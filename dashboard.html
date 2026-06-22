@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenit Global - Main Trading Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2 family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --bg-dark: #0a0f1d;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: radial-gradient(circle at center, #16223f 0%, var(--bg-dark) 100%); color: var(--text-main); min-height: 100vh; padding: 30px 20px; display: flex; justify-content: center; align-items: center; }
+
+        .dashboard-container { width: 100%; max-width: 900px; background: rgba(255, 255, 255, 0.01); border: 1px solid var(--border); backdrop-filter: blur(25px); padding: 35px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); }
+        .dashboard-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 768px) { .dashboard-grid { grid-template-columns: 1fr 2fr; } }
+
+        /* Profile Card */
+        .profile-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px; text-align: center; }
+        .profile-pic { width: 75px; height: 75px; background: linear-gradient(45deg, #00ffcc, #00cb9c); color: #0a0f1d; font-size: 2rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 15px; }
+        .balance-display { font-size: 2.2rem; font-weight: 700; color: var(--primary); margin: 15px 0; text-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+        .ref-link-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 10px; border: 1px dashed var(--primary); margin-top: 15px; font-size: 0.8rem; word-break: break-all; cursor: pointer; }
+
+        /* Investment Cards */
+        .packages-container { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 576px) { .packages-container { grid-template-columns: 1fr 1fr; } }
+        .package-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; transition: 0.3s; }
+        .package-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .package-price { font-size: 1.6rem; font-weight: 700; color: var(--primary); margin: 8px 0; }
+        .btn-buy { width: 100%; padding: 11px; background: transparent; border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-buy:hover { background: var(--primary); color: #0a0f1d; }
+
+        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 24px; border-radius: 10px; color: #fff; font-weight: 600; font-size: 0.88rem; z-index: 10000; box-shadow: 0 8px 20px rgba(0,0,0,0.4); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; }
+    </style>
+</head>
+<body>
+
+<div id="customToast">Notification</div>
+
+<div class="dashboard-container">
+    <div class="dashboard-grid">
+        
+        <div class="profile-card">
+            <div class="profile-pic" id="userInitial">U</div>
+            <h3 id="profileName">Loading User...</h3>
+            <p style="color: #6c7d93; font-size: 0.85rem;" id="profileEmail">email@domain.com</p>
+            
+            <div class="balance-display">$<span id="userBalance">0.00</span></div>
+            <p style="font-size: 0.75rem; color: #6c7d93; text-transform: uppercase; letter-spacing: 1px;">Available Balance</p>
+            
+            <div class="ref-link-box" id="userRefLink" onclick="navigator.clipboard.writeText(this.innerText); notify('Link Copied Successfully!');">
+                https://zenitglobaltrade.com/join?ref=loading
+            </div>
+            <p style="font-size: 0.7rem; color: #51637b; margin-top: 5px;">Click box to copy Referral Link</p>
+            
+            <button onclick="logoutUser()" class="btn-buy" style="margin-top: 30px; border-color: #ff4a4a; color: #ff4a4a;">Secure Logout</button>
+        </div>
+
+        <div>
+            <h3 style="margin-bottom: 20px; font-weight: 600; letter-spacing: 0.5px;"><i class="fa-solid fa-chart-line" style="color: var(--primary); margin-right: 8px;"></i>Active Trading Nodes</h3>
+            <div class="packages-container">
+                
+                <div class="package-card">
+                    <h4>Starter Node</h4>
+                    <div class="package-price">$1.00</div>
+                    <p style="font-size: 0.85rem; color: #6c7d93;">Daily Profit: 5%<br>Validity: 30 Days</p>
+                    <button class="btn-buy" onclick="buyPackage(1.00, 'Starter Node')">Invest Now</button>
+                </div>
+
+                <div class="package-card">
+                    <h4>Silver Alpha</h4>
+                    <div class="package-price">$10.00</div>
+                    <p style="font-size: 0.85rem; color: #6c7d93;">Daily Profit: 7%<br>Validity: 30 Days</p>
+                    <button class="btn-buy" onclick="buyPackage(10.00, 'Silver Alpha')">Invest Now</button>
+                </div>
+
+                <div class="package-card">
+                    <h4>Gold Premium</h4>
+                    <div class="package-price">$50.00</div>
+                    <p style="font-size: 0.85rem; color: #6c7d93;">Daily Profit: 10%<br>Validity: 45 Days</p>
+                    <button class="btn-buy" onclick="buyPackage(50.00, 'Gold Premium')">Invest Now</button>
+                </div>
+
+                <div class="package-card">
+                    <h4>Zenit VIP</h4>
+                    <div class="package-price">$100.00</div>
+                    <p style="font-size: 0.85rem; color: #6c7d93;">Daily Profit: 15%<br>Validity: 60 Days</p>
+                    <button class="btn-buy" onclick="buyPackage(100.00, 'Zenit VIP')">Invest Now</button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo",
+      authDomain: "zenith-global-5e2a4.firebaseapp.com",
+      projectId: "zenith-global-5e2a4",
+      storageBucket: "zenith-global-5e2a4.firebasestorage.app",
+      messagingSenderId: "770652839682",
+      appId: "1:770652839682:web:a1b02cb4040e3727c7ec1b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUserId = null;
+    let currentUserBalance = 0;
+
+    function notify(msg, mode='success') {
+        const toast = document.getElementById('customToast');
+        toast.innerText = msg;
+        toast.style.background = mode === 'success' ? '#00cb9c' : '#ff4a4a';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 3500);
+    }
+
+    // লাইভ সেশন চেক এবং ইউজারের প্রোফাইল ডাটা লোড
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUserId = user.uid;
+            const userDocRef = db.collection("users").doc(user.uid);
+            let userDoc = await userDocRef.get();
+
+            if (userDoc.exists) {
+                let userData = userDoc.data();
+                
+                // বোনাস এবং ভেরিফিকেশন চেক
+                if (!userData.isVerified) {
+                    let freshBalance = 0;
+                    if (userData.referrer) {
+                        const refQuery = await db.collection("users").where("username", "==", userData.referrer).get();
+                        if (!refQuery.empty) {
+                            const refDoc = refQuery.docs[0];
+                            if(refDoc.data().email !== userData.email) {
+                                await db.collection("users").doc(refDoc.id).update({
+                                    balance: (refDoc.data().balance || 0) + 1.00
+                                });
+                                freshBalance = 1.00; // নিজে ১ ডলার বোনাস পেল
+                            }
+                        }
+                    }
+                    await userDocRef.update({ isVerified: true, balance: freshBalance });
+                    userDoc = await userDocRef.get();
+                    userData = userDoc.data();
+                }
+
+                // ড্যাশবোর্ডে লাইভ ডাটা পুশ
+                currentUserBalance = userData.balance || 0;
+                document.getElementById('profileName').innerText = userData.firstName + " " + userData.lastName;
+                document.getElementById('profileEmail').innerText = userData.email;
+                document.getElementById('userBalance').innerText = currentUserBalance.toFixed(2);
+                document.getElementById('userInitial').innerText = userData.firstName.charAt(0).toUpperCase();
+                document.getElementById('userRefLink').innerText = `https://zenitglobaltrade.com/join?ref=${userData.username}`;
+            }
+        } else {
+            // যদি ইউজার লগইন ছাড়া ড্যাশবোর্ডে ঢোকার চেষ্টা করে, তাকে লগইন পেজে ব্যাক পাঠাবে
+            window.location.href = "index.html";
+        }
+    });
+
+    // ইনভেস্টমেন্ট প্যাকেজ কিনার লজিক
+    async function buyPackage(price, packageName) {
+        if (!currentUserId) return;
+
+        if (currentUserBalance < price) {
+            notify(`❌ Insufficient Balance! You need $${price.toFixed(2)}`, "error");
+            return;
+        }
+
+        const confirmPurchase = confirm(`Are you sure you want to invest $${price} in ${packageName}?`);
+        if (!confirmPurchase) return;
+
+        try {
+            const updatedBalance = currentUserBalance - price;
+            await db.collection("users").doc(currentUserId).update({ balance: updatedBalance });
+
+            await db.collection("investments").add({
+                uid: currentUserId, packageName: packageName, amount: price, status: "Active", timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            currentUserBalance = updatedBalance;
+            document.getElementById('userBalance').innerText = currentUserBalance.toFixed(2);
+            notify(`🎉 Success! ${packageName} Activated.`);
+        } catch (error) {
+            notify("❌ Transaction Failed!", "error");
+        }
+    }
+
+    // সিকিউর লগআউট
+    function logoutUser() {
+        auth.signOut().then(() => { window.location.href = "index.html"; });
+    }
+</script>
+</body>
+</html>
