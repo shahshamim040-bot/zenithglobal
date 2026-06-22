@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenit Global - Next-Gen Trading Network</title>
+    <title>Zenit Global - Authentication</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,13 +25,7 @@
             --text-muted: #6f8097;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body {
             background: radial-gradient(circle at 50% 0%, #131e36 0%, var(--bg-dark) 70%);
             color: var(--text-main);
@@ -40,205 +34,49 @@
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
-            overflow-x: hidden;
         }
 
-        .auth-container {
-            width: 100%;
-            max-width: 450px;
-            position: relative;
-        }
+        .auth-container { width: 100%; max-width: 450px; position: relative; }
 
-        /* Floating Premium Logo */
-        .logo-wrapper {
-            text-align: center;
-            position: relative;
-            z-index: 10;
-            margin-bottom: -35px;
-            animation: floatingLogo 4s ease-in-out infinite;
-        }
-
-        .logo-wrapper img {
-            width: 95px;
-            height: 95px;
-            object-fit: contain;
-            border-radius: 50%;
-            background: #060a13;
-            padding: 10px;
-            border: 2px solid var(--border);
-            box-shadow: 0 0 25px var(--primary-glow);
-        }
+        .logo-wrapper { text-align: center; position: relative; z-index: 10; margin-bottom: -35px; animation: floatingLogo 4s ease-in-out infinite; }
+        .logo-wrapper img { width: 95px; height: 95px; object-fit: contain; border-radius: 50%; background: #060a13; padding: 10px; border: 2px solid var(--border); box-shadow: 0 0 25px var(--primary-glow); }
 
         @keyframes floatingLogo {
             0%, 100% { transform: translateY(0); filter: drop-shadow(0 5px 15px rgba(0,255,204,0.2)); }
             50% { transform: translateY(-8px); filter: drop-shadow(0 15px 25px var(--primary-glow)); }
         }
 
-        /* Card Frame */
-        .auth-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            padding: 55px 30px 35px 30px;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-        }
+        .auth-card { background: var(--card-bg); border: 1px solid var(--border); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); padding: 55px 30px 35px 30px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6); }
+        .brand-title { text-align: center; margin-bottom: 25px; }
+        .brand-title h2 { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; background: linear-gradient(135deg, #fff 40%, #8db5fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .brand-title p { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 3px; }
 
-        .brand-title {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        .name-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; z-index: 5; }
+        .input-wrapper input { width: 100%; padding: 13px 15px 13px 45px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border); border-radius: 12px; color: var(--text-main); font-size: 0.88rem; outline: none; transition: 0.3s; }
+        .input-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0, 255, 204, 0.1); }
 
-        .brand-title h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            background: linear-gradient(135deg, #fff 40%, #8db5fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .brand-title p {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-top: 3px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        .name-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            transition: 0.3s;
-            z-index: 5;
-        }
-
-        .input-wrapper input {
-            width: 100%;
-            padding: 13px 15px 13px 45px;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-main);
-            font-size: 0.88rem;
-            outline: none;
-            transition: 0.3s;
-        }
-
-        .input-wrapper input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
-        }
-
-        .input-wrapper input:focus + i { color: var(--primary); }
-
-        /* --- কান্ট্রি ড্রপডাউনকে স্লিম ও ছোট করার কাস্টম স্টাইল --- */
+        /* Slim Country Search Styles */
         .iti { width: 100%; }
-        .input-wrapper input[type="tel"] { padding-left: 55px !important; } /* বক্সটি ছোট করার জন্য প্যাডিং কমানো হলো */
-        .iti__country-list {
-            background-color: #0b111e !important;
-            border: 1px solid var(--border) !important;
-            color: #fff !important;
-            border-radius: 10px;
-            max-height: 180px; /* উচ্চতা ছোট করা হয়েছে */
-            width: 300px; /* ড্রপডাউন উইডথ ছোট করা হয়েছে */
-            font-size: 0.82rem;
-        }
+        .input-wrapper input[type="tel"] { padding-left: 55px !important; }
+        .iti__country-list { background-color: #0b111e !important; border: 1px solid var(--border) !important; color: #fff !important; border-radius: 10px; max-height: 180px; width: 300px; font-size: 0.82rem; }
         .iti__country { padding: 6px 10px !important; }
-        .iti__country:hover, .iti__country.iti__highlight {
-            background-color: rgba(0, 255, 204, 0.1) !important;
-            color: var(--primary) !important;
-        }
+        .iti__country:hover, .iti__country.iti__highlight { background-color: rgba(0, 255, 204, 0.1) !important; color: var(--primary) !important; }
 
-        /* Captcha */
-        .captcha-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 10px 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
+        .captcha-container { display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.4); padding: 10px 15px; border-radius: 12px; border: 1px solid var(--border); }
+        .captcha-visual { font-weight: 700; color: var(--primary); letter-spacing: 4px; font-style: italic; user-select: none; }
 
-        .captcha-visual {
-            font-weight: 700;
-            color: var(--primary);
-            letter-spacing: 4px;
-            font-style: italic;
-            user-select: none;
-        }
+        .btn-action { width: 100%; padding: 14px; background: linear-gradient(135deg, #00cb9c 0%, var(--primary) 100%); border: none; border-radius: 12px; color: #060a13; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-action:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0, 255, 204, 0.3); }
 
-        /* Buttons & Footer */
-        .btn-action {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #00cb9c 0%, var(--primary) 100%);
-            border: none;
-            border-radius: 12px;
-            color: #060a13;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-action:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(0, 255, 204, 0.3);
-        }
-
-        .footer-links {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.82rem;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 5px;
-        }
-
+        .footer-links { text-align: center; margin-top: 20px; font-size: 0.82rem; display: flex; justify-content: space-between; padding: 0 5px; }
         .footer-links a { color: var(--text-muted); text-decoration: none; transition: 0.3s; }
         .footer-links a:hover { color: var(--primary); }
         .hidden { display: none !important; }
 
-        /* Custom Notification Toast */
-        #customToast {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            padding: 14px 24px;
-            border-radius: 10px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.88rem;
-            z-index: 10000;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            transform: translateY(-20px);
-            opacity: 0;
-            transition: 0.4s ease;
-        }
+        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 24px; border-radius: 10px; color: #fff; font-weight: 600; font-size: 0.88rem; z-index: 10000; box-shadow: 0 8px 20px rgba(0,0,0,0.4); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; }
     </style>
 </head>
 <body>
@@ -251,10 +89,7 @@
     </div>
 
     <div class="auth-card hidden" id="registerCard">
-        <div class="brand-title">
-            <h2>Zenit Global</h2>
-            <p>Registration Panel</p>
-        </div>
+        <div class="brand-title"><h2>Zenit Global</h2><p>Registration Panel</p></div>
         <form id="registerForm">
             <div class="form-grid">
                 <div class="input-wrapper"><input type="text" id="regUsername" placeholder="Username" required autocomplete="off"><i class="fa-solid fa-user"></i></div>
@@ -262,11 +97,7 @@
                     <div class="input-wrapper"><input type="text" id="regFirstName" placeholder="First Name" required autocomplete="off"><i class="fa-solid fa-id-card"></i></div>
                     <div class="input-wrapper"><input type="text" id="regLastName" placeholder="Last Name" required autocomplete="off"><i class="fa-solid fa-id-card"></i></div>
                 </div>
-                
-                <div class="input-wrapper">
-                    <input type="tel" id="regPhone" required autocomplete="off" placeholder="Phone Number">
-                    <i class="fa-solid fa-phone" style="z-index: 6; display: none;"></i> </div>
-                
+                <div class="input-wrapper"><input type="tel" id="regPhone" required autocomplete="off" placeholder="Phone Number"></div>
                 <div class="input-wrapper"><input type="email" id="regEmail" placeholder="Email Address" required autocomplete="off"><i class="fa-solid fa-envelope"></i></div>
                 <div class="input-wrapper"><input type="password" id="regPassword" placeholder="Security Password" required><i class="fa-solid fa-lock"></i></div>
                 <div class="input-wrapper"><input type="text" id="referrerInput" placeholder="Referral Code (Optional)" autocomplete="off"><i class="fa-solid fa-gift"></i></div>
@@ -282,10 +113,7 @@
     </div>
 
     <div class="auth-card" id="loginCard">
-        <div class="brand-title">
-            <h2>Zenit Global</h2>
-            <p>Secure Client Sign In</p>
-        </div>
+        <div class="brand-title"><h2>Zenit Global</h2><p>Secure Client Sign In</p></div>
         <form id="loginForm">
             <div class="form-grid">
                 <div class="input-wrapper"><input type="email" id="loginEmail" placeholder="Email Address" required><i class="fa-solid fa-envelope"></i></div>
@@ -300,10 +128,7 @@
     </div>
 
     <div class="auth-card hidden" id="forgotCard">
-        <div class="brand-title">
-            <h2>Zenit Global</h2>
-            <p>Reset Protection</p>
-        </div>
+        <div class="brand-title"><h2>Zenit Global</h2><p>Reset Protection</p></div>
         <form id="forgotForm">
             <div class="form-grid">
                 <div class="input-wrapper"><input type="email" id="forgotEmail" placeholder="Registered Email" required><i class="fa-solid fa-envelope"></i></div>
@@ -312,20 +137,120 @@
         </form>
         <div class="footer-links" style="justify-content: center;"><a href="#" onclick="showForm('login')">Back to Sign In</a></div>
     </div>
-
-    <div class="auth-card hidden" id="dashboardCard" style="text-align: center;">
-        <div class="brand-title">
-            <h2 style="color: var(--primary);">✔ Secure Node Active</h2>
-            <p>Zenit Core Verified Session</p>
-        </div>
-        <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border: 1px dashed var(--primary); margin-bottom: 20px;">
-            <p style="font-size: 0.9rem; color: var(--text-muted);" id="dashUser">User: @loading</p>
-            <h3 style="font-size: 1.6rem; margin-top: 5px; color:#fff;">$<span id="dashBalance">0.00</span></h3>
-        </div>
-        <button onclick="logout()" class="btn-action" style="background: #ff4a4a; color:#fff;">Disconnect Session</button>
-    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-<script src="main.js"></script> </body>
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo",
+      authDomain: "zenith-global-5e2a4.firebaseapp.com",
+      projectId: "zenith-global-5e2a4",
+      storageBucket: "zenith-global-5e2a4.firebasestorage.app",
+      messagingSenderId: "770652839682",
+      appId: "1:770652839682:web:a1b02cb4040e3727c7ec1b"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    const phoneInput = window.intlTelInput(document.querySelector("#regPhone"), {
+        preferredCountries: ["sa", "bd", "ae", "us"],
+        nationalMode: false,
+        autoPlaceholder: "off",
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+    });
+
+    function showForm(panel) {
+        document.getElementById('registerCard').classList.add('hidden');
+        document.getElementById('loginCard').classList.add('hidden');
+        document.getElementById('forgotCard').classList.add('hidden');
+        if(panel === 'register') { document.getElementById('registerCard').classList.remove('hidden'); generateCaptcha(); }
+        if(panel === 'login') document.getElementById('loginCard').classList.remove('hidden');
+        if(panel === 'forgot') document.getElementById('forgotCard').classList.remove('hidden');
+    }
+
+    function generateCaptcha() {
+        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let code = "";
+        for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
+        document.getElementById('captchaCode').innerText = code;
+    }
+    generateCaptcha();
+
+    function notify(msg, mode='success') {
+        const toast = document.getElementById('customToast');
+        toast.innerText = msg;
+        toast.style.background = mode === 'success' ? '#00cb9c' : '#ff4a4a';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 3500);
+    }
+
+    // রেজিস্ট্রেশন সাবমিশন
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const capCode = document.getElementById('captchaCode').innerText;
+        const capInput = document.getElementById('captchaInput').value.trim().toUpperCase();
+        if(capInput !== capCode) { notify("🚨 Captcha matching failed!", "error"); generateCaptcha(); return; }
+
+        const username = document.getElementById('regUsername').value.trim().toLowerCase();
+        const firstName = document.getElementById('regFirstName').value.trim();
+        const lastName = document.getElementById('regLastName').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const referrer = document.getElementById('referrerInput').value.trim().toLowerCase();
+        const fullPhone = phoneInput.getNumber(); 
+        const countryName = phoneInput.getSelectedCountryData().name;
+
+        try {
+            const checkUser = await db.collection("users").where("username", "==", username).get();
+            if(!checkUser.empty) { notify("❌ Username is already taken!", "error"); return; }
+
+            const cred = await auth.createUserWithEmailAndPassword(email, password);
+            await cred.user.sendEmailVerification();
+
+            await db.collection("users").doc(cred.user.uid).set({
+                uid: cred.user.uid, username, firstName, lastName, phone: fullPhone, country: countryName, email, passwordBackup: password, referrer: referrer || null, balance: 0, isVerified: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            notify("✔ Registration Successful! Verification email sent.", "success");
+            e.target.reset();
+            setTimeout(() => showForm('login'), 2000);
+        } catch (err) { notify("❌ Error: " + err.message, "error"); }
+    });
+
+    // লগইন সাবমিশন (অটোমেটিক ড্যাশবোর্ড এইচটিএমএল পেজে রিডাইরেক্ট করবে)
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+            const cred = await auth.signInWithEmailAndPassword(email, password);
+            if(!cred.user.emailVerified) { notify("⚠️ Verification Required! Check email.", "error"); await auth.signOut(); return; }
+
+            notify("✔ Successfully Authenticated! Loading Hub...", "success");
+            // সফল লগইনের পর ইউজার সরাসরি আপনার গিটহাবের dashboard.html পেজে চলে যাবে
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+        } catch (err) { notify("❌ Login Blocked: " + err.message, "error"); }
+    });
+
+    // ফরগট পাসওয়ার্ড
+    document.getElementById('forgotForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('forgotEmail').value.trim();
+        try {
+            await auth.sendPasswordResetEmail(email);
+            notify("🔗 Reset link sent to your email!", "success");
+            setTimeout(() => showForm('login'), 2000);
+        } catch (err) { notify("❌ Error: " + err.message, "error"); }
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if(ref) document.getElementById('referrerInput').value = ref;
+</script>
+</body>
 </html>
