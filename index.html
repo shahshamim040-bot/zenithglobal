@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenit Global - Next-Gen Registration</title>
+    <title>Zenit Global - Next-Gen Trading Network</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
 
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary: #00ffcc;
-            --primary-glow: rgba(0, 255, 204, 0.3);
+            --primary-glow: rgba(0, 255, 204, 0.25);
             --bg-dark: #060a13;
             --card-bg: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
             --text-muted: #6f8097;
         }
@@ -41,81 +45,79 @@
 
         .auth-container {
             width: 100%;
-            max-width: 480px;
+            max-width: 450px;
             position: relative;
         }
 
-        /* Floating Luxury Logo Styling */
+        /* Floating Premium Logo */
         .logo-wrapper {
             text-align: center;
             position: relative;
             z-index: 10;
-            margin-bottom: -35px; /* Form এর ওপর ভাসিয়ে রাখার জন্য */
+            margin-bottom: -35px;
             animation: floatingLogo 4s ease-in-out infinite;
         }
 
         .logo-wrapper img {
-            width: 100px;
-            height: 100px;
+            width: 95px;
+            height: 95px;
             object-fit: contain;
             border-radius: 50%;
-            background: rgba(6, 10, 19, 0.6);
+            background: #060a13;
             padding: 10px;
             border: 2px solid var(--border);
-            box-shadow: 0 0 30px var(--primary-glow), inset 0 0 15px rgba(255,255,255,0.05);
+            box-shadow: 0 0 25px var(--primary-glow);
         }
 
         @keyframes floatingLogo {
-            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 5px 15px rgba(0, 255, 204, 0.2)); }
-            50% { transform: translateY(-10px) scale(1.03); filter: drop-shadow(0 15px 30px var(--primary-glow)); }
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0 5px 15px rgba(0,255,204,0.2)); }
+            50% { transform: translateY(-8px); filter: drop-shadow(0 15px 25px var(--primary-glow)); }
         }
 
-        /* Cyberpunk Glassmorphism Form Box */
-        .registration-card {
+        /* Card Frame */
+        .auth-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            padding: 60px 35px 40px 35px;
-            border-radius: 28px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255,255,255,0.1);
-            position: relative;
+            padding: 55px 30px 35px 30px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
         }
 
         .brand-title {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .brand-title h2 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            letter-spacing: 1px;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 30%, #8db5fc 100%);
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #fff 40%, #8db5fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .brand-title p {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             letter-spacing: 2px;
             text-transform: uppercase;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
-        /* Input Styles */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 18px;
+            gap: 16px;
         }
 
         .name-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 12px;
         }
 
         .input-wrapper {
@@ -128,219 +130,202 @@
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: 0.3s;
-            z-index: 2;
+            z-index: 5;
         }
 
         .input-wrapper input {
             width: 100%;
-            padding: 14px 16px 14px 48px;
-            background: rgba(0, 0, 0, 0.4);
+            padding: 13px 15px 13px 45px;
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px;
             color: var(--text-main);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             outline: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
         }
 
         .input-wrapper input:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.12);
-            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
         }
 
-        .input-wrapper input:focus + i {
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
-        }
+        .input-wrapper input:focus + i { color: var(--primary); }
 
-        /* Smart Country / Phone Input Fixes */
-        .iti {
-            width: 100%;
-        }
-        .input-wrapper input[type="tel"] {
-            padding-left: 85px !important; /* Flag এবং কোডের জন্য জায়গা */
-        }
+        /* --- কান্ট্রি ড্রপডাউনকে স্লিম ও ছোট করার কাস্টম স্টাইল --- */
+        .iti { width: 100%; }
+        .input-wrapper input[type="tel"] { padding-left: 55px !important; } /* বক্সটি ছোট করার জন্য প্যাডিং কমানো হলো */
         .iti__country-list {
             background-color: #0b111e !important;
             border: 1px solid var(--border) !important;
             color: #fff !important;
-            border-radius: 12px;
-            max-height: 250px;
+            border-radius: 10px;
+            max-height: 180px; /* উচ্চতা ছোট করা হয়েছে */
+            width: 300px; /* ড্রপডাউন উইডথ ছোট করা হয়েছে */
+            font-size: 0.82rem;
         }
+        .iti__country { padding: 6px 10px !important; }
         .iti__country:hover, .iti__country.iti__highlight {
             background-color: rgba(0, 255, 204, 0.1) !important;
             color: var(--primary) !important;
         }
 
-        /* Security Captcha System */
+        /* Captcha */
         .captcha-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 10px 16px;
-            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 15px;
+            border-radius: 12px;
             border: 1px solid var(--border);
         }
 
         .captcha-visual {
             font-weight: 700;
-            font-size: 1.1rem;
-            letter-spacing: 5px;
             color: var(--primary);
+            letter-spacing: 4px;
             font-style: italic;
             user-select: none;
-            text-shadow: 0 0 10px var(--primary-glow);
         }
 
-        .btn-refresh {
-            color: var(--text-muted);
+        /* Buttons & Footer */
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00cb9c 0%, var(--primary) 100%);
+            border: none;
+            border-radius: 12px;
+            color: #060a13;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
         }
 
-        .btn-refresh:hover {
-            color: var(--primary);
-            transform: rotate(180deg);
-        }
-
-        /* Premium Gradient Submit Button */
-        .btn-register {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #00cb9c 0%, var(--primary) 100%);
-            border: none;
-            border-radius: 14px;
-            color: #060a13;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 6px 20px rgba(0, 255, 204, 0.2);
-            margin-top: 10px;
-        }
-
-        .btn-register:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 255, 204, 0.4);
+        .btn-action:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(0, 255, 204, 0.3);
         }
 
         .footer-links {
             text-align: center;
-            margin-top: 25px;
-            font-size: 0.85rem;
+            margin-top: 20px;
+            font-size: 0.82rem;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
         }
 
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: 0.3s;
-        }
+        .footer-links a { color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+        .footer-links a:hover { color: var(--primary); }
+        .hidden { display: none !important; }
 
-        .footer-links a:hover {
-            color: var(--primary);
+        /* Custom Notification Toast */
+        #customToast {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            padding: 14px 24px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.88rem;
+            z-index: 10000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: 0.4s ease;
         }
     </style>
 </head>
 <body>
 
+<div id="customToast">Notification</div>
+
 <div class="auth-container">
     <div class="logo-wrapper">
-        <img src="logo.png" alt="Zenit Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991195.png';">
+        <img src="logo.png" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991195.png';">
     </div>
 
-    <div class="registration-card">
+    <div class="auth-card hidden" id="registerCard">
         <div class="brand-title">
             <h2>Zenit Global</h2>
-            <p>Create Secure Account</p>
+            <p>Registration Panel</p>
         </div>
-
         <form id="registerForm">
             <div class="form-grid">
-                
-                <div class="input-wrapper">
-                    <input type="text" id="regUsername" placeholder="Username" required autocomplete="off">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-
+                <div class="input-wrapper"><input type="text" id="regUsername" placeholder="Username" required autocomplete="off"><i class="fa-solid fa-user"></i></div>
                 <div class="name-row">
-                    <div class="input-wrapper">
-                        <input type="text" id="regFirstName" placeholder="First Name" required autocomplete="off">
-                        <i class="fa-solid fa-id-card"></i>
-                    </div>
-                    <div class="input-wrapper">
-                        <input type="text" id="regLastName" placeholder="Last Name" required autocomplete="off">
-                        <i class="fa-solid fa-id-card"></i>
-                    </div>
-                </div>
-
-                <div class="input-wrapper">
-                    <input type="tel" id="regPhone" required autocomplete="off">
-                    <i class="fa-solid fa-phone" style="z-index: 5;"></i>
-                </div>
-
-                <div class="input-wrapper">
-                    <input type="email" id="regEmail" placeholder="Email Address" required autocomplete="off">
-                    <i class="fa-solid fa-envelope"></i>
-                </div>
-
-                <div class="input-wrapper">
-                    <input type="password" id="regPassword" placeholder="Security Password" required>
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-
-                <div class="input-wrapper">
-                    <input type="text" id="referrerInput" placeholder="Referral Code (Optional)" autocomplete="off">
-                    <i class="fa-solid fa-gift"></i>
+                    <div class="input-wrapper"><input type="text" id="regFirstName" placeholder="First Name" required autocomplete="off"><i class="fa-solid fa-id-card"></i></div>
+                    <div class="input-wrapper"><input type="text" id="regLastName" placeholder="Last Name" required autocomplete="off"><i class="fa-solid fa-id-card"></i></div>
                 </div>
                 
+                <div class="input-wrapper">
+                    <input type="tel" id="regPhone" required autocomplete="off" placeholder="Phone Number">
+                    <i class="fa-solid fa-phone" style="z-index: 6; display: none;"></i> </div>
+                
+                <div class="input-wrapper"><input type="email" id="regEmail" placeholder="Email Address" required autocomplete="off"><i class="fa-solid fa-envelope"></i></div>
+                <div class="input-wrapper"><input type="password" id="regPassword" placeholder="Security Password" required><i class="fa-solid fa-lock"></i></div>
+                <div class="input-wrapper"><input type="text" id="referrerInput" placeholder="Referral Code (Optional)" autocomplete="off"><i class="fa-solid fa-gift"></i></div>
                 <div class="captcha-container">
                     <span class="captcha-visual" id="captchaCode">XXXXX</span>
-                    <i class="fa-solid fa-rotate btn-refresh" onclick="generateCaptcha()"></i>
-                    <input type="text" id="captchaInput" placeholder="Enter Code" style="width: 35%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: #fff; text-align: center;" required>
+                    <i class="fa-solid fa-rotate" onclick="generateCaptcha()" style="cursor:pointer; color:var(--text-muted)"></i>
+                    <input type="text" id="captchaInput" placeholder="Captcha" style="width: 35%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: #fff; text-align: center;" required>
                 </div>
-
-                <button type="submit" class="btn-register">Register Account</button>
+                <button type="submit" class="btn-action">Register Account</button>
             </div>
         </form>
+        <div class="footer-links" style="justify-content: center;"><a href="#" onclick="showForm('login')">Already have an account? <span style="color:var(--primary)">Sign In</span></a></div>
+    </div>
 
-        <div class="footer-links">
-            <a href="login.html">Already have an account? <span style="color: var(--primary); font-weight:600;">Sign In</span></a>
+    <div class="auth-card" id="loginCard">
+        <div class="brand-title">
+            <h2>Zenit Global</h2>
+            <p>Secure Client Sign In</p>
         </div>
+        <form id="loginForm">
+            <div class="form-grid">
+                <div class="input-wrapper"><input type="email" id="loginEmail" placeholder="Email Address" required><i class="fa-solid fa-envelope"></i></div>
+                <div class="input-wrapper"><input type="password" id="loginPassword" placeholder="Password" required><i class="fa-solid fa-lock"></i></div>
+                <button type="submit" class="btn-action">Sign In Platform</button>
+            </div>
+        </form>
+        <div class="footer-links">
+            <a href="#" onclick="showForm('register')">Create Account</a>
+            <a href="#" onclick="showForm('forgot')">Forgot Password?</a>
+        </div>
+    </div>
+
+    <div class="auth-card hidden" id="forgotCard">
+        <div class="brand-title">
+            <h2>Zenit Global</h2>
+            <p>Reset Protection</p>
+        </div>
+        <form id="forgotForm">
+            <div class="form-grid">
+                <div class="input-wrapper"><input type="email" id="forgotEmail" placeholder="Registered Email" required><i class="fa-solid fa-envelope"></i></div>
+                <button type="submit" class="btn-action">Send Reset Link</button>
+            </div>
+        </form>
+        <div class="footer-links" style="justify-content: center;"><a href="#" onclick="showForm('login')">Back to Sign In</a></div>
+    </div>
+
+    <div class="auth-card hidden" id="dashboardCard" style="text-align: center;">
+        <div class="brand-title">
+            <h2 style="color: var(--primary);">✔ Secure Node Active</h2>
+            <p>Zenit Core Verified Session</p>
+        </div>
+        <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border: 1px dashed var(--primary); margin-bottom: 20px;">
+            <p style="font-size: 0.9rem; color: var(--text-muted);" id="dashUser">User: @loading</p>
+            <h3 style="font-size: 1.6rem; margin-top: 5px; color:#fff;">$<span id="dashBalance">0.00</span></h3>
+        </div>
+        <button onclick="logout()" class="btn-action" style="background: #ff4a4a; color:#fff;">Disconnect Session</button>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-<script>
-    // Initialize Smart Country Selector with Flag and Search Option
-    const phoneInputField = document.querySelector("#regPhone");
-    const phoneInput = window.intlTelInput(phoneInputField, {
-        preferredCountries: ["sa", "bd", "ae", "us", "gb"], // সৌদি, বাংলাদেশ ইত্যাদি ওপরে থাকবে
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
-    });
-
-    // Captcha Logic for UI
-    function generateCaptcha() {
-        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let code = "";
-        for (let i = 0; i < 5; i++) {
-            code += chars[Math.floor(Math.random() * chars.length)];
-        }
-        document.getElementById('captchaCode').innerText = code;
-    }
-    
-    // Auto-generate on screen load
-    generateCaptcha();
-
-    // Auto Catch Referral Code from url (?ref=username)
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    if(ref) {
-        document.getElementById('referrerInput').value = ref;
-    }
-</script>
-</body>
+<script src="main.js"></script> </body>
 </html>
