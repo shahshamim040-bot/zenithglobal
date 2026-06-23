@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenit Global - Nexus Core Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root { --danger: #ff4a4a; --success: #00ffcc; --bg: #060a13; --card: rgba(255,255,255,0.02); --border: rgba(255,255,255,0.08); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
+        body { background:var(--bg); color:#fff; padding:30px 15px; }
+        .lock-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:#060a13; z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+        .input-box { padding:12px; background:rgba(0,0,0,0.4); border:1px solid var(--border); color:#fff; border-radius:8px; margin-bottom:12px; width:100%; max-width:320px; outline:none; }
+        .btn { padding:12px 24px; background:var(--success); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; }
+        .admin-container { max-width:1200px; margin:0 auto; display:none; }
+        .panel-grid { display:grid; grid-template-columns:1fr; gap:25px; margin-top:20px; }
+        @media(min-width:768px){ .panel-grid { grid-template-columns:1fr 1fr; } }
+        .card { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:12px; margin-bottom:20px; }
+        .table-item { display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; margin-bottom:8px; border:1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<!-- Secure Authorization Layer -->
+<div class="lock-screen" id="lockScreen">
+    <h2 style="margin-bottom:20px; color:var(--success); letter-spacing:1px;">NEXUS SYSTEM COMMAND BLOCK</h2>
+    <input type="text" id="admUser" class="input-box" placeholder="Operator Identity Identifier">
+    <input type="password" id="admPass" class="input-box" placeholder="Authorization Access Key">
+    <button class="btn" onclick="verifyAuthorization()">Initialize Override</button>
+</div>
+
+<!-- Main Admin Control Panel -->
+<div class="admin-container" id="adminContainer">
+    <div style="display:flex; justify-content:between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:25px;">
+        <h2>Nexus Node Operational Master Base</h2>
+        <span style="color:var(--success); font-weight:600;">System Secure Connection: ACTIVE</span>
+    </div>
+
+    <!-- Configuration Gateways & Broadcast Notice -->
+    <div class="panel-grid">
+        <div class="card">
+            <h3>Exchange & Hardware Gateway Configuration</h3>
+            <label style="font-size:0.8rem; color:var(--success);">Global Rate (1 USD = X BDT)</label>
+            <input type="number" id="sysRate" class="input-box" style="max-width:100%;" placeholder="Rate">
+            <input type="text" id="gateBkash" class="input-box" style="max-width:100%;" placeholder="bKash Routing Wallet Account">
+            <input type="text" id="gateNagad" class="input-box" style="max-width:100%;" placeholder="Nagad Routing Wallet Account">
+            <input type="text" id="gateBinance" class="input-box" style="max-width:100%;" placeholder="Binance USDT (TRC20) Gateway Hex">
+            <button class="btn" onclick="updateSystemSettings()">Deploy Settings Array</button>
+        </div>
+        
+        <div class="card">
+            <h3>Global Network Terminal Notice Feed</h3>
+            <textarea id="sysNotice" class="input-box" style="max-width:100%; height:110px; resize:none;" placeholder="Broadcast alert terminal message text to active matrices..."></textarea>
+            <button class="btn" style="background:#ffaa00;" onclick="broadcastNotice()">Push Live Alert</button>
+            <button class="btn" style="background:var(--danger); color:#fff; margin-left:10px;" onclick="clearNotice()">Wipe Feed</button>
+        </div>
+    </div>
+
+    <!-- Core Dynamic Worklists -->
+    <div class="panel-grid">
+        <!-- Structural Pending Ledger Requests -->
+        <div class="card">
+            <h3>Pending Strategic Asset Operations Queue</h3>
+            <div id="queueContainer" style="margin-top:15px;"></div>
+        </div>
+
+        <!-- Directory Profiles Register -->
+        <div class="card">
+            <h3>Active Terminal Account Profile Nodes</h3>
+            <div id="usersContainer" style="margin-top:15px;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo", authDomain: "zenith-global-5e2a4.firebaseapp.com", projectId: "zenith-global-5e2a4", storageBucket: "zenith-global-5e2a4.firebasestorage.app", messagingSenderId: "770652839682", appId: "1:770652839682:web:a1b02cb4040e3727c7ec1b" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function verifyAuthorization() {
+        const u = document.getElementById('admUser').value, p = document.getElementById('admPass').value;
+        if(u === 'shamim12' && p === '123456@') {
+            document.getElementById('lockScreen').style.display = 'none';
+            document.getElementById('adminContainer').style.display = 'block';
+            bootAdminStreamers();
+        } else { alert("Terminal access violation detected. Authorization keys invalid."); }
+    }
+
+    function bootAdminStreamers() {
+        // Core Config Sync
+        db.collection("settings").doc("system").onSnapshot(doc => {
+            if(doc.exists) {
+                const s = doc.data();
+                document.getElementById('sysRate').value = s.rate || 127;
+                document.getElementById('gateBkash').value = s.gateways?.bkash || '';
+                document.getElementById('gateNagad').value = s.gateways?.nagad || '';
+                document.getElementById('gateBinance').value = s.gateways?.binance || '';
+            }
+        });
+
+        // Transactions Realtime Tracker
+        db.collection("transactions").where("status", "==", "Pending").onSnapshot(snap => {
+            const container = document.getElementById('queueContainer');
+            container.innerHTML = "";
+            if(snap.empty) container.innerHTML = "<p style='color:gray;'>Queue empty.</p>";
+            snap.forEach(doc => {
+                const t = doc.data(), id = doc.id;
+                const div = document.createElement('div');
+                div.className = 'table-item';
+                div.innerHTML = `<div><strong>${t.type.toUpperCase()} ($${t.amount})</strong><br><small>Src: ${t.sender || t.target} | Tx: ${t.txn || 'N/A'}</small></div>
+                <div><button class="btn" style="padding:6px; font-size:0.75rem;" onclick="processTransaction('${id}', 'Success', '${t.type}', '${t.uid}', ${t.amount})">Approve</button>
+                <button class="btn" style="padding:6px; font-size:0.75rem; background:var(--danger); color:#fff;" onclick="processTransaction('${id}', 'Rejected', '${t.type}', '${t.uid}', ${t.amount})">Reject</button></div>`;
+                container.appendChild(div);
+            });
+        });
+
+        // Accounts System Index
+        db.collection("users").onSnapshot(snap => {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = "";
+            snap.forEach(doc => {
+                const u = doc.data(), id = doc.id;
+                const div = document.createElement('div');
+                div.className = 'table-item';
+                div.innerHTML = `<div><strong>${u.firstName} (@${u.username})</strong><br><small>P:${u.balance.toFixed(2)} | D:${u.depositBalance?.toFixed(2) || '0.00'} | B:${u.refBalance?.toFixed(2) || '0.00'}</small></div>
+                <div><button class="btn" style="padding:5px; font-size:0.7rem; background:#444; color:#fff;" onclick="editUserTerminals('${id}')">Modify</button>
+                <button class="btn" style="padding:5px; font-size:0.7rem; background:var(--danger); color:#fff;" onclick="toggleUserMatrixLock('${id}', ${u.isBlocked || false})">${u.isBlocked ? 'Unblock' : 'Block'}</button></div>`;
+                container.appendChild(div);
+            });
+        });
+    }
+
+    async function processTransaction(id, targetStatus, type, uid, amount) {
+        let reason = "";
+        if(targetStatus === 'Rejected') {
+            reason = prompt("Provide transactional failure justification code:");
+            if(reason === null) return;
+        }
+
+        if(targetStatus === 'Success' && type === 'deposit') {
+            await db.collection("users").doc(uid).update({ depositBalance: firebase.firestore.FieldValue.increment(amount) });
+        }
+
+        await db.collection("transactions").doc(id).update({ status: targetStatus, reason: reason || null });
+        alert(`Request processed into terminal state: ${targetStatus}`);
+    }
+
+    function editUserTerminals(id) {
+        const p = parseFloat(prompt("Set Withdrawable Profit Balance ($):")), d = parseFloat(prompt("Set Core Deposit Vault Balance ($):")), b = parseFloat(prompt("Set Referral Asset Balance ($):"));
+        if(isNaN(p) || isNaN(d) || isNaN(b)) return;
+        db.collection("users").doc(id).update({ balance: p, depositBalance: d, refBalance: b });
+    }
+
+    function toggleUserMatrixLock(id, currentStatus) {
+        db.collection("users").doc(id).update({ isBlocked: !currentStatus });
+    }
+
+    function updateSystemSettings() {
+        const rate = parseFloat(document.getElementById('sysRate').value), bkash = document.getElementById('gateBkash').value, nagad = document.getElementById('gateNagad').value, binance = document.getElementById('gateBinance').value;
+        db.collection("settings").doc("system").set({ rate, gateways: { bkash, nagad, binance } });
+        alert("Configuration pipeline operational matrix uploaded.");
+    }
+
+    function broadcastNotice() {
+        const text = document.getElementById('sysNotice').value;
+        db.collection("settings").doc("notice").set({ text });
+        alert("Notice feed uploaded.");
+    }
+
+    function clearNotice() {
+        db.collection("settings").doc("notice").set({ text: "" });
+        document.getElementById('sysNotice').value = "";
+    }
+</script>
+</body>
+</html>
