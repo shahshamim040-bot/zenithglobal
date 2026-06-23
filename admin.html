@@ -3,175 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenit Global - Nexus Core Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Zenit Global - Security Control Center</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
-        :root { --danger: #ff4a4a; --success: #00ffcc; --bg: #060a13; --card: rgba(255,255,255,0.02); --border: rgba(255,255,255,0.08); }
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Plus Jakarta Sans',sans-serif; }
-        body { background:var(--bg); color:#fff; padding:30px 15px; }
-        .lock-screen { position:fixed; top:0; left:0; width:100%; height:100%; background:#060a13; z-index:99999; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-        .input-box { padding:12px; background:rgba(0,0,0,0.4); border:1px solid var(--border); color:#fff; border-radius:8px; margin-bottom:12px; width:100%; max-width:320px; outline:none; }
-        .btn { padding:12px 24px; background:var(--success); color:#000; border:none; border-radius:8px; font-weight:700; cursor:pointer; }
-        .admin-container { max-width:1200px; margin:0 auto; display:none; }
-        .panel-grid { display:grid; grid-template-columns:1fr; gap:25px; margin-top:20px; }
-        @media(min-width:768px){ .panel-grid { grid-template-columns:1fr 1fr; } }
-        .card { background:var(--card); border:1px solid var(--border); padding:20px; border-radius:12px; margin-bottom:20px; }
-        .table-item { display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:12px; border-radius:8px; margin-bottom:8px; border:1px solid var(--border); }
+        :root {
+            --primary: #ffaa00;
+            --bg-dark: #0a0a14;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: #06060c; color: var(--text-main); padding: 30px 15px; min-height: 100vh; }
+
+        .admin-container { max-width: 1200px; margin: 0 auto; display: none; }
+        .login-box { max-width: 400px; margin: 100px auto; background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 16px; text-align: center; }
+        
+        .header-section { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; }
+        .grid-panel { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 768px) { .grid-panel { grid-template-columns: 1fr 1fr; } }
+
+        .admin-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 16px; height: fit-content; }
+        h3 { margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+        .input-box { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 12px; outline: none; }
+        .btn-prime { width: 100%; padding: 12px; background: var(--primary); border: none; color: #000; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-prime:hover { opacity: 0.9; }
+
+        .req-item { background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 12px; }
+        .action-btns { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-success { background: #00ffcc; color: #000; border: none; padding: 6px 12px; font-weight: 700; border-radius: 4px; cursor: pointer; }
+        .btn-danger { background: #ff4a4a; color: #fff; border: none; padding: 6px 12px; font-weight: 700; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<!-- Secure Authorization Layer -->
-<div class="lock-screen" id="lockScreen">
-    <h2 style="margin-bottom:20px; color:var(--success); letter-spacing:1px;">NEXUS SYSTEM COMMAND BLOCK</h2>
-    <input type="text" id="admUser" class="input-box" placeholder="Operator Identity Identifier">
-    <input type="password" id="admPass" class="input-box" placeholder="Authorization Access Key">
-    <button class="btn" onclick="verifyAuthorization()">Initialize Override</button>
+<div class="login-box" id="loginBox">
+    <h2 style="color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-user-shield"></i> Admin Security</h2>
+    <p style="font-size: 0.85rem; color: gray; margin-bottom: 15px;">Enter Secret Terminal Master PIN</p>
+    <input type="password" id="adminPin" class="input-box" placeholder="••••">
+    <button class="btn-prime" onclick="loginAdminWithPin()">Authorize Terminal</button>
 </div>
 
-<!-- Main Admin Control Panel -->
-<div class="admin-container" id="adminContainer">
-    <div style="display:flex; justify-content:between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:15px; margin-bottom:25px;">
-        <h2>Nexus Node Operational Master Base</h2>
-        <span style="color:var(--success); font-weight:600;">System Secure Connection: ACTIVE</span>
+<div class="admin-container" id="adminPanel">
+    <div class="header-section">
+        <div>
+            <h1>Zenit Global Master Panel</h1>
+            <p style="color: gray; font-size: 0.85rem;">Terminal Security Operation: <span style="color:#00ffcc;">Online</span></p>
+        </div>
+        <button onclick="logoutAdmin()" class="btn-danger" style="padding: 10px 20px;">Disconnect Session</button>
     </div>
 
-    <!-- Configuration Gateways & Broadcast Notice -->
-    <div class="panel-grid">
-        <div class="card">
-            <h3>Exchange & Hardware Gateway Configuration</h3>
-            <label style="font-size:0.8rem; color:var(--success);">Global Rate (1 USD = X BDT)</label>
-            <input type="number" id="sysRate" class="input-box" style="max-width:100%;" placeholder="Rate">
-            <input type="text" id="gateBkash" class="input-box" style="max-width:100%;" placeholder="bKash Routing Wallet Account">
-            <input type="text" id="gateNagad" class="input-box" style="max-width:100%;" placeholder="Nagad Routing Wallet Account">
-            <input type="text" id="gateBinance" class="input-box" style="max-width:100%;" placeholder="Binance USDT (TRC20) Gateway Hex">
-            <button class="btn" onclick="updateSystemSettings()">Deploy Settings Array</button>
-        </div>
+    <div class="grid-panel">
         
-        <div class="card">
-            <h3>Global Network Terminal Notice Feed</h3>
-            <textarea id="sysNotice" class="input-box" style="max-width:100%; height:110px; resize:none;" placeholder="Broadcast alert terminal message text to active matrices..."></textarea>
-            <button class="btn" style="background:#ffaa00;" onclick="broadcastNotice()">Push Live Alert</button>
-            <button class="btn" style="background:var(--danger); color:#fff; margin-left:10px;" onclick="clearNotice()">Wipe Feed</button>
-        </div>
-    </div>
-
-    <!-- Core Dynamic Worklists -->
-    <div class="panel-grid">
-        <!-- Structural Pending Ledger Requests -->
-        <div class="card">
-            <h3>Pending Strategic Asset Operations Queue</h3>
-            <div id="queueContainer" style="margin-top:15px;"></div>
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-sliders"></i> Global Gateways & Conversion</h3>
+            <label>Dollar Live Rate (BDT)</label>
+            <input type="number" id="sysRate" class="input-box" placeholder="e.g. 127">
+            <label>bKash Agent Number</label>
+            <input type="text" id="sysBkash" class="input-box">
+            <label>Nagad Agent Number</label>
+            <input type="text" id="sysNagad" class="input-box">
+            <label>Binance Pay USDT TRC20 Address</label>
+            <input type="text" id="sysBinance" class="input-box">
+            <button class="btn-prime" onclick="updateSystemGateways()">Push Global Settings</button>
         </div>
 
-        <!-- Directory Profiles Register -->
-        <div class="card">
-            <h3>Active Terminal Account Profile Nodes</h3>
-            <div id="usersContainer" style="margin-top:15px;"></div>
+        <div class="admin-card">
+            <h3><i class="fa-solid fa-bullhorn"></i> Live System Bulletin Notice</h3>
+            <textarea id="sysNotice" class="input-box" rows="4" placeholder="Enter marquee or system notice for users..."></textarea>
+            <button class="btn-prime" onclick="updateSystemNotice()">Broadcast Bulletin</button>
         </div>
+
+        <div class="admin-card" style="grid-column: 1 / -1;">
+            <h3><i class="fa-solid fa-users-gear"></i> User Accounts Ledger Database</h3>
+            <input type="text" id="searchUserEmail" class="input-box" placeholder="Enter Target User Email..." oninput="searchUserDatabase()">
+            <div id="userDataBox" style="margin-top: 15px; display: none; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px; border: 1px solid var(--border);">
+                <h4 id="targetUserName" style="margin-bottom: 15px;">User: None</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div><label>Plan Profit Balance ($)</label><input type="number" id="editBal" class="input-box"></div>
+                    <div><label>Core Deposit Vault ($)</label><input type="number" id="editDepo" class="input-box"></div>
+                    <div><label>Affiliate Bonus Vault ($)</label><input type="number" id="editRef" class="input-box"></div>
+                </div>
+                <div class="action-btns" style="margin-top: 15px;">
+                    <button class="btn-success" onclick="saveUserBalances()">Save Financial Ledgers</button>
+                    <button id="blockBtn" class="btn-danger" onclick="toggleUserBlockStatus()">Suspend Account</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-card" style="grid-column: 1 / -1;">
+            <h3><i class="fa-solid fa-money-bill-transfer"></i> Operational Pending Queues (Deposit/Withdrawal)</h3>
+            <div id="pendingReqsBox" style="margin-top: 15px;">
+                </div>
+        </div>
+
     </div>
 </div>
 
 <script>
-    const firebaseConfig = { apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo", authDomain: "zenith-global-5e2a4.firebaseapp.com", projectId: "zenith-global-5e2a4", storageBucket: "zenith-global-5e2a4.firebasestorage.app", messagingSenderId: "770652839682", appId: "1:770652839682:web:a1b02cb4040e3727c7ec1b" };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo",
+      authDomain: "zenith-global-5e2a4.firebaseapp.com",
+      projectId: "zenith-global-5e2a4",
+      storageBucket: "zenith-global-5e2a4.firebasestorage.app",
+      messagingSenderId: "770652839682",
+      appId: "1:770652839682:web:a1b02cb4040e3727c7ec1b"
+    };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    function verifyAuthorization() {
-        const u = document.getElementById('admUser').value, p = document.getElementById('admPass').value;
-        if(u === 'shamim12' && p === '123456@') {
-            document.getElementById('lockScreen').style.display = 'none';
-            document.getElementById('adminContainer').style.display = 'block';
-            bootAdminStreamers();
-        } else { alert("Terminal access violation detected. Authorization keys invalid."); }
+    let targetUserUid = null;
+    let targetUserObj = {};
+
+    // আপনার সিক্রেট পিন (এটি আপনি চাইলে পরিবর্তন করতে পারেন)
+    const SECRET_MASTER_PIN = "2026"; 
+
+    // পেজ লোড হলে আগে সেশন চেক করবে
+    window.onload = function() {
+        if (sessionStorage.getItem("admin_authenticated") === "true") {
+            showAdminPanel();
+        }
+    };
+
+    function loginAdminWithPin() {
+        const pin = document.getElementById('adminPin').value.trim();
+        if(pin === SECRET_MASTER_PIN) {
+            sessionStorage.setItem("admin_authenticated", "true");
+            showAdminPanel();
+        } else {
+            alert("❌ Incorrect Security Token PIN. Access Denied.");
+        }
     }
 
-    function bootAdminStreamers() {
-        // Core Config Sync
-        db.collection("settings").doc("system").onSnapshot(doc => {
+    function showAdminPanel() {
+        document.getElementById('loginBox').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        loadSystemConfigurations();
+        listenPendingTransactions();
+    }
+
+    function logoutAdmin() {
+        sessionStorage.removeItem("admin_authenticated");
+        window.location.reload();
+    }
+
+    function loadSystemConfigurations() {
+        db.collection("settings").doc("system").get().then(doc => {
             if(doc.exists) {
-                const s = doc.data();
-                document.getElementById('sysRate').value = s.rate || 127;
-                document.getElementById('gateBkash').value = s.gateways?.bkash || '';
-                document.getElementById('gateNagad').value = s.gateways?.nagad || '';
-                document.getElementById('gateBinance').value = s.gateways?.binance || '';
+                const d = doc.data();
+                document.getElementById('sysRate').value = d.rate || 127;
+                document.getElementById('sysBkash').value = d.gateways?.bkash || "";
+                document.getElementById('sysNagad').value = d.gateways?.nagad || "";
+                document.getElementById('sysBinance').value = d.gateways?.binance || "";
             }
         });
+        db.collection("settings").doc("notice").get().then(doc => {
+            if(doc.exists) document.getElementById('sysNotice').value = doc.data().text || "";
+        });
+    }
 
-        // Transactions Realtime Tracker
+    function updateSystemGateways() {
+        const rate = parseFloat(document.getElementById('sysRate').value) || 127;
+        const bkash = document.getElementById('sysBkash').value.trim();
+        const nagad = document.getElementById('sysNagad').value.trim();
+        const binance = document.getElementById('sysBinance').value.trim();
+
+        db.collection("settings").doc("system").set({
+            rate: rate, gateways: { bkash: bkash, nagad: nagad, binance: binance }
+        }).then(() => alert("Global Gateways Operational Infrastructure Updated!"));
+    }
+
+    function updateSystemNotice() {
+        const txt = document.getElementById('sysNotice').value.trim();
+        db.collection("settings").doc("notice").set({ text: txt })
+          .then(() => alert("Bulletin Board Live Notice Dispatched!"));
+    }
+
+    async function searchUserDatabase() {
+        const email = document.getElementById('searchUserEmail').value.trim().toLowerCase();
+        if(!email) return;
+
+        const snap = await db.collection("users").where("email", "==", email).get();
+        const box = document.getElementById('userDataBox');
+        
+        if(!snap.empty) {
+            box.style.display = 'block';
+            const doc = snap.docs[0];
+            targetUserUid = doc.id;
+            targetUserObj = doc.data();
+
+            document.getElementById('targetUserName').innerText = `User Ledger: ${targetUserObj.firstName} ${targetUserObj.lastName} (${targetUserObj.username})`;
+            document.getElementById('editBal').value = targetUserObj.balance || 0;
+            document.getElementById('editDepo').value = targetUserObj.depositBalance || 0;
+            document.getElementById('editRef').value = targetUserObj.refBalance || 0;
+            
+            const btn = document.getElementById('blockBtn');
+            btn.innerText = targetUserObj.isBlocked ? "Lift Suspension (Unblock)" : "Terminate Operations (Block)";
+            btn.style.background = targetUserObj.isBlocked ? "#00ffcc" : "#ff4a4a";
+        } else {
+            box.style.display = 'none';
+        }
+    }
+
+    function saveUserBalances() {
+        if(!targetUserUid) return;
+        const bal = parseFloat(document.getElementById('editBal').value) || 0;
+        const depo = parseFloat(document.getElementById('editDepo').value) || 0;
+        const ref = parseFloat(document.getElementById('editRef').value) || 0;
+
+        db.collection("users").doc(targetUserUid).update({
+            balance: bal, depositBalance: depo, refBalance: ref
+        }).then(() => alert("User financial matrix ledger saved successfully!"));
+    }
+
+    function toggleUserBlockStatus() {
+        if(!targetUserUid) return;
+        const currentStatus = targetUserObj.isBlocked || false;
+        db.collection("users").doc(targetUserUid).update({ isBlocked: !currentStatus }).then(() => {
+            alert("User Operational Token Status Toggled.");
+            searchUserDatabase();
+        });
+    }
+
+    function listenPendingTransactions() {
         db.collection("transactions").where("status", "==", "Pending").onSnapshot(snap => {
-            const container = document.getElementById('queueContainer');
+            const container = document.getElementById('pendingReqsBox');
             container.innerHTML = "";
-            if(snap.empty) container.innerHTML = "<p style='color:gray;'>Queue empty.</p>";
+            if(snap.empty) container.innerHTML = "<p style='color:gray; font-size:0.9rem;'>No active pending operational executions inside channel pipeline.</p>";
+            
             snap.forEach(doc => {
-                const t = doc.data(), id = doc.id;
-                const div = document.createElement('div');
-                div.className = 'table-item';
-                div.innerHTML = `<div><strong>${t.type.toUpperCase()} ($${t.amount})</strong><br><small>Src: ${t.sender || t.target} | Tx: ${t.txn || 'N/A'}</small></div>
-                <div><button class="btn" style="padding:6px; font-size:0.75rem;" onclick="processTransaction('${id}', 'Success', '${t.type}', '${t.uid}', ${t.amount})">Approve</button>
-                <button class="btn" style="padding:6px; font-size:0.75rem; background:var(--danger); color:#fff;" onclick="processTransaction('${id}', 'Rejected', '${t.type}', '${t.uid}', ${t.amount})">Reject</button></div>`;
-                container.appendChild(div);
-            });
-        });
-
-        // Accounts System Index
-        db.collection("users").onSnapshot(snap => {
-            const container = document.getElementById('usersContainer');
-            container.innerHTML = "";
-            snap.forEach(doc => {
-                const u = doc.data(), id = doc.id;
-                const div = document.createElement('div');
-                div.className = 'table-item';
-                div.innerHTML = `<div><strong>${u.firstName} (@${u.username})</strong><br><small>P:${u.balance.toFixed(2)} | D:${u.depositBalance?.toFixed(2) || '0.00'} | B:${u.refBalance?.toFixed(2) || '0.00'}</small></div>
-                <div><button class="btn" style="padding:5px; font-size:0.7rem; background:#444; color:#fff;" onclick="editUserTerminals('${id}')">Modify</button>
-                <button class="btn" style="padding:5px; font-size:0.7rem; background:var(--danger); color:#fff;" onclick="toggleUserMatrixLock('${id}', ${u.isBlocked || false})">${u.isBlocked ? 'Unblock' : 'Block'}</button></div>`;
-                container.appendChild(div);
+                const req = doc.data();
+                const id = doc.id;
+                
+                const item = document.createElement('div');
+                item.className = 'req-item';
+                item.innerHTML = `
+                    <p><strong>Type:</strong> ${req.type.toUpperCase()} | <strong>Amount:</strong> $${req.amount}</p>
+                    <p style="font-size:0.85rem; color:gray;">Method: ${req.method.toUpperCase()} | Channel ID: ${req.txn || req.target || 'N/A'}</p>
+                    <div class="action-btns">
+                        <button class="btn-success" onclick="processRequest('${id}', '${req.type}', '${req.uid}', ${req.amount}, 'Success')">Approve Request</button>
+                        <button class="btn-danger" onclick="rejectRequestPrompt('${id}')">Reject Route</button>
+                    </div>
+                `;
+                container.appendChild(item);
             });
         });
     }
 
-    async function processTransaction(id, targetStatus, type, uid, amount) {
-        let reason = "";
-        if(targetStatus === 'Rejected') {
-            reason = prompt("Provide transactional failure justification code:");
-            if(reason === null) return;
+    async function processRequest(id, type, uid, amount, status, reason = "") {
+        if(status === "Success" && type === "deposit") {
+            await db.collection("users").doc(uid).update({
+                depositBalance: firebase.firestore.FieldValue.increment(amount)
+            });
+        }
+        if(status === "Rejected" && type === "withdrawal") {
+            await db.collection("users").doc(uid).update({
+                balance: firebase.firestore.FieldValue.increment(amount)
+            });
         }
 
-        if(targetStatus === 'Success' && type === 'deposit') {
-            await db.collection("users").doc(uid).update({ depositBalance: firebase.firestore.FieldValue.increment(amount) });
-        }
-
-        await db.collection("transactions").doc(id).update({ status: targetStatus, reason: reason || null });
-        alert(`Request processed into terminal state: ${targetStatus}`);
+        await db.collection("transactions").doc(id).update({ status: status, reason: reason });
+        alert(`Transaction pipeline processed as [${status}] successfully.`);
     }
 
-    function editUserTerminals(id) {
-        const p = parseFloat(prompt("Set Withdrawable Profit Balance ($):")), d = parseFloat(prompt("Set Core Deposit Vault Balance ($):")), b = parseFloat(prompt("Set Referral Asset Balance ($):"));
-        if(isNaN(p) || isNaN(d) || isNaN(b)) return;
-        db.collection("users").doc(id).update({ balance: p, depositBalance: d, refBalance: b });
-    }
-
-    function toggleUserMatrixLock(id, currentStatus) {
-        db.collection("users").doc(id).update({ isBlocked: !currentStatus });
-    }
-
-    function updateSystemSettings() {
-        const rate = parseFloat(document.getElementById('sysRate').value), bkash = document.getElementById('gateBkash').value, nagad = document.getElementById('gateNagad').value, binance = document.getElementById('gateBinance').value;
-        db.collection("settings").doc("system").set({ rate, gateways: { bkash, nagad, binance } });
-        alert("Configuration pipeline operational matrix uploaded.");
-    }
-
-    function broadcastNotice() {
-        const text = document.getElementById('sysNotice').value;
-        db.collection("settings").doc("notice").set({ text });
-        alert("Notice feed uploaded.");
-    }
-
-    function clearNotice() {
-        db.collection("settings").doc("notice").set({ text: "" });
-        document.getElementById('sysNotice').value = "";
+    function rejectRequestPrompt(id) {
+        const reason = prompt("Enter precise reason code for request rejection:");
+        if(reason === null) return;
+        db.collection("transactions").doc(id).get().then(doc => {
+            const data = doc.data();
+            processRequest(id, data.type, data.uid, data.amount, "Rejected", reason);
+        });
     }
 </script>
 </body>
