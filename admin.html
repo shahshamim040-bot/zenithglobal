@@ -13,8 +13,8 @@
 
     <style>
         :root {
-            --primary: #ffaa00;
-            --bg-dark: #0a0a14;
+            --primary: #00ffcc;
+            --bg-dark: #060a13;
             --card-bg: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
@@ -24,7 +24,7 @@
         body { background: #06060c; color: var(--text-main); padding: 30px 15px; min-height: 100vh; }
 
         .admin-container { max-width: 1200px; margin: 0 auto; display: none; }
-        .login-box { max-width: 400px; margin: 100px auto; background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 16px; text-align: center; }
+        .login-box { max-width: 400px; margin: 100px auto; background: var(--card-bg); border: 1px solid var(--border); padding: 40px 30px; border-radius: 16px; text-align: center; }
         
         .header-section { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; }
         .grid-panel { display: grid; grid-template-columns: 1fr; gap: 25px; }
@@ -33,8 +33,8 @@
         .admin-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 16px; height: fit-content; }
         h3 { margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
 
-        .input-box { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 12px; outline: none; }
-        .btn-prime { width: 100%; padding: 12px; background: var(--primary); border: none; color: #000; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .input-box { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 15px; outline: none; font-size: 1rem; }
+        .btn-prime { width: 100%; padding: 14px; background: var(--primary); border: none; color: #000; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 1rem; }
         .btn-prime:hover { opacity: 0.9; }
 
         .req-item { background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 12px; }
@@ -45,13 +45,15 @@
 </head>
 <body>
 
+<!-- আপনার স্ক্রিনশটের হুবহু ইন্টারফেস ডিজাইন কিন্তু সহজ সিকিউরিটি সিস্টেম -->
 <div class="login-box" id="loginBox">
-    <h2 style="color: var(--primary); margin-bottom: 20px;"><i class="fa-solid fa-user-shield"></i> Admin Security</h2>
-    <p style="font-size: 0.85rem; color: gray; margin-bottom: 15px;">Enter Secret Terminal Master PIN</p>
+    <h2 style="color: var(--primary); font-size: 1.8rem; font-weight: 700; text-align: left; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px;">NEXUS SYSTEM COMMAND BLOCK</h2>
+    <input type="text" id="adminUser" class="input-box" placeholder="Operator Identity Identifier">
     <input type="password" id="adminPin" class="input-box" placeholder="••••">
-    <button class="btn-prime" onclick="loginAdminWithPin()">Authorize Terminal</button>
+    <button class="btn-prime" onclick="loginAdminWithPin()">Initialize Override</button>
 </div>
 
+<!-- মূল ড্যাশবোর্ড কন্ট্রোল প্যানেল -->
 <div class="admin-container" id="adminPanel">
     <div class="header-section">
         <div>
@@ -62,7 +64,7 @@
     </div>
 
     <div class="grid-panel">
-        
+        <!-- ১. গ্লোবাল গেটওয়ে ও রেট সেটিংস -->
         <div class="admin-card">
             <h3><i class="fa-solid fa-sliders"></i> Global Gateways & Conversion</h3>
             <label>Dollar Live Rate (BDT)</label>
@@ -76,12 +78,14 @@
             <button class="btn-prime" onclick="updateSystemGateways()">Push Global Settings</button>
         </div>
 
+        <!-- ২. লাইভ অ্যালার্ট নোটিশ বোর্ড -->
         <div class="admin-card">
             <h3><i class="fa-solid fa-bullhorn"></i> Live System Bulletin Notice</h3>
             <textarea id="sysNotice" class="input-box" rows="4" placeholder="Enter marquee or system notice for users..."></textarea>
             <button class="btn-prime" onclick="updateSystemNotice()">Broadcast Bulletin</button>
         </div>
 
+        <!-- ৩. ইউজার ব্যালেন্স কন্ট্রোল ও ব্লক মেকানিজম -->
         <div class="admin-card" style="grid-column: 1 / -1;">
             <h3><i class="fa-solid fa-users-gear"></i> User Accounts Ledger Database</h3>
             <input type="text" id="searchUserEmail" class="input-box" placeholder="Enter Target User Email..." oninput="searchUserDatabase()">
@@ -99,12 +103,13 @@
             </div>
         </div>
 
+        <!-- ৪. ইনকামিং ট্রানজেকশন রিকোয়েস্ট (ডিপোজিট ও উইথড্র) -->
         <div class="admin-card" style="grid-column: 1 / -1;">
             <h3><i class="fa-solid fa-money-bill-transfer"></i> Operational Pending Queues (Deposit/Withdrawal)</h3>
             <div id="pendingReqsBox" style="margin-top: 15px;">
-                </div>
+                <!-- রিকোয়েস্টগুলো অটো লোড হবে এখানে -->
+            </div>
         </div>
-
     </div>
 </div>
 
@@ -124,10 +129,9 @@
     let targetUserUid = null;
     let targetUserObj = {};
 
-    // আপনার সিক্রেট পিন (এটি আপনি চাইলে পরিবর্তন করতে পারেন)
+    // আপনার সিক্রেট কোড পিন
     const SECRET_MASTER_PIN = "2026"; 
 
-    // পেজ লোড হলে আগে সেশন চেক করবে
     window.onload = function() {
         if (sessionStorage.getItem("admin_authenticated") === "true") {
             showAdminPanel();
@@ -140,7 +144,7 @@
             sessionStorage.setItem("admin_authenticated", "true");
             showAdminPanel();
         } else {
-            alert("❌ Incorrect Security Token PIN. Access Denied.");
+            alert("❌ Security Token Override Failed. Incorrect PIN.");
         }
     }
 
