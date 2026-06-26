@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenit Global - Premium Hub</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -40,7 +40,6 @@
             overflow-x: hidden;
         }
 
-        /* Smooth Custom Scrollbar */
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg-dark); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
@@ -77,7 +76,6 @@
             display: flex; flex-direction: column; gap: 30px; min-width: 0;
         }
 
-        /* Core Global Header */
         .workspace-header { display: flex; justify-content: space-between; align-items: center; }
         .user-meta-hub { display: flex; align-items: center; gap: 10px; background: var(--card-bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 30px; }
         .badge-verified { color: var(--verified-blue); font-size: 0.95rem; display: none; margin-left: 4px; }
@@ -108,12 +106,6 @@
         .live-pulse { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--primary); font-weight: 600; }
         .live-pulse span { width: 7px; height: 7px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-        
-        .chart-canvas-mock {
-            height: 180px; width: 100%; display: flex; align-items: flex-end; gap: 4px; padding-top: 20px;
-        }
-        .chart-bar-node { flex: 1; background: linear-gradient(to top, rgba(0, 255, 204, 0.02), rgba(0, 255, 204, 0.2)); border-radius: 3px 3px 0 0; animation: barGrow 2s ease-in-out infinite alternate; }
-        @keyframes barGrow { from { height: var(--h-start); } to { height: var(--h-end); } }
 
         /* Investment Strategy Architecture Grid */
         .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
@@ -162,10 +154,8 @@
         .history-table th { background: rgba(255,255,255,0.01); padding: 14px 18px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
         .history-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); color: #fff; }
         
-        /* Affiliate Network Box */
         .affiliate-link-card { background: rgba(0,255,204,0.01); border: 1px dashed rgba(0,255,204,0.2); padding: 20px; border-radius: 12px; display: flex; gap: 10px; align-items: center; }
 
-        /* Absolute Global UI Toast Component */
         #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 22px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.85rem; z-index: 10000; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transform: translateY(-20px); opacity: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         
         .global-loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 99999; transition: 0.5s ease; }
@@ -226,11 +216,15 @@
     <div class="view-panel active-panel" id="panel-trade">
         <div class="trading-chart-container">
             <div class="chart-mock-header">
-                <div style="font-size: 0.9rem; font-weight: 600;">BTC/USD Advanced Market Node</div>
-                <div class="live-pulse"><span></span> Real-Time Node Feed</div>
-            </div>
-            <div class="chart-canvas-mock" id="chartCanvas">
+                <div style="font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px;">
+                    <i class="fa-solid fa-chart-area" style="color: var(--primary); margin-right: 6px;"></i> 
+                    BTC/USD Real-Time High-Frequency Graph
                 </div>
+                <div class="live-pulse"><span></span> Live Network Feed</div>
+            </div>
+            <div style="position: relative; width: 100%; height: 220px; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; overflow: hidden;">
+                <canvas id="liveTradingCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
+            </div>
         </div>
 
         <div class="welcome-box"><h3 style="font-size: 1.1rem; font-weight: 600;">Premium Investment Nodes</h3></div>
@@ -333,7 +327,7 @@
         <div class="history-table-wrapper">
             <table class="history-table">
                 <thead><tr><th>Payload Timestamp</th><th>Operation Type</th><th>Volume Amount</th><th>Network Execution Flow Status</th></tr></thead>
-                <tbody id="historyTableBody"><tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:30px;">Listening for secure records data pipeline...</td></tr></tbody>
+                <tbody id="historyTableBody"><tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:30px;">Listening for records data pipeline...</td></tr></tbody>
             </table>
         </div>
     </div>
@@ -359,13 +353,12 @@
 </main>
 
 <script>
-    // 🔒 Heavy Anti-Copyright & Data Replication Infiltration Locks
+    // 🔒 Heavy Anti-Copyright Protection
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
         if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'a' || e.key === 'i')) e.preventDefault();
     });
 
-    // Core Project Connection Data Configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo",
       authDomain: "zenith-global-5e2a4.firebaseapp.com",
@@ -383,7 +376,6 @@
     let cameraMediaStream = null;
     let base64CapturedImagePayload = "";
 
-    // Application SPA Routing Interface Controller
     function switchRoute(targetPanelId) {
         document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-panel'));
         document.querySelectorAll('.menu-list .menu-item').forEach(m => m.classList.remove('active'));
@@ -399,26 +391,103 @@
         killCameraStream();
     }
 
-    // Capture and Handle Manual URL Router Page State Refresh Triggers
     window.addEventListener('load', () => {
         const hash = window.location.hash.replace('#', '');
         if(hash) switchRoute(hash);
     });
 
-    // Build Mock Premium Graphical Bars Grid Interface
-    const canvasNode = document.getElementById('chartCanvas');
-    for(let i=0; i<45; i++) {
-        const bar = document.createElement('div');
-        bar.className = 'chart-bar-node';
-        const start = Math.floor(Math.random() * 80) + 20;
-        const end = Math.floor(Math.random() * 80) + 20;
-        bar.style.setProperty('--h-start', `${start}px`);
-        bar.style.setProperty('--h-end', `${end}px`);
-        bar.style.animationDelay = `${i * 0.05}s`;
-        canvasNode.appendChild(bar);
+    // --- 🚀 ইনস্ট্যান্ট হাই-ফ্রিকোয়েন্সি ক্যানভাস গ্রাফ ইঞ্জিন ---
+    const canvas = document.getElementById('liveTradingCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth * window.devicePixelRatio;
+        canvas.height = canvas.parentElement.clientHeight * window.devicePixelRatio;
+        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let dataPoints = [];
+    const maxPoints = 40;
+    const viewWidth = canvas.parentElement.clientWidth;
+    const viewHeight = 200;
+
+    function generateImmediateMockData() {
+        let startingPrice = 64200 + Math.random() * 500;
+        for (let i = 0; i < maxPoints; i++) {
+            startingPrice += (Math.random() - 0.5) * 60;
+            dataPoints.push(startingPrice);
+        }
+    }
+    generateImmediateMockData(); 
+
+    function drawLiveTradingChart() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (dataPoints.length === 0) return;
+
+        const minVal = Math.min(...dataPoints) - 10;
+        const maxVal = Math.max(...dataPoints) + 10;
+        const valRange = maxVal - minVal;
+        const stepX = viewWidth / (maxPoints - 1);
+
+        let fillGradient = ctx.createLinearGradient(0, 0, 0, viewHeight);
+        fillGradient.addColorStop(0, 'rgba(0, 255, 204, 0.25)');
+        fillGradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
+
+        ctx.beginPath();
+        ctx.moveTo(0, viewHeight);
+        for (let i = 0; i < dataPoints.length; i++) {
+            const x = i * stepX;
+            const y = viewHeight - ((dataPoints[i] - minVal) / valRange) * viewHeight;
+            ctx.lineTo(x, y);
+        }
+        ctx.lineTo((dataPoints.length - 1) * stepX, viewHeight);
+        ctx.closePath();
+        ctx.fillStyle = fillGradient;
+        ctx.fill();
+
+        ctx.beginPath();
+        for (let i = 0; i < dataPoints.length; i++) {
+            const x = i * stepX;
+            const y = viewHeight - ((dataPoints[i] - minVal) / valRange) * viewHeight;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = 'rgba(0, 255, 204, 0.6)';
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        const lastX = (dataPoints.length - 1) * stepX;
+        const lastY = viewHeight - ((dataPoints[dataPoints.length - 1] - minVal) / valRange) * viewHeight;
+        
+        ctx.beginPath();
+        ctx.arc(lastX, lastY, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.arc(lastX, lastY, 10, 0, 2 * Math.PI);
+        ctx.strokeStyle = 'rgba(0, 255, 204, 0.8)';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        requestAnimationFrame(drawLiveTradingChart);
     }
 
-    // Secure Pipeline Session Lifecycle Listener Guard Routing
+    setInterval(() => {
+        const lastPrice = dataPoints[dataPoints.length - 1];
+        const change = (Math.random() - 0.49) * 45;
+        dataPoints.push(lastPrice + change);
+        if (dataPoints.length > maxPoints) dataPoints.shift();
+    }, 400); 
+
+    requestAnimationFrame(drawLiveTradingChart);
+
+    // Guard Pipeline & Active Listener
     auth.onAuthStateChanged(user => {
         if (!user) {
             window.location.href = "index.html";
@@ -428,36 +497,30 @@
         }
     });
 
-    // Real-time Account Profile Synchronization Engine Engine
     function synchronizeRealtimeAccountState() {
         db.collection("users").doc(localSessionUser.uid).onSnapshot(doc => {
             if (doc.exists) {
                 const schema = doc.data();
                 
-                // Dynamic Header Elements Mapping
                 document.getElementById('globalHeaderUsername').innerText = schema.username || "Client Node";
                 document.getElementById('metricBalance').innerText = Number(schema.balance || 0).toFixed(2);
                 document.getElementById('metricBonus').innerText = Number(schema.bonusBalance || 0).toFixed(2);
                 
-                // Form Fields Mapping Data
                 document.getElementById('profFirst').value = schema.firstName || "";
                 document.getElementById('profLast').value = schema.lastName || "";
                 document.getElementById('profPhone').value = schema.phone || "OAuth Verified";
                 document.getElementById('profEmail').value = schema.email || "";
 
-                // Premium Verified Blue Tick Badge Processing Interface Logic
                 if(schema.isVerified === true) {
                     document.getElementById('globalVerifiedTick').style.display = 'inline-block';
                 } else {
                     document.getElementById('globalVerifiedTick').style.display = 'none';
                 }
 
-                // Affiliate Link String Parser Construction Architecture Engine
                 const coreCode = schema.username || localSessionUser.uid;
                 const pathUrl = window.location.origin + window.location.pathname.replace('dashboard.html', 'index.html');
                 document.getElementById('affiliateInputShare').value = `${pathUrl}?ref=${coreCode}`;
 
-                // Process Dynamic Internal Structural Matrix Sub-Systems
                 streamOperationalLogs();
                 streamAffiliateNetworkGraph(coreCode);
                 evaluateKycStatusBlock(schema.kycStatus, schema.kycReason);
@@ -466,7 +529,6 @@
         });
     }
 
-    // Evaluate Regulatory KYC Pipeline Parameters Data Blocks Logic
     function evaluateKycStatusBlock(status, reason) {
         const header = document.getElementById('kycStatusHeader');
         const reasonBox = document.getElementById('kycRejectionReason');
@@ -496,7 +558,6 @@
         }
     }
 
-    // Boot up Hardware Camera Capture Sub-System Core
     async function initializeCamera() {
         const video = document.getElementById('webcamStream');
         const canvas = document.getElementById('capturedCanvas');
@@ -507,11 +568,10 @@
             cameraMediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
             video.srcObject = cameraMediaStream;
         } catch (err) {
-            popNotification("🚫 Camera hardware initialization refused or unavailable.", "danger");
+            popNotification("🚫 Camera hardware initialization refused.", "danger");
         }
     }
 
-    // Freeze Frame Capture Biometric Processing Snapshot Engine
     function captureBiometricSnapshot() {
         const video = document.getElementById('webcamStream');
         const canvas = document.getElementById('capturedCanvas');
@@ -525,7 +585,6 @@
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
         base64CapturedImagePayload = canvas.toDataURL('image/jpeg', 0.85);
         
         video.style.display = 'none';
@@ -541,7 +600,6 @@
         }
     }
 
-    // Transmit KYC Regulatory Registration Data Structure
     document.getElementById('kycSubmissionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const type = document.getElementById('kycDocType').value;
@@ -555,33 +613,23 @@
         try {
             document.getElementById('kycSubmitBtn').innerText = "Transmitting Secured Packets...";
             await db.collection("users").doc(localSessionUser.uid).update({
-                kycStatus: "pending",
-                kycDocumentType: type,
-                kycSerialNo: serial,
-                kycBiometricBase64: base64CapturedImagePayload,
-                kycTimestamp: firebase.firestore.FieldValue.serverTimestamp()
+                kycStatus: "pending", kycDocumentType: type, kycSerialNo: serial, kycBiometricBase64: base64CapturedImagePayload, kycTimestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
-            popNotification("✔ KYC Packet verified and transmitted into audit node pipeline.", "success");
-        } catch(err) {
-            popNotification(`Error payload: ${err.message}`, "danger");
-        } finally {
-            document.getElementById('kycSubmitBtn').innerText = "Transmit KYC Verification Ledger";
-        }
+            popNotification("✔ KYC Packet verified and transmitted.", "success");
+        } catch(err) { popNotification(`Error: ${err.message}`, "danger"); }
+        finally { document.getElementById('kycSubmitBtn').innerText = "Transmit KYC Verification Ledger"; }
     });
 
-    // Profile Metadata Fields Alteration Commitment
     document.getElementById('profileCoreForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const first = document.getElementById('profFirst').value.trim();
         const last = document.getElementById('profLast').value.trim();
-
         try {
             await db.collection("users").doc(localSessionUser.uid).update({ firstName: first, lastName: last });
             popNotification("✔ Dynamic profile core modifications established.", "success");
-        } catch(err) { popNotification(`Transaction abort: ${err.message}`, "danger"); }
+        } catch(err) { popNotification(`Error: ${err.message}`, "danger"); }
     });
 
-    // Purchase Investment Stratum Node Infrastructure Component
     async function purchaseNode(name, fee) {
         try {
             const userRef = db.collection("users").doc(localSessionUser.uid);
@@ -589,7 +637,7 @@
             const currentBalance = userSnapshot.data().balance || 0;
 
             if(currentBalance < fee) {
-                popNotification(`❌ Insufficient core capital. Node entry requirement is $${fee.toFixed(2)}.`, "danger");
+                popNotification(`❌ Insufficient core capital. Node requirement is $${fee.toFixed(2)}.`, "danger");
                 return;
             }
 
@@ -600,155 +648,110 @@
                 
                 const logRef = db.collection("history").doc();
                 transaction.set(logRef, {
-                    uid: localSessionUser.uid,
-                    type: `Node Contract Node (${name})`,
-                    amount: -fee,
-                    status: "Completed / Synchronized",
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    uid: localSessionUser.uid, type: `Node Contract (${name})`, amount: -fee, status: "Completed / Synchronized", timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
             });
-
-            popNotification(`✔ ${name} deployment node successfully initialized online.`, "success");
-        } catch(err) { popNotification(`Node engagement failed: ${err.message}`, "danger"); }
+            popNotification(`✔ ${name} deployment node initialized online.`, "success");
+        } catch(err) { popNotification(`Failed: ${err.message}`, "danger"); }
     }
 
-    // Dynamic Financial Operations Engine (Deposit / Withdraw Handlers)
     async function openFinOps(mode) {
-        const amountString = prompt(`Enter volumetric capital dollar values to ${mode}:`);
+        const amountString = prompt(`Enter value to ${mode}:`);
         if(!amountString) return;
         const volume = parseFloat(amountString);
 
-        if(isNaN(volume) || volume <= 0) {
-            popNotification("🚨 Processing exception: Invalid float value variable.", "danger");
-            return;
-        }
-
-        if(mode === 'Deposit' && volume < 6) {
-            popNotification("❌ Minimal entry deposit node standard constraint is $6.00.", "danger");
-            return;
-        }
-        if(mode === 'Withdraw' && volume < 20) {
-            popNotification("❌ Operational assets outflow minimum transaction baseline boundary is $20.00.", "danger");
-            return;
-        }
+        if(isNaN(volume) || volume <= 0) { popNotification("🚨 Invalid amount value.", "danger"); return; }
+        if(mode === 'Deposit' && volume < 6) { popNotification("❌ Minimal entry deposit node is $6.00.", "danger"); return; }
+        if(mode === 'Withdraw' && volume < 20) { popNotification("❌ Minimal asset outflow is $20.00.", "danger"); return; }
 
         try {
             const userRef = db.collection("users").doc(localSessionUser.uid);
-            
             if(mode === 'Withdraw') {
                 const snap = await userRef.get();
-                const bal = snap.data().balance || 0;
-                if(bal < volume) { popNotification("❌ Wallet balance insufficient to fulfill transaction request context.", "danger"); return; }
+                if((snap.data().balance || 0) < volume) { popNotification("❌ Balance insufficient.", "danger"); return; }
             }
 
             await db.collection("history").add({
-                uid: localSessionUser.uid,
-                type: mode,
-                amount: mode === 'Deposit' ? volume : -volume,
-                status: "Pending Network Clearance",
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                uid: localSessionUser.uid, type: mode, amount: mode === 'Deposit' ? volume : -volume, status: "Pending Network Clearance", timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
 
             if(mode === 'Deposit') {
-                // মক সিস্টেম অটোমেটিক ফান্ড অ্যাড করার লজিক (প্রয়োজনে অ্যাডমিন দিয়ে ম্যানুয়াল করতে পারেন)
                 await userRef.update({ balance: firebase.firestore.FieldValue.increment(volume) });
-                popNotification("✔ Capital deposit transaction fully executed into ledger database.", "success");
+                popNotification("✔ Deposit logged successfully.", "success");
             } else {
                 await userRef.update({ balance: firebase.firestore.FieldValue.increment(-volume) });
-                popNotification("✔ Asset withdraw pipeline query logged. Pending verification clearance.", "success");
+                popNotification("✔ Withdraw logged. Pending audit clearance.", "success");
             }
-        } catch (err) { popNotification(`Process failure: ${err.message}`, "danger"); }
+        } catch (err) { popNotification(`Failure: ${err.message}`, "danger"); }
     }
 
-    // Stream Real-Time Transaction Operations History Array Logs Pipeline
     function streamOperationalLogs() {
-        db.collection("history")
-          .where("uid", "==", localSessionUser.uid)
-          .orderBy("timestamp", "desc")
-          .onSnapshot(snapshot => {
+        db.collection("history").where("uid", "==", localSessionUser.uid).orderBy("timestamp", "desc").onSnapshot(snapshot => {
               const tbody = document.getElementById('historyTableBody');
               tbody.innerHTML = "";
-              
               if(snapshot.empty) {
-                  tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No transaction records context logged inside cluster.</td></tr>`;
+                  tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No transaction records logged.</td></tr>`;
                   return;
               }
-
               snapshot.forEach(doc => {
                   const item = doc.data();
                   const time = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString() : "Processing Frame";
                   const flagColor = item.amount >= 0 ? "#00ffcc" : "#ff4a4a";
-                  const volumeSymbol = item.amount >= 0 ? `+$${item.amount.toFixed(2)}` : `-$${Math.abs(item.amount).toFixed(2)}`;
-                  
                   tbody.innerHTML += `
                     <tr>
                         <td>${time}</td>
                         <td style="font-weight:600;">${item.type}</td>
-                        <td style="color:${flagColor}; font-weight:700;">${volumeSymbol}</td>
+                        <td style="color:${flagColor}; font-weight:700;">${item.amount >= 0 ? `+$${item.amount.toFixed(2)}` : `-$${Math.abs(item.amount).toFixed(2)}`}</td>
                         <td style="color:var(--text-muted); font-size:0.8rem;"><i class="fa-solid fa-circle-nodes" style="color:var(--primary); font-size:0.6rem; margin-right:5px;"></i> ${item.status}</td>
-                    </tr>
-                  `;
+                    </tr>`;
               });
           });
     }
 
-    // Stream Downline Affiliate Tree Network Visualization Subsystem Mapping
     function streamAffiliateNetworkGraph(userRefUsername) {
-        db.collection("users")
-          .where("referrer", "==", userRefUsername)
-          .onSnapshot(snapshot => {
+        db.collection("users").where("referrer", "==", userRefUsername).onSnapshot(snapshot => {
               const tbody = document.getElementById('affiliateTableBody');
               document.getElementById('metricRefCount').innerText = snapshot.size;
               tbody.innerHTML = "";
 
               if(snapshot.empty) {
-                  tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">No downline network nodes mapped to your tracking matrix code.</td></tr>`;
+                  tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">No downline network nodes mapped.</td></tr>`;
                   return;
               }
 
               let compoundBonus = 0;
               snapshot.forEach(doc => {
                   const data = doc.data();
-                  // উদাহরণস্বরূপ প্রতি রেফারে $1 বোনাস ক্যাপিটাল এলোকেটেড (এটি আপনার মতো কাস্টমাইজ করতে পারেন)
                   compoundBonus += 1.00; 
-                  const verificationBadgeStatus = data.kycStatus === 'verified' ? '<span style="color:var(--primary)">VIP Verified Node</span>' : '<span style="color:var(--text-muted)">Unverified Node</span>';
-
                   tbody.innerHTML += `
                     <tr>
                         <td><i class="fa-solid fa-link" style="color:var(--text-muted); margin-right:8px;"></i> ${data.username}</td>
-                        <td>${verificationBadgeStatus}</td>
+                        <td>${data.kycStatus === 'verified' ? '<span style="color:var(--primary)">VIP Verified Node</span>' : '<span style="color:var(--text-muted)">Unverified Node</span>'}</td>
                         <td style="color:var(--primary); font-weight:700;">+$1.00</td>
-                    </tr>
-                  `;
+                    </tr>`;
               });
-              
-              // বোনাস ওয়ালেট আপডেট পুশ করা ফায়ারস্টোরে
               db.collection("users").doc(localSessionUser.uid).update({ bonusBalance: compoundBonus });
           });
     }
 
-    // Affiliate System Copy Dynamic URL Payload Logic
     function copyAffiliateURL() {
         const el = document.getElementById('affiliateInputShare');
         el.select();
         navigator.clipboard.writeText(el.value);
-        popNotification("✔ Affiliate network registration payload URL link copied.", "success");
+        popNotification("✔ Affiliate network payload link copied.", "success");
     }
 
-    // Modern Inter-Module Communication Layer Toasts Alerts Core
     function popNotification(msg, type='success') {
         const node = document.getElementById('customToast');
         node.innerHTML = msg;
         node.style.background = type === 'success' ? '#00cb9c' : '#ff4a4a';
-        node.style.opacity = '1';
-        node.style.transform = 'translateY(0)';
+        node.style.opacity = '1'; node.style.transform = 'translateY(0)';
         setTimeout(() => { node.style.opacity = '0'; node.style.transform = 'translateY(-20px)'; }, 4000);
     }
 
     function hideGlobalAppLoader() {
         const l = document.getElementById('globalAppLoader');
-        l.style.opacity = '0';
-        setTimeout(() => l.style.display = 'none', 500);
+        l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 500);
     }
 
     function triggerSessionTermination() {
