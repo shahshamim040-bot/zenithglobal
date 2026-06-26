@@ -71,12 +71,22 @@
         .btn-action { width: 100%; padding: 14px; background: linear-gradient(135deg, #00cb9c 0%, var(--primary) 100%); border: none; border-radius: 12px; color: #060a13; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn-action:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0, 255, 204, 0.3); }
 
+        /* VIP ওয়ান-ট্যাপ গুগল বাটন ও ডিভাইডার ডিজাইন */
+        .social-divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0; }
+        .social-divider::before, .social-divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
+        .social-divider:not(:empty)::before { margin-right: .5em; }
+        .social-divider:not(:empty)::after { margin-left: .5em; }
+
+        .btn-google { width: 100%; padding: 13px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px; color: #fff; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: 0.3s; }
+        .btn-google:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); }
+        .btn-google img { width: 18px; height: 18px; }
+
         .footer-links { text-align: center; margin-top: 20px; font-size: 0.82rem; display: flex; justify-content: space-between; padding: 0 5px; }
         .footer-links a { color: var(--text-muted); text-decoration: none; transition: 0.3s; }
         .footer-links a:hover { color: var(--primary); }
         .hidden { display: none !important; }
 
-        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 24px; border-radius: 10px; color: #fff; font-weight: 600; font-size: 0.88rem; z-index: 10000; box-shadow: 0 8px 20px rgba(0,0,0,0.4); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; }
+        #customToast { position: fixed; top: 25px; right: 25px; padding: 16px 24px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.88rem; z-index: 10000; box-shadow: 0 8px 30px rgba(0,0,0,0.5); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; max-width: 350px; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -88,6 +98,7 @@
         <img src="logo.png" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2991/2991195.png';">
     </div>
 
+    <!-- রেজিস্ট্রেশন প্যানেল -->
     <div class="auth-card hidden" id="registerCard">
         <div class="brand-title"><h2>Zenit Global</h2><p>Registration Panel</p></div>
         <form id="registerForm">
@@ -109,9 +120,14 @@
                 <button type="submit" class="btn-action">Register Account</button>
             </div>
         </form>
-        <div class="footer-links" style="justify-content: center;"><a href="#" onclick="showForm('login')">Already have an account? <span style="color:var(--primary)">Sign In</span></a></div>
+
+        <div class="social-divider">Or Access With</div>
+        <button class="btn-google" onclick="loginWithGoogle()"><img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="Google"> Continue with Google</button>
+
+        <div class="footer-links" style="justify-content: center; margin-top: 25px;"><a href="#" onclick="showForm('login')">Already have an account? <span style="color:var(--primary)">Sign In</span></a></div>
     </div>
 
+    <!-- লগইন প্যানেল -->
     <div class="auth-card" id="loginCard">
         <div class="brand-title"><h2>Zenit Global</h2><p>Secure Client Sign In</p></div>
         <form id="loginForm">
@@ -121,12 +137,17 @@
                 <button type="submit" class="btn-action">Sign In Platform</button>
             </div>
         </form>
+
+        <div class="social-divider">Or Access With</div>
+        <button class="btn-google" onclick="loginWithGoogle()"><img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="Google"> Sign In with Google</button>
+
         <div class="footer-links">
             <a href="#" onclick="showForm('register')">Create Account</a>
             <a href="#" onclick="showForm('forgot')">Forgot Password?</a>
         </div>
     </div>
 
+    <!-- পাসওয়ার্ড রিসেট প্যানেল -->
     <div class="auth-card hidden" id="forgotCard">
         <div class="brand-title"><h2>Zenit Global</h2><p>Reset Protection</p></div>
         <form id="forgotForm">
@@ -181,14 +202,57 @@
 
     function notify(msg, mode='success') {
         const toast = document.getElementById('customToast');
-        toast.innerText = msg;
+        toast.innerHTML = msg;
         toast.style.background = mode === 'success' ? '#00cb9c' : '#ff4a4a';
         toast.style.opacity = '1';
         toast.style.transform = 'translateY(0)';
-        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 3500);
+        setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 5500);
     }
 
-    // রেজিস্ট্রেশন সাবমিশন
+    // Google ১-ক্লিক সাইন-ইন এবং অটোমেটিক ডাটাবেজ রেজিস্ট্রেশন সিস্টেম
+    async function loginWithGoogle() {
+        const googleProvider = new firebase.auth.GoogleAuthProvider();
+        try {
+            const result = await auth.signInWithPopup(googleProvider);
+            const user = result.user;
+            
+            // ইউজার ডাটাবেজে আগে থেকে আছে কি না চেক করা
+            const userDoc = await db.collection("users").doc(user.uid).get();
+            
+            if (!userDoc.exists) {
+                // নতুন ইউজার হলে ডাটাবেজে তার প্রোফাইল অটো তৈরি হবে
+                const displayNameParts = user.displayName ? user.displayName.split(" ") : ["User", ""];
+                const fName = displayNameParts[0];
+                const lName = displayNameParts.slice(1).join(" ") || "Node";
+                const uName = user.email.split("@")[0].replace(/[^a-zA-省0-9]/g, "") + Math.floor(100 + Math.random() * 900);
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const referrer = urlParams.get('ref') || null;
+
+                await db.collection("users").doc(user.uid).set({
+                    uid: user.uid,
+                    username: uName.toLowerCase(),
+                    firstName: fName,
+                    lastName: lName,
+                    phone: user.phoneNumber || "Google Account",
+                    country: "Auto-Detected",
+                    email: user.email,
+                    passwordBackup: "OAuth-Google Secured",
+                    referrer: referrer,
+                    balance: 0,
+                    isVerified: true, // গুগল অ্যাকাউন্ট ভেরিফাইড থাকে
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+
+            notify("✔ Secure Sign In Successful! Synced with Google Core.", "success");
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
+        } catch (err) {
+            notify("❌ Google Authentication Failed: " + err.message, "error");
+        }
+    }
+
+    // ম্যানুয়াল রেজিস্ট্রেশন সাবমিশন
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const capCode = document.getElementById('captchaCode').innerText;
@@ -215,13 +279,14 @@
                 uid: cred.user.uid, username, firstName, lastName, phone: fullPhone, country: countryName, email, passwordBackup: password, referrer: referrer || null, balance: 0, isVerified: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            notify("✔ Registration Successful! Verification email sent.", "success");
+            // স্প্যাম ফোল্ডারের ভিআইপি নোটিশ অ্যালার্ট
+            notify("✔ Registration Successful!<br><br>⚠️ <strong>গুরুত্বপূর্ণ নোটিশ:</strong> ভেরিফিকেশন মেইলটি আপনার ইমেইলের <strong>Spam (স্প্যাম ফোল্ডার)</strong>-এ যেতে পারে। দয়া করে ইনবক্সের পাশাপাশি স্প্যাম ফোল্ডারটি চেক করে অ্যাকাউন্ট কনফার্ম করুন।", "success");
             e.target.reset();
-            setTimeout(() => showForm('login'), 2000);
+            setTimeout(() => showForm('login'), 5000);
         } catch (err) { notify("❌ Error: " + err.message, "error"); }
     });
 
-    // লগইন সাবমিশন (অটোমেটিক ড্যাশবোর্ড এইচটিএমএল পেজে রিডাইরেক্ট করবে)
+    // ম্যানুয়াল লগইন সাবমিশন
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value.trim();
@@ -229,10 +294,13 @@
 
         try {
             const cred = await auth.signInWithEmailAndPassword(email, password);
-            if(!cred.user.emailVerified) { notify("⚠️ Verification Required! Check email.", "error"); await auth.signOut(); return; }
+            if(!cred.user.emailVerified) { 
+                notify("⚠️ Verification Required!<br>আপনার ইমেইলটি ভেরিফাই করা হয়নি। দয়া করে আপনার জিমেইলের <strong>Spam (স্প্যাম ফোল্ডার)</strong> অথবা ইনবক্স চেক করে লিঙ্কটি ভেরিফাই করুন।", "error"); 
+                await auth.signOut(); 
+                return; 
+            }
 
             notify("✔ Successfully Authenticated! Loading Hub...", "success");
-            // সফল লগইনের পর ইউজার সরাসরি আপনার গিটহাবের dashboard.html পেজে চলে যাবে
             setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
         } catch (err) { notify("❌ Login Blocked: " + err.message, "error"); }
     });
@@ -243,8 +311,8 @@
         const email = document.getElementById('forgotEmail').value.trim();
         try {
             await auth.sendPasswordResetEmail(email);
-            notify("🔗 Reset link sent to your email!", "success");
-            setTimeout(() => showForm('login'), 2000);
+            notify("🔗 Reset link sent! Also make sure to check your <strong>Spam Folder</strong> if you don't receive it.", "success");
+            setTimeout(() => showForm('login'), 3500);
         } catch (err) { notify("❌ Error: " + err.message, "error"); }
     });
 
