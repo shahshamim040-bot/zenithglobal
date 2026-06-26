@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenit Global - Authentication</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- VIP Flag Dropdown CSS CDN ফিক্স -->
+    <!-- VIP Flag Dropdown CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -26,7 +26,7 @@
             --text-muted: #6f8097;
         }
 
-        /* অ্যান্টি-কপি এবং টেক্সট সিলেকশন সম্পূর্ণ ব্লক */
+        /* 🔒 অ্যান্টি-কপি এবং টেক্সট সিলেকশন সম্পূর্ণ ব্লক */
         * { 
             margin: 0; 
             padding: 0; 
@@ -68,7 +68,7 @@
         .input-wrapper { position: relative; }
         .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; z-index: 5; }
         
-        /* কপির চেষ্টা করার সময় ইনপুটগুলো নরমাল রাখার জন্য */
+        /* ইনপুটে ইউজারদের লেখার সুবিধা রাখার জন্য */
         .input-wrapper input { 
             width: 100%; 
             padding: 13px 15px 13px 45px; 
@@ -87,7 +87,7 @@
         /* VIP Country Dropdown Custom Styles */
         .iti { width: 100%; }
         .input-wrapper input[type="tel"] { padding-left: 55px !important; }
-        .iti__country-list { background-color: #0b111e !important; border: 1px solid var(--border) !important; color: #fff !important; border-radius: 10px; max-height: 200px; width: 320px; font-size: 0.85rem; }
+        .iti__country-list { background-color: #0b111e !important; border: 1px solid var(--border) !important; color: #fff !important; border-radius: 10px; max-height: 200px; width: 320px; font-size: 0.85rem; z-index: 999; }
         .iti__country { padding: 8px 10px !important; }
         .iti__country:hover, .iti__country.iti__highlight { background-color: rgba(0, 255, 204, 0.1) !important; color: var(--primary) !important; }
         .iti__selected-flag { background-color: rgba(255, 255, 255, 0.02) !important; border-radius: 12px 0 0 12px; }
@@ -134,6 +134,7 @@
                     <div class="input-wrapper"><input type="text" id="regFirstName" placeholder="First Name" required autocomplete="off"><i class="fa-solid fa-id-card"></i></div>
                     <div class="input-wrapper"><input type="text" id="regLastName" placeholder="Last Name" required autocomplete="off"><i class="fa-solid fa-id-card"></i></div>
                 </div>
+                <!-- ফোন নাম্বার ইনপুট ফিল্ড -->
                 <div class="input-wrapper"><input type="tel" id="regPhone" required autocomplete="off"></div>
                 <div class="input-wrapper"><input type="email" id="regEmail" placeholder="Email Address" required autocomplete="off"><i class="fa-solid fa-envelope"></i></div>
                 <div class="input-wrapper"><input type="password" id="regPassword" placeholder="Security Password" required><i class="fa-solid fa-lock"></i></div>
@@ -141,7 +142,7 @@
                 <div class="captcha-container">
                     <span class="captcha-visual" id="captchaCode">XXXXX</span>
                     <i class="fa-solid fa-rotate" onclick="generateCaptcha()" style="cursor:pointer; color:var(--text-muted)"></i>
-                    <input type="text" id="captchaInput" placeholder="Captcha" style="width: 35%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: #fff; text-align: center;" required>
+                    <input type="text" id="captchaInput" placeholder="Captcha" style="width: 35%; padding: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; color: #fff; text-align: center;" required autocomplete="off">
                 </div>
                 <button type="submit" class="btn-action">Register Account</button>
             </div>
@@ -186,10 +187,10 @@
     </div>
 </div>
 
-<!-- VIP Flag Dropdown Script JS CDN ফিক্স -->
+<!-- VIP Flag Dropdown Script JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
 <script>
-    // 🔒 অ্যান্টি-কপি সিকিউরিটি রাইট-ক্লিক এবং শর্টকাট প্রটেকশন
+    // 🔒 অ্যান্টি-কপি সিকিউরিটি প্রোটেকশন (মাউস এবং কী-বোর্ড সম্পূর্ণ ব্লক)
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', e => {
         if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'a' || e.key === 'i')) {
@@ -211,11 +212,11 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // ফ্ল্যাগ ও কারেক্ট ইংলিশ দেশের নামের সাথে ইনপুট ইনিশিয়ালিটি
+    // 🌍 দেশের কোড ইন্টিগ্রেশন (নাম্বার প্লেসহোল্ডার সম্পূর্ণ ফাঁকা বা ব্লাংক রাখা হয়েছে)
     const phoneInput = window.intlTelInput(document.querySelector("#regPhone"), {
         preferredCountries: ["sa", "bd", "ae", "us"],
         nationalMode: false,
-        autoPlaceholder: "polite",
+        autoPlaceholder: "off", // ডামি প্লেসহোল্ডার নাম্বার অফ করার জন্য
         utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
     });
 
@@ -245,7 +246,7 @@
         setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-20px)'; }, 5500);
     }
 
-    // Google Sign-In Strategy 
+    // Google Sign-In System
     async function loginWithGoogle() {
         const googleProvider = new firebase.auth.GoogleAuthProvider();
         try {
@@ -285,7 +286,7 @@
         }
     }
 
-    // Manual Registration Form Submission
+    // Manual Registration (All Notifications in English)
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const capCode = document.getElementById('captchaCode').innerText;
@@ -312,13 +313,13 @@
                 uid: cred.user.uid, username, firstName, lastName, phone: fullPhone, country: countryName, email, passwordBackup: password, referrer: referrer || null, balance: 0, isVerified: false, createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
 
-            notify("✔ Registration Successful!<br><br>⚠️ <strong>গুরুত্বপূর্ণ নোটিশ:</strong> ভেরিফিকেশন মেইলটি আপনার জিমেইলের <strong>Spam (স্প্যাম ফোল্ডার)</strong>-এ যেতে পারে। ইনবক্সের পাশাপাশি অনুগ্রহ করে স্প্যাম ফোল্ডার চেক করে অ্যাকাউন্ট কনফার্ম করুন।", "success");
+            notify("✔ Registration Successful!<br><br>⚠️ <strong>Important Notice:</strong> The verification email might land in your <strong>Spam Folder</strong>. Please check both your inbox and spam folder to confirm your account.", "success");
             e.target.reset();
             setTimeout(() => showForm('login'), 5500);
         } catch (err) { notify("❌ Error: " + err.message, "error"); }
     });
 
-    // Manual Login Form Submission
+    // Manual Login (All Notifications in English)
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value.trim();
@@ -327,7 +328,7 @@
         try {
             const cred = await auth.signInWithEmailAndPassword(email, password);
             if(!cred.user.emailVerified) { 
-                notify("⚠️ Verification Required!<br>আপনার জিমেইলের <strong>Spam (স্প্যাম ফোল্ডার)</strong> অথবা ইনবক্স চেক করে লিঙ্কটি আগে ভেরিফাই করুন।", "error"); 
+                notify("⚠️ Verification Required!<br>Please check your <strong>Spam Folder</strong> or Inbox to verify your link first.", "error"); 
                 await auth.signOut(); 
                 return; 
             }
@@ -337,7 +338,7 @@
         } catch (err) { notify("❌ Login Blocked: " + err.message, "error"); }
     });
 
-    // Forgot Password Link Trigger
+    // Forgot Password (All Notifications in English)
     document.getElementById('forgotForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('forgotEmail').value.trim();
