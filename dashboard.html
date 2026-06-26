@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenit Global - Premium Hub</title>
+    <title>Zenit Global - Mobile & Desktop Premium Hub</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,11 +25,9 @@
             --danger: #ff4a4a;
         }
 
-        /* 🔒 Anti-Copy & System Core Protection */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            -webkit-user-select: none; user-select: none;
         }
 
         body {
@@ -37,21 +35,35 @@
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
+            flex-direction: row;
             overflow-x: hidden;
         }
 
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg-dark); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        /* 📱 Mobile Menu Trigger Toggle (শুধুমাত্র মোবাইলের জন্য) */
+        .mobile-nav-bar {
+            display: none;
+            width: 100%;
+            background: rgba(6, 10, 19, 0.95);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0; left: 0; z-index: 1000;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+        .mobile-menu-btn {
+            background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;
+        }
 
         /* Premium Layout Sidebar */
         .sidebar {
             width: 260px; background: rgba(6, 10, 19, 0.8);
             border-right: 1px solid var(--border); padding: 30px 20px;
             display: flex; flex-direction: column; gap: 35px;
-            position: fixed; top: 0; bottom: 0; left: 0; z-index: 99;
+            position: fixed; top: 0; bottom: 0; left: 0; z-index: 999;
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            transition: transform 0.3s ease;
         }
 
         .sidebar-brand { display: flex; align-items: center; gap: 12px; padding-left: 10px; }
@@ -61,7 +73,7 @@
         .menu-item a {
             display: flex; align-items: center; gap: 14px; padding: 12px 16px;
             color: var(--text-muted); text-decoration: none; border-radius: 12px;
-            font-size: 0.9rem; font-weight: 500; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;
             cursor: pointer;
         }
         .menu-item.active a, .menu-item a:hover {
@@ -74,9 +86,10 @@
         .main-workspace {
             margin-left: 260px; flex: 1; padding: 30px 40px;
             display: flex; flex-direction: column; gap: 30px; min-width: 0;
+            transition: all 0.3s ease;
         }
 
-        .workspace-header { display: flex; justify-content: space-between; align-items: center; }
+        .workspace-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
         .user-meta-hub { display: flex; align-items: center; gap: 10px; background: var(--card-bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 30px; }
         .badge-verified { color: var(--verified-blue); font-size: 0.95rem; display: none; margin-left: 4px; }
 
@@ -92,12 +105,12 @@
         .mini-card .val { font-size: 1.4rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
         .mini-icon { width: 42px; height: 42px; background: rgba(255,255,255,0.02); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--border); }
 
-        /* SPA Display Router Panels */
-        .view-panel { display: none; flex-direction: column; gap: 30px; animation: panelFade 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        /* SPA Panels */
+        .view-panel { display: none; flex-direction: column; gap: 30px; animation: panelFade 0.4s ease; }
         .view-panel.active-panel { display: flex; }
         @keyframes panelFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Smooth Live Trading Analytics Simulator Chart Box */
+        /* Live Trading Chart Box */
         .trading-chart-container {
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
             padding: 24px; position: relative; overflow: hidden;
@@ -107,7 +120,7 @@
         .live-pulse span { width: 7px; height: 7px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* Investment Strategy Architecture Grid */
+        /* Investment Grid */
         .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
         .plan-tier-card {
             background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 24px;
@@ -121,7 +134,7 @@
         .btn-subscribe { background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 10px; border-radius: 10px; color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
         .btn-subscribe:hover { background: var(--primary); color: #04080f; border-color: var(--primary); }
 
-        /* Profile Modification Forms */
+        /* Profile & Forms */
         .profile-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
         .panel-box { background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 20px; display: flex; flex-direction: column; gap: 16px; }
         .panel-box h3 { font-size: 1rem; font-weight: 600; margin-bottom: 5px; }
@@ -132,12 +145,11 @@
         .field-box input, .field-box select {
             background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 12px;
             border-radius: 10px; color: #fff; font-size: 0.88rem; outline: none; transition: 0.3s;
-            -webkit-user-select: text; user-select: text;
         }
         .field-box input:focus { border-color: var(--primary); }
         .btn-save-meta { background: var(--primary); color: #04080f; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.88rem; margin-top: 10px; }
 
-        /* KYC Dynamic Form Components & Camera Module Box */
+        /* KYC Layout */
         .kyc-badge-status { padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-align: center; }
         .status-unverified { background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1px solid var(--border); }
         .status-pending { background: rgba(255,165,0,0.1); color: #ffa500; border: 1px solid rgba(ffa500,0.2); }
@@ -148,30 +160,52 @@
         #webcamStream { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
         #capturedCanvas { display: none; width: 100%; height: 100%; object-fit: cover; }
 
-        /* Global Table Interfaces */
+        /* Tables & Lists */
         .history-table-wrapper { width: 100%; overflow-x: auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; }
-        .history-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-        .history-table th { background: rgba(255,255,255,0.01); padding: 14px 18px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); }
+        .history-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; min-width: 500px; }
+        .history-table th { background: rgba(255,255,255,0.01); padding: 14px 18px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
         .history-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); color: #fff; }
         
         .affiliate-link-card { background: rgba(0,255,204,0.01); border: 1px dashed rgba(0,255,204,0.2); padding: 20px; border-radius: 12px; display: flex; gap: 10px; align-items: center; }
 
-        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 22px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.85rem; z-index: 10000; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transform: translateY(-20px); opacity: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        .global-loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 99999; transition: 0.5s ease; }
+        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 22px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.85rem; z-index: 10000; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; }
+        .global-loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 99999; }
         .spinner { width: 35px; height: 35px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: rot 1s linear infinite; }
         @keyframes rot { to { transform: rotate(360deg); } }
+
+        /* 📱 RESPONSIVE MEDIA QUERIES (মোবাইল কমপ্লায়েন্স সিএসএস) */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .mobile-nav-bar { display: flex; }
+            .sidebar {
+                transform: translateX(-100%);
+                width: 260px;
+                top: 60px;
+                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .main-workspace { margin-left: 0; padding: 90px 20px 30px 20px; }
+            .profile-container { grid-template-columns: 1fr; }
+            .workspace-header { flex-direction: column; align-items: flex-start; }
+            .user-meta-hub { width: 100%; justify-content: space-between; }
+        }
     </style>
 </head>
 <body>
 
 <div id="customToast">Notification System</div>
 
-<div class="global-loader" id="globalAppLoader">
-    <div class="spinner"></div>
+<div class="global-loader" id="globalAppLoader"><div class="spinner"></div></div>
+
+<div class="mobile-nav-bar">
+    <div class="sidebar-brand">
+        <i class="fa-solid fa-bolt-lightning" style="color: var(--primary); font-size: 1.1rem;"></i>
+        <h1 style="font-size:1rem; color:#fff;">Zenit Global</h1>
+    </div>
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
 </div>
 
-<aside class="sidebar">
+<aside class="sidebar" id="appSidebar">
     <div class="sidebar-brand">
         <i class="fa-solid fa-bolt-lightning" style="color: var(--primary); font-size: 1.3rem;"></i>
         <h1>Zenit Global</h1>
@@ -235,7 +269,7 @@
                 <div class="price-tag">$6.00</div>
                 <ul class="plan-feature-list">
                     <li><i class="fa-solid fa-check"></i> 1.2% Daily Yield Generation</li>
-                    <li><i class="fa-solid fa-check"></i> Min Deposit Setup Entry Level</li>
+                    <li><i class="fa-solid fa-check"></i> Min Deposit Setup Entry</li>
                 </ul>
                 <button class="btn-subscribe" onclick="purchaseNode('Starter', 6)">Activate Node</button>
             </div>
@@ -288,18 +322,15 @@
     <div class="view-panel" id="panel-kyc">
         <div class="panel-box" style="max-width: 600px;">
             <h3>Regulatory Verification Portal</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 10px;">Upload government documents and provide a face snapshot to unlock full account routing and Blue VIP validation.</p>
-            
             <div id="kycStatusHeader" class="kyc-badge-status status-unverified">Status: Unverified Client</div>
-            <div id="kycRejectionReason" style="color:var(--danger); font-size:0.85rem; display:none; background:rgba(255,74,74,0.05); padding:10px; border-radius:8px;"></div>
+            <div id="kycRejectionReason" style="color:var(--danger); font-size:0.85rem; display:none; background:rgba(255,74,74,0.05); padding:10px; border-radius:8px; margin-top:10px;"></div>
 
-            <form id="kycSubmissionForm" style="display: flex; flex-direction: column; gap: 16px;">
+            <form id="kycSubmissionForm" style="display: flex; flex-direction: column; gap: 16px; margin-top:15px;">
                 <div class="field-box">
                     <label>Document Archetype</label>
                     <select id="kycDocType" required>
                         <option value="National ID Card">National ID Card / Smart Card</option>
                         <option value="International Passport">International Passport</option>
-                        <option value="Birth Registration">Birth Registration Certificate</option>
                         <option value="Driving License">Driving License Card</option>
                     </select>
                 </div>
@@ -312,22 +343,20 @@
                         <canvas id="capturedCanvas"></canvas>
                     </div>
                     <div style="display:flex; gap:10px; margin-top:8px;">
-                        <button type="button" class="btn-subscribe" style="flex:1;" onclick="initializeCamera()">Boot Up Camera Input</button>
-                        <button type="button" class="btn-subscribe" style="flex:1; background:var(--primary); color:#04080f;" onclick="captureBiometricSnapshot()">Freeze Biometric Capture</button>
+                        <button type="button" class="btn-subscribe" style="flex:1;" onclick="initializeCamera()">Boot Camera</button>
+                        <button type="button" class="btn-subscribe" style="flex:1; background:var(--primary); color:#04080f;" onclick="captureBiometricSnapshot()">Freeze Snap</button>
                     </div>
                 </div>
-
-                <button type="submit" class="btn-save-meta" id="kycSubmitBtn">Transmit KYC Verification Ledger</button>
+                <button type="submit" class="btn-save-meta" id="kycSubmitBtn">Transmit KYC Ledger</button>
             </form>
         </div>
     </div>
 
     <div class="view-panel" id="panel-history">
-        <div class="welcome-box"><h3>Real-Time Operations Ledger</h3><p style="font-size:0.82rem; color:var(--text-muted);">Live stream synchronization audits of transaction payloads.</p></div>
         <div class="history-table-wrapper">
             <table class="history-table">
-                <thead><tr><th>Payload Timestamp</th><th>Operation Type</th><th>Volume Amount</th><th>Network Execution Flow Status</th></tr></thead>
-                <tbody id="historyTableBody"><tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:30px;">Listening for records data pipeline...</td></tr></tbody>
+                <thead><tr><th>Payload Timestamp</th><th>Operation Type</th><th>Volume Amount</th><th>Network Flow Status</th></tr></thead>
+                <tbody id="historyTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -335,30 +364,21 @@
     <div class="view-panel" id="panel-affiliate">
         <div class="panel-box">
             <h3>Affiliate Referral Engine</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">Share your customized elite portal routing payload link to generate bonus capital dividends into your profile.</p>
             <div class="affiliate-link-card">
                 <input type="text" id="affiliateInputShare" readonly style="flex:1; background:transparent; border:none; color:#fff; outline:none; font-size:0.85rem;" value="Configuring connection...">
-                <button class="btn-copy" onclick="copyAffiliateURL()" style="padding:10px 18px; border-radius:8px;">Copy URL</button>
+                <button class="btn-subscribe" onclick="copyAffiliateURL()" style="padding:8px 15px;">Copy URL</button>
             </div>
         </div>
-
-        <div class="welcome-box"><h3>Downline Network Matrix Map</h3></div>
-        <div class="history-table-wrapper">
+        <div class="history-table-wrapper" style="margin-top:20px;">
             <table class="history-table">
-                <thead><tr><th>Affiliate Member Network Node</th><th>Verification Status</th><th>Bonus Credited Yield</th></tr></thead>
-                <tbody id="affiliateTableBody"><tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:30px;">Analyzing link tree data structural graph...</td></tr></tbody>
+                <thead><tr><th>Member Node</th><th>Verification Status</th><th>Bonus Credited</th></tr></thead>
+                <tbody id="affiliateTableBody"></tbody>
             </table>
         </div>
     </div>
 </main>
 
 <script>
-    // 🔒 Heavy Anti-Copyright Protection
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-        if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 's' || e.key === 'a' || e.key === 'i')) e.preventDefault();
-    });
-
     const firebaseConfig = {
       apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo",
       authDomain: "zenith-global-5e2a4.firebaseapp.com",
@@ -376,6 +396,10 @@
     let cameraMediaStream = null;
     let base64CapturedImagePayload = "";
 
+    function toggleMobileMenu() {
+        document.getElementById('appSidebar').classList.toggle('open');
+    }
+
     function switchRoute(targetPanelId) {
         document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-panel'));
         document.querySelectorAll('.menu-list .menu-item').forEach(m => m.classList.remove('active'));
@@ -386,19 +410,16 @@
         if(selectedPanel && selectedTab) {
             selectedPanel.classList.add('active-panel');
             selectedTab.classList.add('active');
-            history.pushState(null, "", `#${targetPanelId}`);
         }
+        document.getElementById('appSidebar').classList.remove('open');
         killCameraStream();
     }
 
-    window.addEventListener('load', () => {
-        const hash = window.location.hash.replace('#', '');
-        if(hash) switchRoute(hash);
-    });
-
-    // --- 🚀 ইনস্ট্যান্ট হাই-ফ্রিকোয়েন্সি ক্যানভাস গ্রাফ ইঞ্জিন ---
+    // --- 📊 High Frequency Fast Pre-rendering Chart Engine ---
     const canvas = document.getElementById('liveTradingCanvas');
     const ctx = canvas.getContext('2d');
+    let dataPoints = [];
+    const maxPoints = 40;
 
     function resizeCanvas() {
         canvas.width = canvas.parentElement.clientWidth * window.devicePixelRatio;
@@ -408,356 +429,187 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    let dataPoints = [];
-    const maxPoints = 40;
-    const viewWidth = canvas.parentElement.clientWidth;
-    const viewHeight = 200;
-
-    function generateImmediateMockData() {
-        let startingPrice = 64200 + Math.random() * 500;
-        for (let i = 0; i < maxPoints; i++) {
-            startingPrice += (Math.random() - 0.5) * 60;
-            dataPoints.push(startingPrice);
-        }
+    function initChartMockData() {
+        let base = 64200 + Math.random()*400;
+        for(let i=0; i<maxPoints; i++) { base += (Math.random()-0.5)*50; dataPoints.push(base); }
     }
-    generateImmediateMockData(); 
+    initChartMockData();
 
-    function drawLiveTradingChart() {
+    function drawChart() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (dataPoints.length === 0) return;
+        const w = canvas.parentElement.clientWidth;
+        const h = 200;
+        const min = Math.min(...dataPoints) - 10;
+        const max = Math.max(...dataPoints) + 10;
+        const range = max - min;
+        const step = w / (maxPoints - 1);
 
-        const minVal = Math.min(...dataPoints) - 10;
-        const maxVal = Math.max(...dataPoints) + 10;
-        const valRange = maxVal - minVal;
-        const stepX = viewWidth / (maxPoints - 1);
+        let grad = ctx.createLinearGradient(0,0,0,h);
+        grad.addColorStop(0, 'rgba(0, 255, 204, 0.2)');
+        grad.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
 
-        let fillGradient = ctx.createLinearGradient(0, 0, 0, viewHeight);
-        fillGradient.addColorStop(0, 'rgba(0, 255, 204, 0.25)');
-        fillGradient.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
-
-        ctx.beginPath();
-        ctx.moveTo(0, viewHeight);
-        for (let i = 0; i < dataPoints.length; i++) {
-            const x = i * stepX;
-            const y = viewHeight - ((dataPoints[i] - minVal) / valRange) * viewHeight;
-            ctx.lineTo(x, y);
+        ctx.beginPath(); ctx.moveTo(0, h);
+        for(let i=0; i<dataPoints.length; i++) {
+            ctx.lineTo(i*step, h - ((dataPoints[i]-min)/range)*h);
         }
-        ctx.lineTo((dataPoints.length - 1) * stepX, viewHeight);
-        ctx.closePath();
-        ctx.fillStyle = fillGradient;
-        ctx.fill();
+        ctx.lineTo((dataPoints.length-1)*step, h); ctx.closePath();
+        ctx.fillStyle = grad; ctx.fill();
 
         ctx.beginPath();
-        for (let i = 0; i < dataPoints.length; i++) {
-            const x = i * stepX;
-            const y = viewHeight - ((dataPoints[i] - minVal) / valRange) * viewHeight;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
+        for(let i=0; i<dataPoints.length; i++) {
+            let x = i*step, y = h - ((dataPoints[i]-min)/range)*h;
+            if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
         }
-        ctx.strokeStyle = '#00ffcc';
-        ctx.lineWidth = 2.5;
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = 'rgba(0, 255, 204, 0.6)';
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-
-        const lastX = (dataPoints.length - 1) * stepX;
-        const lastY = viewHeight - ((dataPoints[dataPoints.length - 1] - minVal) / valRange) * viewHeight;
-        
-        ctx.beginPath();
-        ctx.arc(lastX, lastY, 5, 0, 2 * Math.PI);
-        ctx.fillStyle = '#ffffff';
-        ctx.fill();
-        
-        ctx.beginPath();
-        ctx.arc(lastX, lastY, 10, 0, 2 * Math.PI);
-        ctx.strokeStyle = 'rgba(0, 255, 204, 0.8)';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        requestAnimationFrame(drawLiveTradingChart);
+        ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2.5; ctx.stroke();
+        requestAnimationFrame(drawChart);
     }
-
     setInterval(() => {
-        const lastPrice = dataPoints[dataPoints.length - 1];
-        const change = (Math.random() - 0.49) * 45;
-        dataPoints.push(lastPrice + change);
-        if (dataPoints.length > maxPoints) dataPoints.shift();
-    }, 400); 
+        dataPoints.push(dataPoints[dataPoints.length-1] + (Math.random()-0.49)*40);
+        if(dataPoints.length > maxPoints) dataPoints.shift();
+    }, 400);
+    requestAnimationFrame(drawChart);
 
-    requestAnimationFrame(drawLiveTradingChart);
-
-    // Guard Pipeline & Active Listener
+    // --- 📡 Realtime Connection Pipelines ---
     auth.onAuthStateChanged(user => {
-        if (!user) {
-            window.location.href = "index.html";
-        } else {
-            localSessionUser = user;
-            synchronizeRealtimeAccountState();
-        }
+        if (!user) window.location.href = "index.html";
+        else { localSessionUser = user; syncAccountData(); }
     });
 
-    function synchronizeRealtimeAccountState() {
+    function syncAccountData() {
         db.collection("users").doc(localSessionUser.uid).onSnapshot(doc => {
-            if (doc.exists) {
-                const schema = doc.data();
+            if(doc.exists) {
+                const data = doc.data();
+                document.getElementById('globalHeaderUsername').innerText = data.username || "Client Node";
+                document.getElementById('metricBalance').innerText = Number(data.balance || 0).toFixed(2);
+                document.getElementById('metricBonus').innerText = Number(data.bonusBalance || 0).toFixed(2);
                 
-                document.getElementById('globalHeaderUsername').innerText = schema.username || "Client Node";
-                document.getElementById('metricBalance').innerText = Number(schema.balance || 0).toFixed(2);
-                document.getElementById('metricBonus').innerText = Number(schema.bonusBalance || 0).toFixed(2);
-                
-                document.getElementById('profFirst').value = schema.firstName || "";
-                document.getElementById('profLast').value = schema.lastName || "";
-                document.getElementById('profPhone').value = schema.phone || "OAuth Verified";
-                document.getElementById('profEmail').value = schema.email || "";
+                document.getElementById('profFirst').value = data.firstName || "";
+                document.getElementById('profLast').value = data.lastName || "";
+                document.getElementById('profPhone').value = data.phone || "Verified";
+                document.getElementById('profEmail').value = data.email || "";
 
-                if(schema.isVerified === true) {
-                    document.getElementById('globalVerifiedTick').style.display = 'inline-block';
-                } else {
-                    document.getElementById('globalVerifiedTick').style.display = 'none';
-                }
+                document.getElementById('globalVerifiedTick').style.display = data.isVerified ? 'inline-block' : 'none';
 
-                const coreCode = schema.username || localSessionUser.uid;
-                const pathUrl = window.location.origin + window.location.pathname.replace('dashboard.html', 'index.html');
-                document.getElementById('affiliateInputShare').value = `${pathUrl}?ref=${coreCode}`;
+                const path = window.location.origin + window.location.pathname.replace('dashboard.html', 'index.html');
+                document.getElementById('affiliateInputShare').value = `${path}?ref=${data.username || localSessionUser.uid}`;
 
-                streamOperationalLogs();
-                streamAffiliateNetworkGraph(coreCode);
-                evaluateKycStatusBlock(schema.kycStatus, schema.kycReason);
+                streamLogs();
+                streamAffiliates(data.username || localSessionUser.uid);
+                renderKycStatus(data.kycStatus, data.kycReason);
             }
-            hideGlobalAppLoader();
+            document.getElementById('globalAppLoader').style.display = 'none';
         });
     }
 
-    function evaluateKycStatusBlock(status, reason) {
-        const header = document.getElementById('kycStatusHeader');
-        const reasonBox = document.getElementById('kycRejectionReason');
-        const formInputGroup = document.getElementById('kycSubmissionForm');
+    function renderKycStatus(status, reason) {
+        const h = document.getElementById('kycStatusHeader');
+        const r = document.getElementById('kycRejectionReason');
+        const f = document.getElementById('kycSubmissionForm');
+        r.style.display = 'none'; f.style.display = 'flex';
 
-        reasonBox.style.display = 'none';
-        formInputGroup.style.display = 'flex';
-
-        if(!status || status === 'unverified') {
-            header.className = "kyc-badge-status status-unverified";
-            header.innerText = "Status: Unverified Client Account";
-        } else if(status === 'pending') {
-            header.className = "kyc-badge-status status-pending";
-            header.innerText = "Status: Verification Payload Pending Audit Review";
-            formInputGroup.style.display = 'none';
-        } else if(status === 'verified') {
-            header.className = "kyc-badge-status status-verified";
-            header.innerText = "Status: Account Fully Validated & KYC Secured";
-            formInputGroup.style.display = 'none';
-        } else if(status === 'rejected') {
-            header.className = "kyc-badge-status status-rejected";
-            header.innerText = "Status: KYC Verification Submission Rejected";
-            if(reason) {
-                reasonBox.style.display = 'block';
-                reasonBox.innerHTML = `<strong>Rejection Audit Reason:</strong> ${reason}`;
-            }
-        }
+        if(status === 'pending') { h.className="kyc-badge-status status-pending"; h.innerText="Status: Pending Review"; f.style.display='none'; }
+        else if(status === 'verified') { h.className="kyc-badge-status status-verified"; h.innerText="Status: Verified Asset"; f.style.display='none'; }
+        else if(status === 'rejected') { h.className="kyc-badge-status status-rejected"; h.innerText="Status: Submission Rejected"; if(reason){r.style.display='block'; r.innerText=reason;} }
+        else { h.className="kyc-badge-status status-unverified"; h.innerText="Status: Unverified Client"; }
     }
 
     async function initializeCamera() {
-        const video = document.getElementById('webcamStream');
-        const canvas = document.getElementById('capturedCanvas');
-        canvas.style.display = 'none';
-        video.style.display = 'block';
-
         try {
-            cameraMediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-            video.srcObject = cameraMediaStream;
-        } catch (err) {
-            popNotification("🚫 Camera hardware initialization refused.", "danger");
-        }
+            cameraMediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            document.getElementById('webcamStream').srcObject = cameraMediaStream;
+        } catch(e) { popNotify("Camera access denied.", "danger"); }
     }
 
     function captureBiometricSnapshot() {
-        const video = document.getElementById('webcamStream');
-        const canvas = document.getElementById('capturedCanvas');
-        
-        if(!cameraMediaStream || video.paused) {
-            popNotification("⚠️ Please initialize camera feed node structure first.", "danger");
-            return;
-        }
-
-        const ctx = canvas.getContext('2d');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        base64CapturedImagePayload = canvas.toDataURL('image/jpeg', 0.85);
-        
-        video.style.display = 'none';
-        canvas.style.display = 'block';
+        const v = document.getElementById('webcamStream');
+        const c = document.getElementById('capturedCanvas');
+        if(!cameraMediaStream) return;
+        const cx = c.getContext('2d');
+        c.width = v.videoWidth; c.height = v.videoHeight;
+        cx.drawImage(v, 0, 0, c.width, c.height);
+        base64CapturedImagePayload = c.toDataURL('image/jpeg', 0.8);
+        v.style.display = 'none'; c.style.display = 'block';
         killCameraStream();
-        popNotification("✔ Biometric face mapping frozen successfully.", "success");
     }
 
-    function killCameraStream() {
-        if(cameraMediaStream) {
-            cameraMediaStream.getTracks().forEach(t => t.stop());
-            cameraMediaStream = null;
-        }
-    }
+    function killCameraStream() { if(cameraMediaStream) { cameraMediaStream.getTracks().forEach(t=>t.stop()); cameraMediaStream=null; } }
 
     document.getElementById('kycSubmissionForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const type = document.getElementById('kycDocType').value;
-        const serial = document.getElementById('kycSerial').value.trim();
-
-        if(!base64CapturedImagePayload) {
-            popNotification("⚠️ Biometric camera snapshot submission payload missing.", "danger");
-            return;
-        }
-
-        try {
-            document.getElementById('kycSubmitBtn').innerText = "Transmitting Secured Packets...";
-            await db.collection("users").doc(localSessionUser.uid).update({
-                kycStatus: "pending", kycDocumentType: type, kycSerialNo: serial, kycBiometricBase64: base64CapturedImagePayload, kycTimestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            popNotification("✔ KYC Packet verified and transmitted.", "success");
-        } catch(err) { popNotification(`Error: ${err.message}`, "danger"); }
-        finally { document.getElementById('kycSubmitBtn').innerText = "Transmit KYC Verification Ledger"; }
+        if(!base64CapturedImagePayload) { popNotify("Capture snapshot first.", "danger"); return; }
+        document.getElementById('kycSubmitBtn').innerText = "Uploading Payload...";
+        await db.collection("users").doc(localSessionUser.uid).update({
+            kycStatus: "pending", kycDocumentType: document.getElementById('kycDocType').value,
+            kycSerialNo: document.getElementById('kycSerial').value, kycBiometricBase64: base64CapturedImagePayload
+        });
+        popNotify("KYC Payload Transmitted Successfully.", "success");
     });
 
     document.getElementById('profileCoreForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const first = document.getElementById('profFirst').value.trim();
-        const last = document.getElementById('profLast').value.trim();
-        try {
-            await db.collection("users").doc(localSessionUser.uid).update({ firstName: first, lastName: last });
-            popNotification("✔ Dynamic profile core modifications established.", "success");
-        } catch(err) { popNotification(`Error: ${err.message}`, "danger"); }
+        await db.collection("users").doc(localSessionUser.uid).update({
+            firstName: document.getElementById('profFirst').value, lastName: document.getElementById('profLast').value
+        });
+        popNotify("Profile configuration updated.", "success");
     });
 
     async function purchaseNode(name, fee) {
-        try {
-            const userRef = db.collection("users").doc(localSessionUser.uid);
-            const userSnapshot = await userRef.get();
-            const currentBalance = userSnapshot.data().balance || 0;
-
-            if(currentBalance < fee) {
-                popNotification(`❌ Insufficient core capital. Node requirement is $${fee.toFixed(2)}.`, "danger");
-                return;
-            }
-
-            await db.runTransaction(async (transaction) => {
-                const doc = await transaction.get(userRef);
-                const updatedBal = (doc.data().balance || 0) - fee;
-                transaction.update(userRef, { balance: updatedBal });
-                
-                const logRef = db.collection("history").doc();
-                transaction.set(logRef, {
-                    uid: localSessionUser.uid, type: `Node Contract (${name})`, amount: -fee, status: "Completed / Synchronized", timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-            });
-            popNotification(`✔ ${name} deployment node initialized online.`, "success");
-        } catch(err) { popNotification(`Failed: ${err.message}`, "danger"); }
+        const ref = db.collection("users").doc(localSessionUser.uid);
+        const snap = await ref.get();
+        if((snap.data().balance || 0) < fee) { popNotify("Insufficient system balance.", "danger"); return; }
+        await ref.update({ balance: firebase.firestore.FieldValue.increment(-fee) });
+        await db.collection("history").add({ uid: localSessionUser.uid, type: `Activated Node (${name})`, amount: -fee, status: "Synchronized", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+        popNotify(`${name} Node Online.`, "success");
     }
 
     async function openFinOps(mode) {
-        const amountString = prompt(`Enter value to ${mode}:`);
-        if(!amountString) return;
-        const volume = parseFloat(amountString);
+        const val = parseFloat(prompt(`Enter amount to ${mode}:`));
+        if(isNaN(val) || val <= 0) return;
+        const ref = db.collection("users").doc(localSessionUser.uid);
+        if(mode==='Withdraw') {
+            const s = await ref.get(); if((s.data().balance||0)<val) { popNotify("Insufficient assets.", "danger"); return; }
+            await ref.update({ balance: firebase.firestore.FieldValue.increment(-val) });
+        } else {
+            await ref.update({ balance: firebase.firestore.FieldValue.increment(val) });
+        }
+        await db.collection("history").add({ uid: localSessionUser.uid, type: mode, amount: mode==='Deposit'? val : -val, status: "Completed Gateway", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+        popNotify("Operation executed successfully.", "success");
+    }
 
-        if(isNaN(volume) || volume <= 0) { popNotification("🚨 Invalid amount value.", "danger"); return; }
-        if(mode === 'Deposit' && volume < 6) { popNotification("❌ Minimal entry deposit node is $6.00.", "danger"); return; }
-        if(mode === 'Withdraw' && volume < 20) { popNotification("❌ Minimal asset outflow is $20.00.", "danger"); return; }
-
-        try {
-            const userRef = db.collection("users").doc(localSessionUser.uid);
-            if(mode === 'Withdraw') {
-                const snap = await userRef.get();
-                if((snap.data().balance || 0) < volume) { popNotification("❌ Balance insufficient.", "danger"); return; }
-            }
-
-            await db.collection("history").add({
-                uid: localSessionUser.uid, type: mode, amount: mode === 'Deposit' ? volume : -volume, status: "Pending Network Clearance", timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    function streamLogs() {
+        db.collection("history").where("uid", "==", localSessionUser.uid).orderBy("timestamp","desc").onSnapshot(s => {
+            const b = document.getElementById('historyTableBody'); b.innerHTML = "";
+            s.forEach(d => {
+                const i = d.data();
+                b.innerHTML += `<tr><td>${i.timestamp ? new Date(i.timestamp.seconds*1000).toLocaleString():'Pending'}</td><td>${i.type}</td><td style="color:${i.amount>=0?'#00ffcc':'#ff4a4a'}">${i.amount>=0?'+':''}$${i.amount.toFixed(2)}</td><td>${i.status}</td></tr>`;
             });
-
-            if(mode === 'Deposit') {
-                await userRef.update({ balance: firebase.firestore.FieldValue.increment(volume) });
-                popNotification("✔ Deposit logged successfully.", "success");
-            } else {
-                await userRef.update({ balance: firebase.firestore.FieldValue.increment(-volume) });
-                popNotification("✔ Withdraw logged. Pending audit clearance.", "success");
-            }
-        } catch (err) { popNotification(`Failure: ${err.message}`, "danger"); }
+        });
     }
 
-    function streamOperationalLogs() {
-        db.collection("history").where("uid", "==", localSessionUser.uid).orderBy("timestamp", "desc").onSnapshot(snapshot => {
-              const tbody = document.getElementById('historyTableBody');
-              tbody.innerHTML = "";
-              if(snapshot.empty) {
-                  tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No transaction records logged.</td></tr>`;
-                  return;
-              }
-              snapshot.forEach(doc => {
-                  const item = doc.data();
-                  const time = item.timestamp ? new Date(item.timestamp.seconds * 1000).toLocaleString() : "Processing Frame";
-                  const flagColor = item.amount >= 0 ? "#00ffcc" : "#ff4a4a";
-                  tbody.innerHTML += `
-                    <tr>
-                        <td>${time}</td>
-                        <td style="font-weight:600;">${item.type}</td>
-                        <td style="color:${flagColor}; font-weight:700;">${item.amount >= 0 ? `+$${item.amount.toFixed(2)}` : `-$${Math.abs(item.amount).toFixed(2)}`}</td>
-                        <td style="color:var(--text-muted); font-size:0.8rem;"><i class="fa-solid fa-circle-nodes" style="color:var(--primary); font-size:0.6rem; margin-right:5px;"></i> ${item.status}</td>
-                    </tr>`;
-              });
-          });
-    }
-
-    function streamAffiliateNetworkGraph(userRefUsername) {
-        db.collection("users").where("referrer", "==", userRefUsername).onSnapshot(snapshot => {
-              const tbody = document.getElementById('affiliateTableBody');
-              document.getElementById('metricRefCount').innerText = snapshot.size;
-              tbody.innerHTML = "";
-
-              if(snapshot.empty) {
-                  tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">No downline network nodes mapped.</td></tr>`;
-                  return;
-              }
-
-              let compoundBonus = 0;
-              snapshot.forEach(doc => {
-                  const data = doc.data();
-                  compoundBonus += 1.00; 
-                  tbody.innerHTML += `
-                    <tr>
-                        <td><i class="fa-solid fa-link" style="color:var(--text-muted); margin-right:8px;"></i> ${data.username}</td>
-                        <td>${data.kycStatus === 'verified' ? '<span style="color:var(--primary)">VIP Verified Node</span>' : '<span style="color:var(--text-muted)">Unverified Node</span>'}</td>
-                        <td style="color:var(--primary); font-weight:700;">+$1.00</td>
-                    </tr>`;
-              });
-              db.collection("users").doc(localSessionUser.uid).update({ bonusBalance: compoundBonus });
-          });
+    function streamAffiliates(user) {
+        db.collection("users").where("referrer", "==", user).onSnapshot(s => {
+            const b = document.getElementById('affiliateTableBody'); b.innerHTML = "";
+            document.getElementById('metricRefCount').innerText = s.size;
+            s.forEach(d => {
+                const data = d.data();
+                b.innerHTML += `<tr><td>${data.username}</td><td>${data.kycStatus||'unverified'}</td><td>+$1.00</td></tr>`;
+            });
+        });
     }
 
     function copyAffiliateURL() {
-        const el = document.getElementById('affiliateInputShare');
-        el.select();
-        navigator.clipboard.writeText(el.value);
-        popNotification("✔ Affiliate network payload link copied.", "success");
+        const input = document.getElementById('affiliateInputShare'); input.select();
+        navigator.clipboard.writeText(input.value); popNotify("Referral link copied.", "success");
     }
 
-    function popNotification(msg, type='success') {
-        const node = document.getElementById('customToast');
-        node.innerHTML = msg;
-        node.style.background = type === 'success' ? '#00cb9c' : '#ff4a4a';
-        node.style.opacity = '1'; node.style.transform = 'translateY(0)';
-        setTimeout(() => { node.style.opacity = '0'; node.style.transform = 'translateY(-20px)'; }, 4000);
+    function popNotify(msg, type) {
+        const t = document.getElementById('customToast'); t.innerText = msg;
+        t.style.background = type === 'success' ? '#00cb9c' : '#ff4a4a';
+        t.style.opacity = '1'; t.style.transform = 'translateY(0)';
+        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-20px)'; }, 3000);
     }
 
-    function hideGlobalAppLoader() {
-        const l = document.getElementById('globalAppLoader');
-        l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 500);
-    }
-
-    function triggerSessionTermination() {
-        killCameraStream();
-        auth.signOut().then(() => window.location.href = "index.html");
-    }
+    function triggerSessionTermination() { auth.signOut().then(() => window.location.href="index.html"); }
 </script>
 </body>
 </html>
