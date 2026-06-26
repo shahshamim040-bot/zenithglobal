@@ -3,164 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenit Global - Nexus Core Terminal</title>
+    <title>Zenit Global - Admin Core Management</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
         :root {
-            --primary: #00ffcc;
-            --accent: #ffaa00;
-            --bg-dark: #060a13;
+            --primary: #ffa500;
+            --success: #00ffcc;
+            --bg-dark: #0a0f1d;
             --card-bg: rgba(255, 255, 255, 0.02);
             --border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
-            --text-muted: #6f8097;
+            --text-muted: #6b7c96;
+            --danger: #ff4a4a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: radial-gradient(circle at 50% 0%, #0f172a 0%, var(--bg-dark) 100%); color: var(--text-main); min-height: 100vh; padding: 20px; }
+        body { background: var(--bg-dark); color: var(--text-main); padding: 40px; }
 
-        .login-box { max-width: 400px; margin: 100px auto; background: var(--card-bg); border: 1px solid var(--border); padding: 40px 30px; border-radius: 16px; text-align: center; backdrop-filter: blur(10px); }
-        .input-box { width: 100%; padding: 14px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; color: #fff; margin-bottom: 15px; outline: none; font-size: 0.95rem; transition: 0.3s; }
-        .input-box:focus { border-color: var(--primary); }
-        .btn-prime { width: 100%; padding: 14px; background: var(--primary); border: none; color: #060a13; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 1rem; text-transform: uppercase; }
-        .btn-prime:hover { opacity: 0.9; box-shadow: 0 0 15px rgba(0, 255, 204, 0.3); }
+        header { margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        h1 { font-size: 1.6rem; font-weight: 700; color: #fff; }
+        
+        .admin-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        
+        .panel-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 18px; }
+        .panel-card h2 { font-size: 1.1rem; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
 
-        .admin-container { max-width: 1200px; margin: 0 auto; display: none; }
-        .header-section { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; }
-        
-        /* Folder/Tabs Layout */
-        .folder-container { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
-        .folder-tab { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-bottom: none; padding: 12px 24px; border-radius: 10px 10px 0 0; color: var(--text-muted); cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; white-space: nowrap; }
-        .folder-tab.active-folder { background: var(--card-bg); border-color: var(--primary); color: var(--primary); border-bottom: 2px solid var(--bg-dark); position: relative; top: 1px; }
-        
-        .folder-content { background: var(--card-bg); border: 1px solid var(--border); padding: 30px; border-radius: 0 16px 16px 16px; min-height: 400px; display: none; }
-        .folder-content.active-content { display: block; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
+        th { background: rgba(255,255,255,0.02); padding: 12px 15px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        td { padding: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
-        /* User Profile Grid System */
-        .user-directory-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .user-directory-grid { grid-template-columns: 1fr 2fr; } }
-        
-        .user-list-sidebar { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 12px; height: 450px; overflow-y: auto; padding: 10px; }
-        .user-profile-node { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: 0.3s; }
-        .user-profile-node:hover, .user-profile-node.selected-user { border-color: var(--primary); background: rgba(0,255,204,0.03); }
-        .user-avatar { width: 40px; height: 40px; background: rgba(0,255,204,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: 700; }
+        .biometric-preview-img { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); cursor: zoom-in; transition: 0.2s; }
+        .biometric-preview-img:hover { transform: scale(1.1); }
 
-        .profile-details-panel { background: rgba(0,0,0,0.3); border: 1px solid var(--border); padding: 25px; border-radius: 12px; display: none; }
-        
-        /* Queue Request Cards */
-        .req-item { background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .action-btns { display: flex; gap: 10px; }
-        .btn-action-sm { padding: 8px 16px; font-weight: 700; border-radius: 6px; cursor: pointer; border: none; }
-        .btn-success { background: var(--primary); color: #060a13; }
-        .btn-danger { background: #ff4a4a; color: #fff; }
+        /* Action Controls Buttons */
+        .btn-ctl { border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; margin-right: 5px; }
+        .btn-approve { background: rgba(0, 255, 204, 0.15); color: var(--success); border: 1px solid rgba(0,255,204,0.3); }
+        .btn-approve:hover { background: var(--success); color: #000; }
+        .btn-reject { background: rgba(255, 74, 74, 0.15); color: var(--danger); border: 1px solid rgba(255,74,74,0.3); }
+        .btn-reject:hover { background: var(--danger); color: #fff; }
 
-        /* কাস্টম স্মার্ট টোস্ট নোটিফিকেশন ডিজাইন */
-        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-        .custom-toast { background: #131c2e; border-left: 4px solid var(--primary); color: #fff; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 12px; min-width: 300px; animation: slideIn 0.3s ease-out forwards; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-        .custom-toast.toast-error { border-left-color: #ff4a4a; }
-        .toast-icon { font-size: 1.3rem; }
-        .toast-success .toast-icon { color: var(--primary); }
-        .toast-error .toast-icon { color: #ff4a4a; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            to { transform: translateX(100%); opacity: 0; }
-        }
+        .input-inline { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 6px; width: 80px; outline: none; font-size: 0.85rem; }
+        .btn-update-bal { background: var(--primary); color: #000; font-weight: 700; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+
+        /* Lightbox Image View Pop Modal */
+        .modal-lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
+        .modal-lightbox img { max-width: 85%; max-height: 85%; border-radius: 12px; border: 2px solid var(--border); }
+
+        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 22px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.85rem; z-index: 10000; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; }
     </style>
 </head>
 <body>
 
-<!-- স্মার্ট টোস্ট কন্টেইনার -->
-<div id="toast-container"></div>
+<div id="customToast">Admin Status Notification</div>
 
-<!-- লগইন গেটওয়ে লুক -->
-<div class="login-box" id="loginBox">
-    <h2 style="color: var(--primary); font-size: 1.6rem; font-weight: 700; text-align: left; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; line-height: 1.3;">NEXUS SYSTEM COMMAND BLOCK</h2>
-    <input type="text" id="adminUser" class="input-box" placeholder="Operator Identity Identifier">
-    <input type="password" id="adminPin" class="input-box" placeholder="••••">
-    <button class="btn-prime" onclick="loginAdminWithPin()">Initialize Override</button>
+<div class="modal-lightbox" id="imgModal" onclick="this.style.display='none'">
+    <img id="modalTargetImg" src="" alt="Enlarged Preview">
 </div>
 
-<!-- মূল ড্যাশবোর্ড কন্ট্রোল প্যানেল -->
-<div class="admin-container" id="adminPanel">
-    <div class="header-section">
-        <div>
-            <h1>Zenit Global Master Panel</h1>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Terminal Security Operation: <span style="color:#00ffcc;">Online Loop</span></p>
-        </div>
-        <button onclick="logoutAdmin()" class="btn-action-sm btn-danger">Disconnect Session</button>
+<header>
+    <div>
+        <h1>Zenit Global Core Backend</h1>
+        <p style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">Live Node Network Oversight & KYC Ledger Control</p>
     </div>
+    <button class="btn-ctl" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid var(--border); padding:10px 20px;" onclick="location.reload()">Force Refresh Graph Data</button>
+</header>
 
-    <!-- স্মার্ট ফোল্ডার ট্যাব সিলেকশন -->
-    <div class="folder-container">
-        <div class="folder-tab active-folder" onclick="openFolder(event, 'gatewaysFolder')"><i class="fa-solid fa-sliders"></i> Gateways</div>
-        <div class="folder-tab" onclick="openFolder(event, 'noticeFolder')"><i class="fa-solid fa-bullhorn"></i> System Notice</div>
-        <div class="folder-tab" onclick="openFolder(event, 'usersFolder')"><i class="fa-solid fa-users"></i> User Profiles</div>
-        <div class="folder-tab" onclick="openFolder(event, 'requestsFolder')"><i class="fa-solid fa-money-bill-transfer"></i> Pending Requests <span id="reqCountBadge" style="background:#ff4a4a; color:#fff; font-size:0.75rem; padding:2px 6px; border-radius:10px; margin-left:4px; display:none;">0</span></div>
-    </div>
-
-    <!-- ফোল্ডার ১: গ্লোবাল গেটওয়ে ও রেট সেটিংস -->
-    <div id="gatewaysFolder" class="folder-content active-content">
-        <h3 style="margin-bottom: 20px; color: var(--primary);">Global Gateways Configuration</h3>
-        <div style="max-width: 600px;">
-            <label style="color: var(--text-muted); display:block; margin-bottom:5px;">Dollar Live Rate (BDT)</label>
-            <input type="number" id="sysRate" class="input-box" placeholder="e.g. 127">
-            <label style="color: var(--text-muted); display:block; margin-bottom:5px;">bKash Agent Number</label>
-            <input type="text" id="sysBkash" class="input-box">
-            <label style="color: var(--text-muted); display:block; margin-bottom:5px;">Nagad Agent Number</label>
-            <input type="text" id="sysNagad" class="input-box">
-            <label style="color: var(--text-muted); display:block; margin-bottom:5px;">Binance Pay USDT TRC20 Address</label>
-            <input type="text" id="sysBinance" class="input-box">
-            <button class="btn-prime" onclick="updateSystemGateways()" style="margin-top: 10px;">Push Global Settings</button>
+<main class="admin-grid">
+    <div class="panel-card">
+        <h2><i class="fa-solid fa-users-gear"></i> Managed Network Clients Registry</h2>
+        <div style="width:100%; overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client Node</th>
+                        <th>Registered Email</th>
+                        <th>Wallet Core Balance</th>
+                        <th>KYC Pipeline Status</th>
+                        <th>Identity Document Payload</th>
+                        <th>Biometric Freeze Snap</th>
+                        <th>Operational Access Control Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminUserTableBody">
+                    <tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:30px;">Streaming synchronization with global data cluster nodes...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
-
-    <!-- ফোল্ডার ২: লাইভ অ্যালার্ট নোটিশ বোর্ড -->
-    <div id="noticeFolder" class="folder-content">
-        <h3 style="margin-bottom: 20px; color: var(--primary);">Live System Bulletin Notice</h3>
-        <div style="max-width: 600px;">
-            <textarea id="sysNotice" class="input-box" rows="5" placeholder="Enter dashboard text announcement node..."></textarea>
-            <button class="btn-prime" onclick="updateSystemNotice()">Broadcast Bulletin</button>
-        </div>
-    </div>
-
-    <!-- ফোল্ডার ৩: স্মার্ট ইউজার প্রোফাইল ডিরেক্টরি -->
-    <div id="usersFolder" class="folder-content">
-        <h3 style="margin-bottom: 20px; color: var(--primary);">User Database Directory</h3>
-        <div class="user-directory-grid">
-            <div class="user-list-sidebar" id="userDirectoryList">
-                <p style="color: gray; padding: 10px;">Loading database nodes...</p>
-            </div>
-            <div class="profile-details-panel" id="userProfilePanel">
-                <h3 id="targetNameHeader" style="color: #fff; margin-bottom: 20px;">Selected Profile</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                    <div><label style="font-size:0.8rem; color:var(--text-muted);">Plan Profit Balance ($)</label><input type="number" id="editBal" class="input-box"></div>
-                    <div><label style="font-size:0.8rem; color:var(--text-muted);">Core Deposit Vault ($)</label><input type="number" id="editDepo" class="input-box"></div>
-                    <div style="grid-column: 1 / -1;"><label style="font-size:0.8rem; color:var(--text-muted);">Affiliate Bonus Vault ($)</label><input type="number" id="editRef" class="input-box"></div>
-                </div>
-                <div class="action-btns">
-                    <button class="btn-action-sm btn-success" onclick="saveUserBalances()">Save Ledgers</button>
-                    <button id="blockBtn" class="btn-action-sm btn-danger" onclick="toggleUserBlockStatus()">Suspend Node</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ফোল্ডার ৪: ইনকামিং ট্রানজেকশন পেন্ডিং কিউ -->
-    <div id="requestsFolder" class="folder-content">
-        <h3 style="margin-bottom: 20px; color: var(--primary);">Operational Processing Pipelines</h3>
-        <div id="pendingReqsBox"></div>
-    </div>
-</div>
+</main>
 
 <script>
     const firebaseConfig = {
@@ -175,215 +112,115 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    let targetUserUid = null;
-    let targetUserObj = {};
-    const SECRET_MASTER_PIN = "2026"; 
+    // Stream All Global Network Users Realtime
+    function streamAllClientsToConsole() {
+        db.collection("users").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+            const tbody = document.getElementById('adminUserTableBody');
+            tbody.innerHTML = "";
 
-    // নতুন কাস্টম নোটিফিকেশন সিস্টেম ফাংশন
-    function showNotification(message, type = 'success') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = `custom-toast ${type === 'error' ? 'toast-error' : 'toast-success'}`;
-        
-        const icon = type === 'error' ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-circle-check';
-        
-        toast.innerHTML = `
-            <i class="${icon} toast-icon"></i>
-            <div>
-                <strong style="display:block; font-size:0.9rem; text-transform:uppercase; color:${type==='error'?'#ff4a4a':'#00ffcc'}">${type==='error'?'Execution Failed':'System Updated'}</strong>
-                <p style="font-size:0.85rem; color:#d1d5db; margin-top:2px;">${message}</p>
-            </div>
-        `;
-        
-        container.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.style.animation = 'fadeOut 0.4s ease-out forwards';
-            setTimeout(() => toast.remove(), 400);
-        }, 3500);
-    }
-
-    window.onload = function() {
-        if (sessionStorage.getItem("admin_authenticated") === "true") { showAdminPanel(); }
-    };
-
-    function loginAdminWithPin() {
-        if(document.getElementById('adminPin').value.trim() === SECRET_MASTER_PIN) {
-            sessionStorage.setItem("admin_authenticated", "true");
-            showAdminPanel();
-            showNotification("Access Granted. Secure shell established.");
-        } else { 
-            showNotification("Override Denied. Invalid master key.", "error"); 
-        }
-    }
-
-    function showAdminPanel() {
-        document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        loadSystemConfigurations();
-        fetchAllUsersIntoDirectory();
-        listenPendingTransactions();
-    }
-
-    function logoutAdmin() { sessionStorage.removeItem("admin_authenticated"); window.location.reload(); }
-
-    function openFolder(evt, folderId) {
-        document.querySelectorAll('.folder-content').forEach(el => el.classList.remove('active-content'));
-        document.querySelectorAll('.folder-tab').forEach(el => el.classList.remove('active-folder'));
-        document.getElementById(folderId).classList.add('active-content');
-        evt.currentTarget.classList.add('active-folder');
-    }
-
-    function loadSystemConfigurations() {
-        db.collection("settings").doc("system").get().then(doc => {
-            if(doc.exists) {
-                const d = doc.data();
-                document.getElementById('sysRate').value = d.rate || 127;
-                document.getElementById('sysBkash').value = d.gateways?.bkash || "";
-                document.getElementById('sysNagad').value = d.gateways?.nagad || "";
-                document.getElementById('sysBinance').value = d.gateways?.binance || "";
-            }
-        });
-        db.collection("settings").doc("notice").get().then(doc => {
-            if(doc.exists) document.getElementById('sysNotice').value = doc.data().text || "";
-        });
-    }
-
-    function updateSystemGateways() {
-        db.collection("settings").doc("system").set({
-            rate: parseFloat(document.getElementById('sysRate').value) || 127,
-            gateways: {
-                bkash: document.getElementById('sysBkash').value.trim(),
-                nagad: document.getElementById('sysNagad').value.trim(),
-                binance: document.getElementById('sysBinance').value.trim()
-            }
-        }).then(() => showNotification("Global financial infrastructure successfully pushed."));
-    }
-
-    function updateSystemNotice() {
-        db.collection("settings").doc("notice").set({ text: document.getElementById('sysNotice').value.trim() })
-          .then(() => showNotification("Live board bulletin notification dispatched."));
-    }
-
-    function fetchAllUsersIntoDirectory() {
-        db.collection("users").onSnapshot(snap => {
-            const listContainer = document.getElementById('userDirectoryList');
-            listContainer.innerHTML = "";
-            if(snap.empty) { listContainer.innerHTML = "<p style='color:gray;'>No nodes inside database.</p>"; return; }
-            
-            snap.forEach(doc => {
-                const u = doc.data();
-                const uid = doc.id;
-                const node = document.createElement('div');
-                node.className = `user-profile-node ${targetUserUid === uid ? 'selected-user' : ''}`;
-                node.onclick = () => selectUserProfile(uid, u);
-                node.innerHTML = `
-                    <div class="user-avatar">${u.firstName ? u.firstName[0].toUpperCase() : 'U'}</div>
-                    <div>
-                        <p style="font-weight:600; font-size:0.9rem;">${u.firstName || ''} ${u.lastName || ''}</p>
-                        <p style="color:var(--text-muted); font-size:0.75rem;">@${u.username || 'user'}</p>
-                    </div>
-                `;
-                listContainer.appendChild(node);
-            });
-        });
-    }
-
-    function selectUserProfile(uid, data) {
-        targetUserUid = uid;
-        targetUserObj = data;
-        
-        document.querySelectorAll('.user-profile-node').forEach(el => el.classList.remove('selected-user'));
-        document.getElementById('userProfilePanel').style.display = 'block';
-        
-        document.getElementById('targetNameHeader').innerText = `Data Profile: ${data.firstName} (${data.email})`;
-        document.getElementById('editBal').value = data.balance || 0;
-        document.getElementById('editDepo').value = data.depositBalance || 0;
-        document.getElementById('editRef').value = data.refBalance || 0;
-        
-        const btn = document.getElementById('blockBtn');
-        btn.innerText = data.isBlocked ? "Lift Suspension (Unblock)" : "Terminate Account (Block)";
-        btn.style.background = data.isBlocked ? "#00ffcc" : "#ff4a4a";
-        btn.style.color = data.isBlocked ? "#060a13" : "#fff";
-    }
-
-    function saveUserBalances() {
-        if(!targetUserUid) return;
-        db.collection("users").doc(targetUserUid).update({
-            balance: parseFloat(document.getElementById('editBal').value) || 0,
-            depositBalance: parseFloat(document.getElementById('editDepo').value) || 0,
-            refBalance: parseFloat(document.getElementById('editRef').value) || 0
-        }).then(() => showNotification("User financial ledger re-compiled and saved."));
-    }
-
-    function toggleUserBlockStatus() {
-        if(!targetUserUid) return;
-        const nextStatus = !(targetUserObj.isBlocked || false);
-        db.collection("users").doc(targetUserUid).update({ isBlocked: nextStatus }).then(() => {
-            showNotification(nextStatus ? "User account has been suspended." : "User restrictions successfully lifted.");
-            document.getElementById('userProfilePanel').style.display = 'none';
-        });
-    }
-
-    function listenPendingTransactions() {
-        db.collection("transactions").where("status", "==", "Pending").onSnapshot(snap => {
-            const container = document.getElementById('pendingReqsBox');
-            const badge = document.getElementById('reqCountBadge');
-            container.innerHTML = "";
-            
-            if(snap.empty) {
-                container.innerHTML = "<p style='color:gray; font-size:0.9rem;'>Pipeline clear. No pending financial executions.</p>";
-                badge.style.display = 'none';
+            if(snapshot.empty) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">No registered user profiles found.</td></tr>`;
                 return;
             }
-            
-            badge.style.display = 'inline-block';
-            badge.innerText = snap.size;
 
-            snap.forEach(doc => {
-                const req = doc.data();
-                const id = doc.id;
-                const item = document.createElement('div');
-                item.className = 'req-item';
-                item.innerHTML = `
-                    <div>
-                        <p style="font-size:1.1rem; font-weight:600;"><span style="color:var(--primary);">${req.type.toUpperCase()}</span> - $${req.amount.toFixed(2)}</p>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Channel: ${req.method.toUpperCase()} | KeyID: ${req.txn || req.target || 'N/A'} | Sender: ${req.sender || 'N/A'}</p>
-                    </div>
-                    <div class="action-btns">
-                        <button class="btn-action-sm btn-success" onclick="processRequest('${id}', '${req.type}', '${req.uid}', ${req.amount}, 'Success')">Approve</button>
-                        <button class="btn-action-sm btn-danger" onclick="rejectRequestPrompt('${id}')">Reject</button>
-                    </div>
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                const uid = doc.id;
+                
+                // Parse Dynamic KYC Badge Output
+                let statusBadgeStyle = "color: var(--text-muted); font-weight:600;";
+                if(user.kycStatus === 'pending') statusBadgeStyle = "color: #ffa500; font-weight:700;";
+                if(user.kycStatus === 'verified') statusBadgeStyle = "color: var(--success); font-weight:700;";
+                if(user.kycStatus === 'rejected') statusBadgeStyle = "color: var(--danger); font-weight:700;";
+
+                // Parse Biometric Thumbnail Images Render Box
+                const hasImage = user.kycBiometricBase64 ? true : false;
+                const imgElement = hasImage ? `<img src="${user.kycBiometricBase64}" class="biometric-preview-img" onclick="zoomImagePayload('${user.kycBiometricBase64}')">` : `<span style="color:var(--text-muted); font-size:0.8rem;">No Snap</span>`;
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>
+                            <strong style="color:#fff;">${user.firstName || 'User'} ${user.lastName || ''}</strong><br>
+                            <span style="font-size:0.78rem; color:var(--text-muted);">@${user.username || 'unknown'}</span>
+                        </td>
+                        <td>${user.email || 'N/A'}</td>
+                        <td>
+                            <input type="number" step="0.01" class="input-inline" id="bal-${uid}" value="${Number(user.balance || 0).toFixed(2)}">
+                            <button class="btn-update-bal" onclick="commitManualBalanceChange('${uid}')">Set</button>
+                        </td>
+                        <td style="${statusBadgeStyle}">${(user.kycStatus || 'unverified').toUpperCase()}</td>
+                        <td style="font-size:0.8rem; line-height:1.3;">
+                            ${user.kycDocumentType ? `<strong>${user.kycDocumentType}</strong><br><span style="color:var(--text-muted);">No: ${user.kycSerialNo || 'N/A'}</span>` : '<span style="color:var(--text-muted);">No Document</span>'}
+                        </td>
+                        <td>${imgElement}</td>
+                        <td>
+                            <button class="btn-ctl btn-approve" onclick="approveClientKYC('${uid}')"><i class="fa-solid fa-certificate"></i> Approve (Blue Tag)</button>
+                            <button class="btn-ctl btn-reject" onclick="rejectClientKYC('${uid}')"><i class="fa-solid fa-circle-xmark"></i> Reject</button>
+                        </td>
+                    </tr>
                 `;
-                container.appendChild(item);
             });
         });
     }
 
-    async function processRequest(id, type, uid, amount, status, reason = "") {
-        if(status === "Success" && type === "deposit") {
-            await db.collection("users").doc(uid).update({
-                depositBalance: firebase.firestore.FieldValue.increment(amount)
-            });
-        }
-        if(status === "Rejected" && type === "withdrawal") {
-            await db.collection("users").doc(uid).update({
-                balance: firebase.firestore.FieldValue.increment(amount)
-            });
-        }
-
-        await db.collection("transactions").doc(id).update({ status: status, reason: reason });
-        showNotification(`Transaction successfully marked as ${status}.`, status === 'Rejected' ? 'error' : 'success');
+    // Adjust User Balance Node Volume Parameter
+    async function commitManualBalanceChange(uid) {
+        const newVal = parseFloat(document.getElementById(`bal-${uid}`).value);
+        if(isNaN(newVal)) { adminNotify("🚨 Error: Amount input syntax error value.", "danger"); return; }
+        
+        try {
+            await db.collection("users").doc(uid).update({ balance: newVal });
+            adminNotify("✔ User Core Asset Balance node successfully forced updated.", "success");
+        } catch(err) { adminNotify(`Abort operational packet: ${err.message}`, "danger"); }
     }
 
-    function rejectRequestPrompt(id) {
-        const r = prompt("Enter precise reason text for denial rejection:");
-        if(r === null) return;
-        db.collection("transactions").doc(id).get().then(doc => {
-            const data = doc.data();
-            processRequest(id, data.type, data.uid, data.amount, "Rejected", r);
-        });
+    // Approve Verification & Grant Blue Verified Tick Badge
+    async function approveClientKYC(uid) {
+        if(!confirm("Are you sure you want to VALIDATE this client identity and grant a Blue VIP Tag?")) return;
+        try {
+            await db.collection("users").doc(uid).update({
+                kycStatus: "verified",
+                isVerified: true
+            });
+            adminNotify("✔ KYC Core Approved! Blue VIP Verified Status synchronized live.", "success");
+        } catch(err) { adminNotify(`Error payload: ${err.message}`, "danger"); }
     }
+
+    // Reject KYC and Submit Audit trail Reason Message String Variables
+    async function rejectClientKYC(uid) {
+        const reasonPrompt = prompt("Enter specific reason for KYC document rejection notification message:");
+        if(reasonPrompt === null) return; // cancelled operation
+        const reasonStr = reasonPrompt.trim() || "Your uploaded identification files were blurry or mismatched standard parameters.";
+
+        try {
+            await db.collection("users").doc(uid).update({
+                kycStatus: "rejected",
+                isVerified: false,
+                kycReason: reasonStr
+            });
+            adminNotify("❌ KYC Core Submission Rejected. Reason transmitted back to user pipeline.", "danger");
+        } catch(err) { adminNotify(`Error routing payload: ${err.message}`, "danger"); }
+    }
+
+    // Lightbox image toggle zoom framework
+    function zoomImagePayload(base64) {
+        const modal = document.getElementById('imgModal');
+        const target = document.getElementById('modalTargetImg');
+        target.src = base64;
+        modal.style.display = 'flex';
+    }
+
+    // System Alert UI Feedback Toasts
+    function adminNotify(msg, type='success') {
+        const el = document.getElementById('customToast');
+        el.innerHTML = msg;
+        el.style.background = type === 'success' ? '#00cb9c' : '#ff4a4a';
+        el.style.opacity = '1'; el.style.transform = 'translateY(0)';
+        setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-20px)'; }, 3500);
+    }
+
+    // Fire Up Listener Engine Node Core Loop
+    streamAllClientsToConsole();
 </script>
 </body>
 </html>
