@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenit Global - Admin Core Management</title>
+    <title>Zenit Global - Master Premium Admin Console</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -15,91 +15,129 @@
     <style>
         :root {
             --primary: #ffa500;
+            --primary-glow: rgba(255, 165, 0, 0.15);
             --success: #00ffcc;
-            --bg-dark: #0a0f1d;
+            --bg-dark: #060a13;
             --card-bg: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.07);
             --text-main: #ffffff;
             --text-muted: #6b7c96;
             --danger: #ff4a4a;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-main); padding: 40px; }
+        body { background: var(--bg-dark); color: var(--text-main); padding: 20px; min-height: 100vh; }
 
-        header { margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-        h1 { font-size: 1.6rem; font-weight: 700; color: #fff; }
+        header { margin-bottom: 35px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        h1 { font-size: 1.6rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
         
-        .admin-grid { display: grid; grid-template-columns: 1fr; gap: 30px; }
+        .admin-grid { display: flex; flex-direction: column; gap: 30px; }
         
-        .panel-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 18px; }
-        .panel-card h2 { font-size: 1.1rem; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        /* Premium Layout Panels */
+        .panel-card { 
+            background: var(--card-bg); border: 1px solid var(--border); 
+            padding: 24px; border-radius: 18px; backdrop-filter: blur(15px);
+        }
+        .panel-card h2 { font-size: 1.15rem; margin-bottom: 20px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; }
-        th { background: rgba(255,255,255,0.02); padding: 12px 15px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-        td { padding: 15px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        /* Tables & Mobile Responsiveness System */
+        .table-responsive-wrapper { width: 100%; overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 1000px; text-align: left; }
+        th { background: rgba(255,255,255,0.03); padding: 14px; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+        td { padding: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; color: #fff; }
+        tr:hover { background: rgba(255,255,255,0.01); }
 
-        .biometric-preview-img { width: 80px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); cursor: zoom-in; transition: 0.2s; }
-        .biometric-preview-img:hover { transform: scale(1.1); }
-
-        /* Action Controls Buttons */
-        .btn-ctl { border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; margin-right: 5px; }
-        .btn-approve { background: rgba(0, 255, 204, 0.15); color: var(--success); border: 1px solid rgba(0,255,204,0.3); }
+        /* Component Styling */
+        .biometric-preview-img { width: 75px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .biometric-preview-img:hover { transform: scale(1.05); border-color: var(--primary); }
+        
+        .btn-ctl { border: none; padding: 7px 14px; border-radius: 8px; font-weight: 600; font-size: 0.78rem; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-approve { background: rgba(0, 255, 204, 0.12); color: var(--success); border: 1px solid rgba(0,255,204,0.25); }
         .btn-approve:hover { background: var(--success); color: #000; }
-        .btn-reject { background: rgba(255, 74, 74, 0.15); color: var(--danger); border: 1px solid rgba(255,74,74,0.3); }
+        .btn-reject { background: rgba(255, 74, 74, 0.12); color: var(--danger); border: 1px solid rgba(255,74,74,0.25); }
         .btn-reject:hover { background: var(--danger); color: #fff; }
 
-        .input-inline { background: rgba(0,0,0,0.5); border: 1px solid var(--border); color: #fff; padding: 6px 10px; border-radius: 6px; width: 80px; outline: none; font-size: 0.85rem; }
-        .btn-update-bal { background: var(--primary); color: #000; font-weight: 700; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .input-inline { background: rgba(0,0,0,0.4); border: 1px solid var(--border); color: #fff; padding: 7px 10px; border-radius: 8px; width: 90px; outline: none; font-size: 0.85rem; transition: 0.3s; }
+        .input-inline:focus { border-color: var(--primary); }
+        .btn-update-bal { background: var(--primary); color: #000; font-weight: 700; border: none; padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; }
+        .btn-update-bal:hover { opacity: 0.9; }
 
-        /* Lightbox Image View Pop Modal */
-        .modal-lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
-        .modal-lightbox img { max-width: 85%; max-height: 85%; border-radius: 12px; border: 2px solid var(--border); }
+        /* Lightbox Preview System */
+        .modal-lightbox { display: none; position: fixed; inset: 0; background: rgba(4,8,15,0.95); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .modal-lightbox img { max-width: 85%; max-height: 85%; border-radius: 12px; border: 2px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 
-        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 22px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.85rem; z-index: 10000; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; }
+        /* Badge Framework */
+        .status-badge { padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; display: inline-block; }
+        .badge-pending { background: rgba(255,165,0,0.1); color: #ffa500; border: 1px solid rgba(ffa500,0.2); }
+        .badge-verified { background: rgba(0,255,204,0.1); color: var(--success); border: 1px solid rgba(0,255,204,0.2); }
+        .badge-rejected { background: rgba(255,74,74,0.1); color: var(--danger); border: 1px solid rgba(255,74,74,0.2); }
+
+        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 24px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.85rem; z-index: 10000; opacity: 0; transform: translateY(-10px); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        
+        /* 📱 Mobile UI Adjustments */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            header { text-align: center; margin-bottom: 20px; }
+            .panel-card { padding: 16px; }
+        }
     </style>
 </head>
 <body>
 
-<div id="customToast">Admin Status Notification</div>
+<div id="customToast">Core Admin Hub System Active</div>
 
-<div class="modal-lightbox" id="imgModal" onclick="this.style.display='none'">
-    <img id="modalTargetImg" src="" alt="Enlarged Preview">
-</div>
+<div class="modal-lightbox" id="imgModal" onclick="this.style.display='none'"><img id="modalTargetImg" src=""></div>
 
 <header>
-    <div>
-        <h1>Zenit Global Core Backend</h1>
-        <p style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">Live Node Network Oversight & KYC Ledger Control</p>
-    </div>
-    <button class="btn-ctl" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid var(--border); padding:10px 20px;" onclick="location.reload()">Force Refresh Graph Data</button>
+    <h1>Zenit Global Architecture Backend Terminal</h1>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin-top:4px;">Real-time Secure Control Console & Asset Router</p>
 </header>
 
-<main class="admin-grid">
-    <div class="panel-card">
-        <h2><i class="fa-solid fa-users-gear"></i> Managed Network Clients Registry</h2>
-        <div style="width:100%; overflow-x:auto;">
+<div class="admin-grid">
+    
+    <section class="panel-card">
+        <h2><i class="fa-solid fa-users-gear"></i> System Client Matrix Nodes (ইউজার তথ্য ও KYC কন্ট্রোল)</h2>
+        <div class="table-responsive-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th>Client Node</th>
-                        <th>Registered Email</th>
-                        <th>Wallet Core Balance</th>
-                        <th>KYC Pipeline Status</th>
-                        <th>Identity Document Payload</th>
-                        <th>Biometric Freeze Snap</th>
-                        <th>Operational Access Control Actions</th>
+                        <th>Client Profile Details</th>
+                        <th>Security Matrix</th>
+                        <th>Core Account Balance</th>
+                        <th>KYC Status</th>
+                        <th>Document Evidence</th>
+                        <th>Biometric Snap</th>
+                        <th>Control Operations</th>
                     </tr>
                 </thead>
-                <tbody id="adminUserTableBody">
-                    <tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:30px;">Streaming synchronization with global data cluster nodes...</td></tr>
-                </tbody>
+                <tbody id="adminUserTableBody"><tr><td colspan="7" style="color:var(--text-muted); text-align:center;">Synchronizing real-time stream...</td></tr></tbody>
             </table>
         </div>
-    </div>
-</main>
+    </section>
+
+    <section class="panel-card">
+        <h2><i class="fa-solid fa-money-bill-transfer"></i> Core Ledger Asset Request Streams (ডিপোজিট ও উইথড্রাল রিকোয়েস্ট)</h2>
+        <div class="table-responsive-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Request Timestamp</th>
+                        <th>Client Reference</th>
+                        <th>Transaction Type</th>
+                        <th>Asset Volume</th>
+                        <th>Current Status</th>
+                        <th>Ledger Authorization</th>
+                    </tr>
+                </thead>
+                <tbody id="adminFinancialTableBody"><tr><td colspan="6" style="color:var(--text-muted); text-align:center;">Listening to network data pipelines...</td></tr></tbody>
+            </table>
+        </div>
+    </section>
+
+</div>
 
 <script>
+    // App Firebase Master Web Configurations
     const firebaseConfig = {
       apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo",
       authDomain: "zenith-global-5e2a4.firebaseapp.com",
@@ -112,50 +150,57 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Stream All Global Network Users Realtime
-    function streamAllClientsToConsole() {
-        db.collection("users").orderBy("createdAt", "desc").onSnapshot(snapshot => {
+    // 1. Live Stream Network Clients Matrix
+    function initUserPipelineStream() {
+        db.collection("users").onSnapshot(snapshot => {
             const tbody = document.getElementById('adminUserTableBody');
             tbody.innerHTML = "";
-
-            if(snapshot.empty) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:20px;">No registered user profiles found.</td></tr>`;
-                return;
-            }
+            if(snapshot.empty) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No client nodes detected.</td></tr>`; return; }
 
             snapshot.forEach(doc => {
                 const user = doc.data();
                 const uid = doc.id;
                 
-                // Parse Dynamic KYC Badge Output
-                let statusBadgeStyle = "color: var(--text-muted); font-weight:600;";
-                if(user.kycStatus === 'pending') statusBadgeStyle = "color: #ffa500; font-weight:700;";
-                if(user.kycStatus === 'verified') statusBadgeStyle = "color: var(--success); font-weight:700;";
-                if(user.kycStatus === 'rejected') statusBadgeStyle = "color: var(--danger); font-weight:700;";
-
-                // Parse Biometric Thumbnail Images Render Box
-                const hasImage = user.kycBiometricBase64 ? true : false;
-                const imgElement = hasImage ? `<img src="${user.kycBiometricBase64}" class="biometric-preview-img" onclick="zoomImagePayload('${user.kycBiometricBase64}')">` : `<span style="color:var(--text-muted); font-size:0.8rem;">No Snap</span>`;
+                // Realtime Image Base64 Verification Setup
+                const imgTag = user.kycBiometricBase64 ? 
+                    `<img src="${user.kycBiometricBase64}" class="biometric-preview-img" onclick="zoom('${user.kycBiometricBase64}')">` : 
+                    `<span style="color:var(--text-muted); font-style:italic;">No Snapshot</span>`;
                 
+                // Verification Badges Rendering Engine
+                let kycBadge = `<span class="status-badge badge-pending">Unverified</span>`;
+                if(user.kycStatus === 'pending') kycBadge = `<span class="status-badge badge-pending">Pending</span>`;
+                else if(user.kycStatus === 'verified') kycBadge = `<span class="status-badge badge-verified">Verified</span>`;
+                else if(user.kycStatus === 'rejected') kycBadge = `<span class="status-badge badge-rejected">Rejected</span>`;
+
                 tbody.innerHTML += `
                     <tr>
                         <td>
-                            <strong style="color:#fff;">${user.firstName || 'User'} ${user.lastName || ''}</strong><br>
-                            <span style="font-size:0.78rem; color:var(--text-muted);">@${user.username || 'unknown'}</span>
+                            <strong style="font-size:0.9rem;">${user.firstName || 'New'} ${user.lastName || 'Node'}</strong><br>
+                            <span style="color:var(--primary); font-size:0.78rem;">@${user.username || 'unknown'}</span>
                         </td>
-                        <td>${user.email || 'N/A'}</td>
                         <td>
-                            <input type="number" step="0.01" class="input-inline" id="bal-${uid}" value="${Number(user.balance || 0).toFixed(2)}">
-                            <button class="btn-update-bal" onclick="commitManualBalanceChange('${uid}')">Set</button>
+                            <span style="color:var(--text-muted);">E:</span> ${user.email || 'N/A'}<br>
+                            <span style="color:var(--text-muted);">P:</span> ${user.password || '••••••••'}<br>
+                            <span style="color:var(--text-muted);">M:</span> ${user.phone || 'N/A'}<br>
+                            <span style="color:var(--text-muted);">Ref By:</span> ${user.referrer || 'None'}
                         </td>
-                        <td style="${statusBadgeStyle}">${(user.kycStatus || 'unverified').toUpperCase()}</td>
-                        <td style="font-size:0.8rem; line-height:1.3;">
-                            ${user.kycDocumentType ? `<strong>${user.kycDocumentType}</strong><br><span style="color:var(--text-muted);">No: ${user.kycSerialNo || 'N/A'}</span>` : '<span style="color:var(--text-muted);">No Document</span>'}
-                        </td>
-                        <td>${imgElement}</td>
                         <td>
-                            <button class="btn-ctl btn-approve" onclick="approveClientKYC('${uid}')"><i class="fa-solid fa-certificate"></i> Approve (Blue Tag)</button>
-                            <button class="btn-ctl btn-reject" onclick="rejectClientKYC('${uid}')"><i class="fa-solid fa-circle-xmark"></i> Reject</button>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                <input type="number" step="0.01" class="input-inline" id="balance-${uid}" value="${Number(user.balance || 0).toFixed(2)}">
+                                <button class="btn-update-bal" onclick="commitBalanceUpdate('${uid}')">Set</button>
+                            </div>
+                        </td>
+                        <td>${kycBadge}</td>
+                        <td>
+                            <strong>${user.kycDocumentType || 'None'}</strong><br>
+                            <span style="color:var(--text-muted); font-size:0.75rem;">${user.kycSerialNo || ''}</span>
+                        </td>
+                        <td>${imgTag}</td>
+                        <td>
+                            <div style="display:flex; flex-direction:column; gap:4px;">
+                                <button class="btn-ctl btn-approve" onclick="executeKycApproval('${uid}')"><i class="fa-solid fa-user-check"></i> Approve</button>
+                                <button class="btn-ctl btn-reject" onclick="executeKycRejection('${uid}')"><i class="fa-solid fa-user-xmark"></i> Reject</button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -163,64 +208,109 @@
         });
     }
 
-    // Adjust User Balance Node Volume Parameter
-    async function commitManualBalanceChange(uid) {
-        const newVal = parseFloat(document.getElementById(`bal-${uid}`).value);
-        if(isNaN(newVal)) { adminNotify("🚨 Error: Amount input syntax error value.", "danger"); return; }
-        
-        try {
-            await db.collection("users").doc(uid).update({ balance: newVal });
-            adminNotify("✔ User Core Asset Balance node successfully forced updated.", "success");
-        } catch(err) { adminNotify(`Abort operational packet: ${err.message}`, "danger"); }
-    }
+    // 2. Live Stream Financial Operations Router (Deposits / Withdrawals)
+    function initFinancialPipelineStream() {
+        db.collection("history").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+            const tbody = document.getElementById('adminFinancialTableBody');
+            tbody.innerHTML = "";
+            if(snapshot.empty) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No financial requests available.</td></tr>`; return; }
 
-    // Approve Verification & Grant Blue Verified Tick Badge
-    async function approveClientKYC(uid) {
-        if(!confirm("Are you sure you want to VALIDATE this client identity and grant a Blue VIP Tag?")) return;
-        try {
-            await db.collection("users").doc(uid).update({
-                kycStatus: "verified",
-                isVerified: true
+            snapshot.forEach(doc => {
+                const log = doc.data();
+                const logId = doc.id;
+                
+                let flowBadge = `<span class="status-badge badge-pending">${log.status || 'Pending Gateway'}</span>`;
+                if(log.status === 'Completed Gateway' || log.status === 'Synchronized') flowBadge = `<span class="status-badge badge-verified">Success</span>`;
+                else if(log.status === 'Rejected Asset Flow') flowBadge = `<span class="status-badge badge-rejected">Rejected</span>`;
+
+                // Control Action buttons conditional display
+                let actionsContainer = `<span style="color:var(--text-muted); font-style:italic;">Settled</span>`;
+                if(log.status !== 'Completed Gateway' && log.status !== 'Synchronized' && log.status !== 'Rejected Asset Flow') {
+                    actionsContainer = `
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-ctl btn-approve" onclick="settleAssetRequest('${logId}', '${log.uid}', ${log.amount}, 'approve')">Approve</button>
+                            <button class="btn-ctl btn-reject" onclick="settleAssetRequest('${logId}', '${log.uid}', ${log.amount}, 'reject')">Reject</button>
+                        </div>
+                    `;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'Processing...'}</td>
+                        <td><span style="font-family:monospace; font-size:0.8rem; background:rgba(255,255,255,0.05); padding:3px 6px; border-radius:4px;">${log.uid || 'Global'}</span></td>
+                        <td><strong>${log.type || 'Transfer Link'}</strong></td>
+                        <td style="color:${log.amount >= 0 ? '#00ffcc' : '#ff4a4a'}; font-weight:700;">
+                            ${log.amount >= 0 ? '+' : ''}$${Math.abs(log.amount).toFixed(2)}
+                        </td>
+                        <td>${flowBadge}</td>
+                        <td>${actionsContainer}</td>
+                    </tr>
+                `;
             });
-            adminNotify("✔ KYC Core Approved! Blue VIP Verified Status synchronized live.", "success");
-        } catch(err) { adminNotify(`Error payload: ${err.message}`, "danger"); }
+        });
     }
 
-    // Reject KYC and Submit Audit trail Reason Message String Variables
-    async function rejectClientKYC(uid) {
-        const reasonPrompt = prompt("Enter specific reason for KYC document rejection notification message:");
-        if(reasonPrompt === null) return; // cancelled operation
-        const reasonStr = reasonPrompt.trim() || "Your uploaded identification files were blurry or mismatched standard parameters.";
-
-        try {
-            await db.collection("users").doc(uid).update({
-                kycStatus: "rejected",
-                isVerified: false,
-                kycReason: reasonStr
-            });
-            adminNotify("❌ KYC Core Submission Rejected. Reason transmitted back to user pipeline.", "danger");
-        } catch(err) { adminNotify(`Error routing payload: ${err.message}`, "danger"); }
+    // 3. Control Operations Core Action Drivers
+    async function commitBalanceUpdate(uid) {
+        const targetVal = parseFloat(document.getElementById(`balance-${uid}`).value);
+        if(isNaN(targetVal)) { popAdminNotification("Invalid number sequence entered.", "danger"); return; }
+        await db.collection("users").doc(uid).update({ balance: targetVal });
+        popAdminNotification("Balance configuration updated successfully.", "success");
     }
 
-    // Lightbox image toggle zoom framework
-    function zoomImagePayload(base64) {
+    async function executeKycApproval(uid) {
+        await db.collection("users").doc(uid).update({ kycStatus: "verified", isVerified: true });
+        popAdminNotification("Client Node KYC Verification Confirmed.", "success");
+    }
+
+    async function executeKycRejection(uid) {
+        const feedbackMsg = prompt("Specify Regulatory Rejection Reason (ইউজারের ড্যাশবোর্ডে শো করবে):");
+        if(feedbackMsg === null) return;
+        await db.collection("users").doc(uid).update({ kycStatus: "rejected", isVerified: false, kycReason: feedbackMsg });
+        popAdminNotification("Client Identity Submission Terminated.", "danger");
+    }
+
+    async function settleAssetRequest(logId, uid, amount, executionType) {
+        const userRef = db.collection("users").doc(uid);
+        if(executionType === 'approve') {
+            // If it's a deposit asset routing, add the money to the user wallet on final confirmation
+            if(amount > 0) {
+                await userRef.update({ balance: firebase.firestore.FieldValue.increment(amount) });
+            }
+            await db.collection("history").doc(logId).update({ status: "Completed Gateway" });
+            popAdminNotification("Asset transaction approved & updated.", "success");
+        } else {
+            // If it's a rejection of a withdrawal, reverse/return the funds back to the client account
+            if(amount < 0) {
+                await userRef.update({ balance: firebase.firestore.FieldValue.increment(Math.abs(amount)) });
+            }
+            await db.collection("history").doc(logId).update({ status: "Rejected Asset Flow" });
+            popAdminNotification("Asset transaction rejected & returned.", "danger");
+        }
+    }
+
+    // 4. Interface Mechanics Utilities
+    function zoom(sourcePayload) {
         const modal = document.getElementById('imgModal');
-        const target = document.getElementById('modalTargetImg');
-        target.src = base64;
+        document.getElementById('modalTargetImg').src = sourcePayload;
         modal.style.display = 'flex';
     }
 
-    // System Alert UI Feedback Toasts
-    function adminNotify(msg, type='success') {
-        const el = document.getElementById('customToast');
-        el.innerHTML = msg;
-        el.style.background = type === 'success' ? '#00cb9c' : '#ff4a4a';
-        el.style.opacity = '1'; el.style.transform = 'translateY(0)';
-        setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(-20px)'; }, 3500);
+    function popAdminNotification(msg, type) {
+        const toast = document.getElementById('customToast');
+        toast.innerText = msg;
+        toast.style.background = type === 'success' ? '#00cb9c' : '#ff4a4a';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+        setTimeout(() => { 
+            toast.style.opacity = '0'; 
+            toast.style.transform = 'translateY(-10px)'; 
+        }, 3000);
     }
 
-    // Fire Up Listener Engine Node Core Loop
-    streamAllClientsToConsole();
+    // Initialization Pipelines Boot
+    initUserPipelineStream();
+    initFinancialPipelineStream();
 </script>
 </body>
 </html>
