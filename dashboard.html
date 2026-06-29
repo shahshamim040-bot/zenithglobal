@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Firebase Legacy Core SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -40,7 +39,7 @@
         .menu-trigger { font-size: 1.3rem; color: #fff; cursor: pointer; background: none; border: none; }
 
         /* 📈 Live Scrolling Marquee Notice Box */
-        .notice-container { background: rgba(255, 165, 0, 0.06); border-y: 1px solid rgba(255,165,0,0.1); padding: 8px; font-size: 0.8rem; overflow: hidden; white-space: nowrap; display: flex; align-items: center; }
+        .notice-container { background: rgba(255, 165, 0, 0.06); border-top: 1px solid rgba(255,165,0,0.1); border-bottom: 1px solid rgba(255,165,0,0.1); padding: 8px; font-size: 0.8rem; overflow: hidden; white-space: nowrap; display: flex; align-items: center; }
         .notice-label { background: var(--primary); color: #000; font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-right: 10px; z-index: 2; }
         .notice-marquee { display: inline-block; animation: marquee 22s linear infinite; color: #fff; }
         @keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
@@ -64,11 +63,9 @@
         /* 📉 Real-Time Micro Trading Signals Engine Widget */
         .widget-card { background: var(--panel-bg); margin: 0 14px 16px 14px; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 14px; }
         .widget-title { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-        .signal-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .signal-asset { font-weight: 600; font-size: 0.85rem; }
-        .signal-action { padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-        .sig-call { background: rgba(0,255,204,0.1); color: var(--success); }
-        .sig-put { background: rgba(255,74,74,0.1); color: var(--danger); }
+        
+        /* Dynamic Canvas Graph Style */
+        #tradingGraph { width: 100%; height: 180px; background: #020617; border-radius: 10px; display: block; margin-top: 5px; }
 
         /* 💎 Investment Tier Node Matrix Grid */
         .section-header { padding: 0 14px 10px 14px; font-size: 0.95rem; font-weight: 700; color: #fff; display: flex; justify-content: space-between; }
@@ -90,10 +87,20 @@
         .btn-submit-action { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; margin-top: 10px; cursor: pointer; }
         
         .calc-preview-box { background: rgba(255,165,0,0.04); border: 1px dashed rgba(255,165,0,0.2); padding: 10px; border-radius: 8px; font-size: 0.8rem; margin: 10px 0; line-height: 1.4; color: #fff; }
+        .notice-danger { background: rgba(255, 74, 74, 0.1); border-left: 4px solid var(--danger); padding: 12px; border-radius: 8px; color: #ffbcbc; font-size: 0.82rem; margin-bottom: 15px; }
 
-        /* 📋 Live History Stream Timeline */
-        .history-item { background: var(--panel-bg); border-left: 3px solid var(--primary); padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem; }
-        .history-meta { display: flex; justify-content: space-between; margin-bottom: 4px; color: var(--text-muted); }
+        /* 📋 Live History Modern Table Framework */
+        .history-table-container { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.04); border-radius: 14px; overflow-x: auto; margin-top: 10px; }
+        .history-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem; }
+        .history-table th, .history-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .history-table th { background: rgba(0,0,0,0.2); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+        .history-table td { color: #fff; }
+        
+        /* Global Status Badges */
+        .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; display: inline-block; }
+        .status-success { background: rgba(0, 255, 204, 0.15); color: var(--success); }
+        .status-pending { background: rgba(255, 165, 0, 0.15); color: var(--primary); }
+        .status-rejected { background: rgba(255, 74, 74, 0.15); color: var(--danger); }
 
         /* 🧭 Luxury Side Navigation System Drawer */
         .side-drawer { position: fixed; inset: 0; background: rgba(4,6,12,0.96); z-index: 1000; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); padding: 24px; }
@@ -108,17 +115,17 @@
         .drawer-item-logout { border-color: rgba(255,74,74,0.1); color: var(--danger); }
         .drawer-item-logout i { color: var(--danger); }
 
-        /* Global Status Badges */
         .badge-verify-tick { background: var(--success); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 5px; }
-
         #toastNotify { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(10px); background: #ffa500; color: #000; font-weight: 700; font-size: 0.82rem; padding: 12px 24px; border-radius: 30px; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: 0.3s; }
+        
+        ul { padding-left: 18px; margin: 8px 0; }
+        li { margin-bottom: 6px; }
     </style>
 </head>
 <body>
 
 <div id="toastNotify">Notification Triggered</div>
 
-<!-- 🧭 SIDE DRAWER NAVIGATION SYSTEM -->
 <div class="side-drawer" id="sideDrawer">
     <button class="drawer-close-btn" onclick="toggleAppDrawer()"><i class="fa-solid fa-xmark"></i></button>
     <div class="drawer-welcome">
@@ -137,28 +144,22 @@
     </div>
 </div>
 
-<!-- TOP MASTER BAR NAVIGATION -->
 <nav class="top-nav">
     <div class="brand-title">ZENIT<span>GLOBAL</span></div>
     <button class="menu-trigger" onclick="toggleAppDrawer()"><i class="fa-solid fa-bars-staggered"></i></button>
 </nav>
 
-<!-- LIVE SCROLLING MARQUEE NOTICE BOX -->
 <div class="notice-container">
     <span class="notice-label"><i class="fa-solid fa-bullhorn"></i> INFO</span>
     <span class="notice-marquee" id="dynamicNoticeNode">Establishing contact with the backend core pipeline system feeds...</span>
 </div>
 
-
-<!-- 🏠 SCREEN VIEW: CORE MATRIX HOME -->
 <div id="viewHome" class="app-view-panel panel-active">
     
-    <!-- EYE TOGGLE SYSTEM -->
     <div class="eye-toggle-master" onclick="toggleBalanceVisibility()">
         <i class="fa-solid fa-eye-slash" id="eyeIcon"></i> Hide Dashboard Balances
     </div>
 
-    <!-- 💰 3-TIER BALANCE BOX GRID -->
     <div class="balance-grid">
         <div class="balance-box">
             <i class="fa-solid fa-vault"></i>
@@ -177,32 +178,37 @@
         </div>
     </div>
 
-    <!-- QUICK OPERATIONS CONTROLS -->
     <div class="action-container">
         <div class="act-btn act-btn-dep" onclick="switchView('viewDeposit')"><i class="fa-solid fa-circle-plus"></i> Deposit</div>
         <div class="act-btn act-btn-wth" onclick="switchView('viewWithdraw')"><i class="fa-solid fa-circle-minus"></i> Withdraw</div>
     </div>
 
-    <!-- REAL-TIME MICRO TRADING SIGNALS OPTION LAYOUT -->
     <div class="widget-card">
-        <div class="widget-title"><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> Live Expert System Trading Indicators</div>
-        <div id="signalDashboardStream">
-            <div class="signal-row"><span>BTC/USDT</span><span class="signal-action sig-call">STRONG BUY</span></div>
-            <div class="signal-row"><span>ETH/USDT</span><span class="signal-action sig-put">STRONG SELL</span></div>
-            <div class="signal-row"><span>SOL/USDT</span><span class="signal-action sig-call">STRONG BUY</span></div>
-        </div>
+        <div class="widget-title"><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> Live Expert System Trading Indicator Graph</div>
+        <canvas id="tradingGraph"></canvas>
     </div>
 
-    <!-- 💎 PLATFORM INVESTMENT PLANS CHANNELS -->
     <div class="section-header"><div><i class="fa-solid fa-cubes"></i> Active Node Packages</div><div style="color:var(--primary); font-size:0.8rem;">Min Dep: $6.00</div></div>
+    
+    <div style="padding: 0 14px 10px 14px;">
+        <label><i class="fa-solid fa-wallet"></i> Select Payment Source for Node Deployment:</label>
+        <select id="planPurchaseSource" class="form-control" style="background: rgba(255,255,255,0.05); padding: 8px 12px;">
+            <option value="balance">Deposit Balance</option>
+            <option value="miningBalance">Mining Profit Wallet</option>
+            <option value="referBalance">Bonus/Ref Wallet</option>
+        </select>
+    </div>
+
     <div class="plan-grid" id="planRenderMatrix"></div>
 </div>
 
-
-<!-- 📥 SCREEN VIEW: DEPOSIT FLOW INTERFACE -->
 <div id="viewDeposit" class="app-view-panel">
     <h3 style="margin-bottom:15px;"><i class="fa-solid fa-wallet" style="color:var(--success)"></i> Asset Deposit System Portal</h3>
     
+    <div class="notice-danger">
+        <strong>⚠️ বিশেষ সতর্কবার্তা:</strong> এখানে শুধু ক্যাশআউট গ্রহণ করা হবে। কোনো প্রকার সেন্ড মানি করা যাবে না।
+    </div>
+
     <div class="form-group">
         <label>Select Financial Asset Transfer Pipeline</label>
         <select id="depMethod" onchange="handleDepositGatewayToggle()">
@@ -217,12 +223,10 @@
         <input type="number" id="depAmount" class="form-control" placeholder="Minimum $6.00" oninput="runDepositCalculationEngine()">
     </div>
 
-    <!-- REAL-TIME AUTO CALCULATOR & SYSTEM INSTRUCTIONS FEED -->
     <div class="calc-preview-box" id="calcGatewayPreview">
         Please complete the processing input form parameters correctly.
     </div>
 
-    <!-- FIAT GATEWAY BLOCK CONTROLS -->
     <div id="fiatInputBlocks">
         <div class="form-group">
             <label>Sender Mobile Network Account Number</label>
@@ -234,7 +238,6 @@
         </div>
     </div>
 
-    <!-- CRYPTO BINANCE SYSTEM BLOCK -->
     <div id="cryptoInputBlock" style="display:none;">
         <div class="form-group">
             <label>Your Origin Binance Account User-ID (Pay-ID/App-ID)</label>
@@ -250,12 +253,15 @@
     <button class="btn-submit-action" onclick="commitDepositTransactionPipeline()"><i class="fa-solid fa-shield-halved"></i> Authorize Deposit Transmission</button>
 </div>
 
-
-<!-- 📤 SCREEN VIEW: WITHDRAW RESOURCE TRANSFERS -->
 <div id="viewWithdraw" class="app-view-panel">
     <h3 style="margin-bottom:15px;"><i class="fa-solid fa-money-bill-transfer" style="color:var(--primary)"></i> Asset Withdrawal Settlement</h3>
-    <div style="background:rgba(255,165,0,0.06); padding:10px; border-radius:8px; font-size:0.78rem; margin-bottom:15px; color:var(--primary)">
-        Notice: Initial wallet audit withdrawal limit is fixed at $12.00. Standard dynamic free liquidity tiers activate instantly upon completion of the initial settlement clearance.
+    
+    <div class="form-group">
+        <label>Choose Withdrawal Wallet Source</label>
+        <select id="withdrawSourceWallet" class="form-control">
+            <option value="miningBalance">Mining Profit Wallet</option>
+            <option value="referBalance">Bonus/Ref Wallet</option>
+        </select>
     </div>
 
     <div class="form-group">
@@ -289,8 +295,6 @@
     <button class="btn-submit-action" onclick="commitWithdrawalRequestPipeline()"><i class="fa-solid fa-bolt"></i> Initiate Settlement Transfer</button>
 </div>
 
-
-<!-- 🪪 SCREEN VIEW: SECURE KYC PROFILE SYSTEM -->
 <div id="viewKyc" class="app-view-panel">
     <h3 style="margin-bottom:15px;"><i class="fa-solid fa-fingerprint"></i> Dynamic KYC Authentication System</h3>
     <div class="form-group">
@@ -302,12 +306,26 @@
         </select>
     </div>
     <div class="form-group">
-        <label>Document Registry Serial Number</label>
-        <input type="text" id="kycSerial" class="form-control" placeholder="Enter Serial reference text">
+        <label>Document Registry Serial Number / NID Number</label>
+        <input type="text" id="kycSerial" class="form-control" placeholder="Enter NID/Document Number" oninput="runKycAutoFillEngine()">
+    </div>
+
+    <div id="bdKycAutofillBlock" style="display:none; background: rgba(0,255,204,0.04); border: 1px solid rgba(0,255,204,0.15); padding: 12px; border-radius: 10px; margin-bottom: 12px; font-size: 0.85rem;">
+        <p style="margin-bottom: 4px; color: var(--success);"><strong><i class="fa-solid fa-circle-check"></i> Bangladesh National ID Database Match:</strong></p>
+        <div style="padding-left: 10px; line-height: 1.5;">
+            <div>👨‍‍ পিতার নাম: <span id="autofillFather" style="color:#fff;">মোঃ আব্দুর রহমান</span></div>
+            <div>👩‍‍ মাতার নাম: <span id="autofillMother" style="color:#fff;">মোসাম্মৎ ফাতেমা বেগম</span></div>
+            <div>📍 ঠিকানা: <span id="autofillAddress" style="color:#fff;">চাঁদপুর, ফরিদগঞ্জ, বাংলাদেশ</span></div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Upload Document Front Side (সামনের অংশ)</label>
+        <input type="file" id="kycDocFile" class="form-control" accept="image/*">
     </div>
     <div class="form-group">
-        <label>Upload Document Snapshot Evidence</label>
-        <input type="file" id="kycDocFile" class="form-control" accept="image/*">
+        <label>Upload Document Back Side (পেছনের অংশ)</label>
+        <input type="file" id="kycDocBackFile" class="form-control" accept="image/*">
     </div>
     <div class="form-group">
         <label>Live Facial Biometric Verification Snapshot</label>
@@ -316,24 +334,49 @@
     <button class="btn-submit-action" onclick="commitKycIdentityStructure()"><i class="fa-solid fa-cloud-arrow-up"></i> Dispatch Verification Ledger</button>
 </div>
 
-
-<!-- 📋 SCREEN VIEW: USER LIVE HISTORY PIPELINES -->
 <div id="viewHistory" class="app-view-panel">
     <h3 style="margin-bottom:15px;"><i class="fa-solid fa-list-check"></i> Real-time Network Ledger Audits</h3>
-    <div id="userLedgerHistoryStream">Synchronizing current pipeline transaction entries...</div>
+    
+    <div class="history-table-container">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Volume/Details</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Reason</th>
+                </tr>
+            </thead>
+            <tbody id="userLedgerHistoryStreamTable">
+                <tr>
+                    <td colspan="5" style="text-align:center; color:var(--text-muted);">Synchronizing network database ledger data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-
-<!-- 🔗 SCREEN VIEW: AFFILIATE NETWORK ENGINE -->
 <div id="viewAffiliate" class="app-view-panel">
     <h3 style="margin-bottom:15px;"><i class="fa-solid fa-network-wired"></i> Affiliate Program Hub</h3>
     <div class="form-group">
         <label>Your Personal Network Inviter Refer-Link Token</label>
         <div style="display:flex; gap:10px;">
             <input type="text" id="refCopyLinkInput" class="form-control" readonly style="background:rgba(255,255,255,0.05)">
-            <button class="btn-update-bal" style="background:var(--primary); padding:0 15px; border-radius:10px; font-weight:700; color:#000;" onclick="copyAffiliateLinkToken()">COPY</button>
+            <button class="btn-update-bal" style="background:var(--primary); padding:0 15px; border-radius:10px; font-weight:700; color:#000; border:none; cursor:pointer;" onclick="copyAffiliateLinkToken()">COPY</button>
         </div>
     </div>
+    
+    <div style="background: rgba(255,165,0,0.05); border: 1px solid rgba(255,165,0,0.15); padding: 14px; border-radius: 12px; font-size: 0.82rem; line-height: 1.5; margin-bottom: 15px; color:#ffe8c4;">
+        <strong style="color: var(--primary); font-size: 0.9rem;"><i class="fa-solid fa-gift"></i> রেফারেল ও অটো বোনাস পলিসি:</strong>
+        <ul>
+            <li>আপনার রেফার লিংকে ক্লিক করে নতুন অ্যাকাউন্ট খুললে রেফারার আইডি অটো-সেট হয়ে যাবে।</li>
+            <li>যিনি রেফার করবেন (Referrer) তিনি পাবেন সরাসরি <strong>$১.০০ অটো বোনাস</strong>।</li>
+            <li>যিনি নতুন জয়েন করবেন (Referee) তিনিও পাবেন সরাসরি <strong>$১.০০ অটো বোনাস</strong>।</li>
+            <li><strong>বাধ্যতামূলক শর্ত:</strong> আমন্ত্রিত নতুন মেম্বার অ্যাকাউন্ট খোলার পর প্রথম যেকোনো একটি <strong>"Active Node Package/Plan"</strong> সফলভাবে ক্রয় করলেই কেবল সিস্টেম স্বয়ংক্রিয়ভাবে উভয়ের ওয়ালেটে $১ বোনাস ক্রেডিট করে দিবে।</li>
+        </ul>
+    </div>
+
     <div style="background:var(--panel-bg); padding:15px; border-radius:14px; border:1px solid rgba(255,255,255,0.04);">
         <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px;">Affiliate Matrix Statistics:</p>
         <h4 style="font-size:1.1rem; color:#fff;" id="refCountMeta">Total Affiliates Recruited: 0 Users</h4>
@@ -341,8 +384,6 @@
     </div>
 </div>
 
-
-<!-- 📞 SCREEN VIEW: HELPCENTER TERMINAL SUPPORT -->
 <div id="viewSupport" class="app-view-panel">
     <h3 style="margin-bottom:15px;"><i class="fa-solid fa-headset"></i> Global Core Support Desk</h3>
     <div style="background:var(--panel-bg); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:20px; line-height:1.7; font-size:0.9rem;">
@@ -351,7 +392,6 @@
         <p><strong style="color:var(--primary)"><i class="fa-solid fa-phone-volume"></i> Hotlines Carrier Number:</strong><br> +1 (212) 555-0198 (Global Desk Toll-Free)</p>
     </div>
 </div>
-
 
 <script>
     // 🔏 Anti-Malicious Key Injection Setup
@@ -399,10 +439,28 @@
     auth.onAuthStateChanged(user => {
         if (user) {
             setupRealtimeSynchronizedStreams(user.uid);
+            checkForIncomingReferralParameter(user.uid);
         } else {
             window.location.href = "login.html"; 
         }
     });
+
+    // URL রেফারেল কোড চেক এবং সিস্টেমে সেভ ইঞ্জিন
+    function checkForIncomingReferralParameter(uid) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        if (refCode) {
+            db.collection("users").doc(uid).get().then(doc => {
+                if(doc.exists && !doc.data().referrer) {
+                    db.collection("users").doc(uid).update({
+                        referrer: refCode
+                    }).then(() => {
+                        popToastNotification("Referral tracking active via link code: " + refCode, "success");
+                    });
+                }
+            });
+        }
+    }
 
     // 2. Realtime Synchronized Pipeline Streams Dashboard Hub
     function setupRealtimeSynchronizedStreams(uid) {
@@ -436,45 +494,38 @@
             }
         });
 
-        // Transaction History Streams Real-Time Sync Pipeline
+        // Transaction History Streams Table Render Real-Time Sync Pipeline
         db.collection("history").where("uid", "==", uid).orderBy("timestamp", "desc").onSnapshot(snap => {
-            const container = document.getElementById('userLedgerHistoryStream');
-            container.innerHTML = "";
-            if(snap.empty) { container.innerHTML = "<p style='color:var(--text-muted)'>No events logged inside database system pipeline ledger.</p>"; return; }
+            const tableBody = document.getElementById('userLedgerHistoryStreamTable');
+            tableBody.innerHTML = "";
+            if(snap.empty) { 
+                tableBody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:var(--text-muted)'>No events logged inside database system pipeline ledger.</td></tr>"; 
+                return; 
+            }
 
             snap.forEach(doc => {
                 const log = doc.data();
-                let statusIconStyle = `color:var(--primary);`;
-                if(log.status === "Completed Gateway" || log.status === "Synchronized") statusIconStyle = `color:var(--success);`;
-                if(log.status === "Rejected Asset Flow") statusIconStyle = `color:var(--danger);`;
+                let statusClass = `status-pending`;
+                if(log.status === "Completed Gateway" || log.status === "Synchronized" || log.status === "Approved") statusClass = `status-success`;
+                if(log.status === "Rejected Asset Flow" || log.status === "Rejected") statusClass = `status-rejected`;
 
-                container.innerHTML += `
-                    <div class="history-item">
-                        <div class="history-meta">
-                            <span><i class="fa-solid fa-receipt"></i> <strong>${log.type}</strong></span>
-                            <span>${log.timestamp ? new Date(log.timestamp.seconds*1000).toLocaleDateString() : 'Sync...'}</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <span style="font-size:0.95rem; font-weight:700; color:#fff;">$${Math.abs(log.amount).toFixed(2)}</span>
-                            <span style="font-size:0.72rem; ${statusIconStyle} font-weight:700;"><i class="fa-solid fa-circle-nodes"></i> ${log.status}</span>
-                        </div>
-                    </div>
+                let displayReason = log.reason ? log.reason : "-";
+                let displayDate = log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleDateString() : 'Sync...';
+
+                tableBody.innerHTML += `
+                    <tr>
+                        <td><strong>${log.type}</strong></td>
+                        <td>$${Math.abs(log.amount).toFixed(2)}</td>
+                        <td>${displayDate}</td>
+                        <td><span class="status-badge ${statusClass}">${log.status || 'Pending'}</span></td>
+                        <td><span style="color:var(--text-muted); font-size:0.78rem;">${displayReason}</span></td>
+                    </tr>
                 `;
             });
         });
 
-        // Trading Signals Mock Dynamic Pulse Logic Engine Setup
-        setInterval(() => {
-            const actions = ["STRONG BUY", "STRONG SELL", "BUY", "SELL"];
-            const assets = ["BTC/USDT", "ETH/USDT", "SOL/USDT"];
-            const stream = document.getElementById('signalDashboardStream');
-            stream.innerHTML = "";
-            assets.forEach(asset => {
-                const randomAct = actions[Math.floor(Math.random() * actions.length)];
-                const badgeClass = randomAct.includes("BUY") ? "sig-call" : "sig-put";
-                stream.innerHTML += `<div class="signal-row"><span>${asset}</span><span class="signal-action ${badgeClass}">${randomAct}</span></div>`;
-            });
-        }, 4500);
+        // Initialize Live Indicator Graph
+        initTradingLiveCanvasGraph();
     }
 
     // 3. Main Dashboard UI Compilation Update Rendering Engine
@@ -493,7 +544,7 @@
         }
 
         document.getElementById('drUsername').innerHTML = (u.username || "Client") + kycVerifiedBadge;
-        document.getElementById('refCopyLinkInput').value = window.location.origin + "/register.html?ref=" + (u.username || "");
+        document.getElementById('refCopyLinkInput').value = window.location.origin + window.location.pathname + "?ref=" + (u.username || "");
 
         // Floating Point Balances Parsing Core Setup
         const dBal = Number(u.balance || 0).toFixed(2);
@@ -501,9 +552,9 @@
         const rBal = Number(u.referBalance || 0).toFixed(2);
 
         if(balancesHiddenStatusState) {
-            document.getElementById('valDep').innerText = "••••••";
-            document.getElementById('valMin').innerText = "••••••";
-            document.getElementById('valRef').innerText = "••••••";
+            document.getElementById('valDep').innerText = "•••••";
+            document.getElementById('valMin').innerText = "•••••";
+            document.getElementById('valRef').innerText = "•••••";
         } else {
             document.getElementById('valDep').innerText = "$" + dBal;
             document.getElementById('valMin').innerText = "$" + mBal;
@@ -529,29 +580,73 @@
         });
     }
 
-    // 4. Investment Core Purchase Processing Pipeline
+    // 4. Investment Core Purchase Processing Pipeline (যেকোনো ব্যালেন্স সাপোর্ট)
     async function executeBuyInvestmentNode(cost, days, profit, index) {
         const u = currentLoggedInUserNode;
-        // Purchase check engine validator rules logic
-        if(Number(u.referBalance || 0) < cost) {
-            popToastNotification("Insufficient funds inside your Affiliate/Bonus Wallet container to allocate this plan.", "danger");
+        const selectedSourceField = document.getElementById('planPurchaseSource').value;
+        const currentWalletBalance = Number(u[selectedSourceField] || 0);
+
+        if(currentWalletBalance < cost) {
+            popToastNotification("Insufficient funds inside your selected wallet container to allocate this plan.", "danger");
             return;
         }
 
-        // Deduct reference balance and append processing transaction item to node database record logs
-        const updatedRefBal = Number(u.referBalance || 0) - cost;
-        
-        await db.collection("users").doc(u.uid).update({
-            referBalance: updatedRefBal
-        });
+        // Deduct balance from targeted chosen wallet source
+        const newWalletValue = currentWalletBalance - cost;
+        let updatePayload = {};
+        updatePayload[selectedSourceField] = newWalletValue;
 
+        // চেক করা হবে এটাই নতুন ইউজারের প্রথম প্ল্যান কেনা কি না, যদি রেফার লিংকে এসে থাকে
+        let referBonusGrantedTrigger = false;
+        if(u.referrer && !u.firstPlanPurchasedDone) {
+            updatePayload.firstPlanPurchasedDone = true;
+            updatePayload.referBalance = Number(u.referBalance || 0) + 1.00; // নিজে ১$ পেলো
+            referBonusGrantedTrigger = true;
+        }
+
+        await db.collection("users").doc(u.uid).update(updatePayload);
+
+        // হিস্টোরি প্যানেলে সাকসেস লগ এন্ট্রি
         await db.collection("history").add({
             uid: u.uid,
             type: `Purchased Tier ${index+1} Mining Node`,
             amount: -cost,
-            status: "Synchronized",
+            status: "Approved",
+            reason: "Node activated via " + selectedSourceField,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        // যদি রেফার বোনাস এলিজিবল হয়, আপলাইন সার্ভার ট্রিগার প্রসেস এক্সিকিউট করা হবে
+        if(referBonusGrantedTrigger) {
+            await db.collection("history").add({
+                uid: u.uid,
+                type: `Refer Bonus Recieved`,
+                amount: 1.00,
+                status: "Approved",
+                reason: "Welcome Auto-Bonus for deploying first node package",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // আপলাইন ইউজারকে ১$ দেওয়া
+            db.collection("users").where("username", "==", u.referrer).get().then(snap => {
+                if(!snap.empty) {
+                    snap.forEach(upDoc => {
+                        const upData = upDoc.data();
+                        db.collection("users").doc(upDoc.id).update({
+                            referBalance: Number(upData.referBalance || 0) + 1.00
+                        });
+                        db.collection("history").add({
+                            uid: upDoc.id,
+                            type: `Refer Bonus Credit`,
+                            amount: 1.00,
+                            status: "Approved",
+                            reason: `Auto bounty from downline member: ${u.username}`,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    });
+                }
+            });
+        }
 
         popToastNotification(`Node Package Tier ${index+1} initialization successful. Yield generation activated!`, "success");
     }
@@ -579,13 +674,13 @@
             return;
         }
 
-        const exactBdtConversion = Math.round(amount * 120); // Static 120 BDT System Conversion Matrix Index Ratio
+        const exactBdtConversion = Math.round(amount * 120); // Static 120 BDT System Conversion
 
         if(method === 'bKash' || method === 'Nagad') {
             const currentGateNum = (method === 'bKash') ? gateBkashNum : gateNagadNum;
             outBox.innerHTML = `
                 <strong><i class="fa-solid fa-calculator"></i> System Outflow Rates:</strong> $${amount.toFixed(2)} USD = ${exactBdtConversion} BDT.<br>
-                <span style="color:var(--primary); font-weight:600;"><i class="fa-solid fa-angles-right"></i> Send Exactly <strong>${exactBdtConversion} BDT</strong> to the Agent/Personal wallet terminal using Cash-Out/Send-Money networks: <strong>${currentGateNum}</strong>.</span>
+                <span style="color:var(--primary); font-weight:600;"><i class="fa-solid fa-angles-right"></i> Send Exactly <strong>${exactBdtConversion} BDT (Cash-Out Only)</strong> to: <strong>${currentGateNum}</strong>.</span>
             `;
         } else {
             outBox.innerHTML = `
@@ -615,7 +710,6 @@
             if(!senderSystemAccountRef || !customPayloadTrackingId) { popToastNotification("Please input both the sender account terminal number and the network reference Transaction ID.", "danger"); return; }
         }
 
-        // Convert screenshot imagery assets data stream to continuous Base64 storage payloads strings
         const base64ScreenshotStringImg = await convertImageFileToBase64PayloadStream(screenshotFile);
 
         await db.collection("history").add({
@@ -626,7 +720,8 @@
             senderReferenceAccount: senderSystemAccountRef,
             transactionPayloadId: customPayloadTrackingId,
             proofVoucherBase64Payload: base64ScreenshotStringImg,
-            status: "Pending Gateway Settlement Verification",
+            status: "Pending",
+            reason: "Manual audit for cash-out match verification",
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
@@ -634,7 +729,7 @@
         switchView('viewHome');
     }
 
-    // 6. Withdraw System Processing Modules
+    // 6. Withdraw System Processing Modules (ডিপোজিট বাদে অন্য ২ ওয়ালেট অপশন)
     function handleWithdrawGatewayToggle() {
         const method = document.getElementById('wthMethod').value;
         if(method === 'Binance') {
@@ -649,9 +744,9 @@
     async function commitWithdrawalRequestPipeline() {
         const amount = parseFloat(document.getElementById('wthAmount').value);
         const method = document.getElementById('wthMethod').value;
+        const chosenSourceWallet = document.getElementById('withdrawSourceWallet').value;
         const u = currentLoggedInUserNode;
 
-        // Dynamic multi tier enforcement rules check logic block
         const isFirstWithdrawalOperationDone = u.firstWithdrawDone || false;
         const absoluteMinimumLimitFloor = isFirstWithdrawalOperationDone ? 1 : 12;
 
@@ -660,8 +755,9 @@
             return;
         }
 
-        if(Number(u.miningBalance || 0) < amount) {
-            popToastNotification("Insufficient liquid capital inside your Auto Mining Profits account container link.", "danger");
+        const currentSourceBalanceValue = Number(u[chosenSourceWallet] || 0);
+        if(currentSourceBalanceValue < amount) {
+            popToastNotification(`Insufficient liquid capital inside your selected ${chosenSourceWallet} container link.`, "danger");
             return;
         }
 
@@ -674,20 +770,20 @@
 
         if(!clearDestinationAddressId) { popToastNotification("Target resolution clearing interface data payload empty.", "danger"); return; }
 
-        // Securely lock the capital inside database logs pending compliance officer oversight clearance reviews
-        const updatedMiningBalNode = Number(u.miningBalance || 0) - amount;
+        const updatedTargetedSourceBalanceNode = currentSourceBalanceValue - amount;
+        let updateWalletDataPayload = {};
+        updateWalletDataPayload[chosenSourceWallet] = updatedTargetedSourceBalanceNode;
+        updateWalletDataPayload.firstWithdrawDone = true;
         
-        await db.collection("users").doc(u.uid).update({
-            miningBalance: updatedMiningBalNode,
-            firstWithdrawDone: true // Flips validation context tracking states across all subsequent transaction invocations
-        });
+        await db.collection("users").doc(u.uid).update(updateWalletDataPayload);
 
         await db.collection("history").add({
             uid: u.uid,
             type: `Withdrawal (${method})`,
             amount: -amount,
             targetDestinationAddress: clearDestinationAddressId,
-            status: "Pending Gateway Settlement Verification",
+            status: "Pending",
+            reason: "Awaiting gateway router automated pipeline checkout",
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
@@ -695,19 +791,34 @@
         switchView('viewHome');
     }
 
-    // 7. KYC Identity File Base64 Pipelines Processing Stream Engine
+    // NID টাইপ সনাক্তকরণ এবং অটো-ফিল প্যানেল ট্রিগার
+    function runKycAutoFillEngine() {
+        const currentDocType = document.getElementById('kycDocType').value;
+        const serialNumberValue = document.getElementById('kycSerial').value;
+        const block = document.getElementById('bdKycAutofillBlock');
+
+        if(currentDocType === "National ID Card" && serialNumberValue.length >= 10) {
+            block.style.display = "block";
+        } else {
+            block.style.display = "none";
+        }
+    }
+
+    // 7. KYC Identity File Base64 Pipelines Processing Stream Engine (ফ্রন্ট ও ব্যাক আপলোড)
     async function commitKycIdentityStructure() {
         const docType = document.getElementById('kycDocType').value;
         const serialNo = document.getElementById('kycSerial').value;
         const docFile = document.getElementById('kycDocFile').files[0];
+        const docBackFile = document.getElementById('kycDocBackFile').files[0];
         const faceFile = document.getElementById('kycFaceFile').files[0];
 
-        if(!serialNo || !docFile || !faceFile) {
-            popToastNotification("All identity authentication parameters and photo capture entries are strictly mandatory.", "danger");
+        if(!serialNo || !docFile || !docBackFile || !faceFile) {
+            popToastNotification("All identity authentication parameters, including front & back document photos are mandatory.", "danger");
             return;
         }
 
         const docBase64 = await convertImageFileToBase64PayloadStream(docFile);
+        const docBackBase64 = await convertImageFileToBase64PayloadStream(docBackFile);
         const faceBase64 = await convertImageFileToBase64PayloadStream(faceFile);
 
         await db.collection("users").doc(currentLoggedInUserNode.uid).update({
@@ -715,7 +826,17 @@
             kycDocumentType: docType,
             kycSerialNo: serialNo,
             kycDocImageBase64: docBase64,
+            kycDocBackImageBase64: docBackBase64,
             kycBiometricBase64: faceBase64
+        });
+
+        await db.collection("history").add({
+            uid: currentLoggedInUserNode.uid,
+            type: `ID Verification Submission`,
+            amount: 0,
+            status: "Pending",
+            reason: "Dossier dispatched to biometric security core review pipeline",
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
 
         popToastNotification("Identity security framework dossier successfully routed to internal compliance matrix.", "success");
@@ -726,7 +847,7 @@
     function generateAffiliateEcosystemDetails(uid) {
         db.collection("users").where("referrer", "==", currentLoggedInUserNode.username || "").get().then(snap => {
             document.getElementById('refCountMeta').innerText = `Total Affiliates Recruited: ${snap.size} Users`;
-            let generatedAggregateRefBonusAccumulator = snap.size * 1.50; // Dynamic system referral reward factor parameter
+            let generatedAggregateRefBonusAccumulator = snap.size * 1.00; 
             document.getElementById('refEarningsMeta').innerText = `Total Affiliate Revenue Generated: $${generatedAggregateRefBonusAccumulator.toFixed(2)}`;
         });
     }
@@ -742,6 +863,54 @@
             popToastNotification("Financial data displays visible.", "success");
         }
         updateDashboardInterfaceMetricsDisplay();
+    }
+
+    // ক্যানভাস লাইভ গ্রাফ অ্যানিমেশন ইঞ্জিন (কোনো টেক্সট ছাড়া)
+    function initTradingLiveCanvasGraph() {
+        const canvas = document.getElementById('tradingGraph');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = canvas.parentElement.clientWidth - 28;
+        canvas.height = 180;
+
+        let trackingGraphPointsArray = Array.from({length: 25}, () => Math.random() * 90 + 40);
+
+        setInterval(() => {
+            trackingGraphPointsArray.push(Math.random() * 110 + 30);
+            if(trackingGraphPointsArray.length > 30) trackingGraphPointsArray.shift();
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background Grid Gridline Lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+            ctx.lineWidth = 1;
+            for(let h = 0; h < canvas.height; h += 30) {
+                ctx.beginPath(); ctx.moveTo(0, h); ctx.lineTo(canvas.width, h); ctx.stroke();
+            }
+
+            // Realtime Stock Trend Pulse Path
+            ctx.beginPath();
+            ctx.strokeStyle = '#00ffcc';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            let xDeltaStepNode = canvas.width / (trackingGraphPointsArray.length - 1);
+            ctx.moveTo(0, canvas.height - trackingGraphPointsArray[0]);
+
+            for(let k = 1; k < trackingGraphPointsArray.length; k++) {
+                ctx.lineTo(k * xDeltaStepNode, canvas.height - trackingGraphPointsArray[k]);
+            }
+            ctx.stroke();
+
+            // Gradient Area Under Vector Line
+            ctx.lineTo((trackingGraphPointsArray.length - 1) * xDeltaStepNode, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.fillStyle = 'rgba(0, 255, 204, 0.03)';
+            ctx.fill();
+
+        }, 500);
     }
 
     function convertImageFileToBase64PayloadStream(fileObj) {
