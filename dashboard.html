@@ -3,382 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenit Global - Mobile & Desktop Premium Hub</title>
+    <title>Zenit Global - Next-Gen Asset Hub</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Firebase Legacy Core SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <style>
         :root {
-            --primary: #00ffcc;
-            --primary-glow: rgba(0, 255, 204, 0.2);
-            --bg-dark: #04080f;
-            --card-bg: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.06);
-            --text-main: #ffffff;
-            --text-muted: #627289;
-            --verified-blue: #1d9bf0;
+            --bg-main: #050811;
+            --panel-bg: rgba(255, 255, 255, 0.03);
+            --border-glow: rgba(255, 165, 0, 0.15);
+            --primary: #ffa500;
+            --success: #00ffcc;
             --danger: #ff4a4a;
+            --text-main: #ffffff;
+            --text-muted: #6b7c96;
         }
 
+        /* 🔒 Anti-Copy & Premium Reset System */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none; -webkit-user-select: none;
         }
+        body { background: var(--bg-main); color: var(--text-main); min-height: 100vh; overflow-x: hidden; padding-bottom: 60px; }
 
-        body {
-            background: #04080f;
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: row;
-            overflow-x: hidden;
-        }
+        /* Navigation Bar */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: rgba(5,8,17,0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .brand-title { font-size: 1.2rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+        .brand-title span { color: var(--primary); }
+        .menu-trigger { font-size: 1.3rem; color: #fff; cursor: pointer; background: none; border: none; }
 
-        /* 📱 Mobile Menu Trigger Toggle (শুধুমাত্র মোবাইলের জন্য) */
-        .mobile-nav-bar {
-            display: none;
-            width: 100%;
-            background: rgba(6, 10, 19, 0.95);
-            padding: 15px 20px;
-            position: fixed;
-            top: 0; left: 0; z-index: 1000;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-        }
-        .mobile-menu-btn {
-            background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;
-        }
+        /* 📈 Live Scrolling Marquee Notice Box */
+        .notice-container { background: rgba(255, 165, 0, 0.06); border-y: 1px solid rgba(255,165,0,0.1); padding: 8px; font-size: 0.8rem; overflow: hidden; white-space: nowrap; display: flex; align-items: center; }
+        .notice-label { background: var(--primary); color: #000; font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; margin-right: 10px; z-index: 2; }
+        .notice-marquee { display: inline-block; animation: marquee 22s linear infinite; color: #fff; }
+        @keyframes marquee { 0% { transform: translate3d(100%, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* Premium Layout Sidebar */
-        .sidebar {
-            width: 260px; background: rgba(6, 10, 19, 0.8);
-            border-right: 1px solid var(--border); padding: 30px 20px;
-            display: flex; flex-direction: column; gap: 35px;
-            position: fixed; top: 0; bottom: 0; left: 0; z-index: 999;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            transition: transform 0.3s ease;
-        }
+        /* 💰 3-Tier Eye Hidden Balance Panel */
+        .balance-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 14px; }
+        .balance-box { background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 12px; position: relative; text-align: center; backdrop-filter: blur(5px); }
+        .balance-box i { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 6px; display: block; }
+        .balance-title { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; }
+        .balance-value { font-size: 0.95rem; font-weight: 700; margin-top: 4px; color: #fff; transition: 0.2s; }
+        .eye-toggle-master { text-align: right; padding: 4px 16px 0 0; font-size: 0.85rem; color: var(--primary); cursor: pointer; }
 
-        .sidebar-brand { display: flex; align-items: center; gap: 12px; padding-left: 10px; }
-        .sidebar-brand h1 { font-size: 1.25rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; background: linear-gradient(135deg, #fff, #7eb6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* ⚡ Quick Action Quick Link Blocks */
+        .action-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 14px 14px 14px; }
+        .act-btn { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.06); padding: 14px; border-radius: 14px; text-align: center; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+        .act-btn-dep { border-color: rgba(0, 255, 204, 0.2); background: linear-gradient(135deg, rgba(0,255,204,0.04), transparent); }
+        .act-btn-dep i { color: var(--success); }
+        .act-btn-wth { border-color: rgba(255, 165, 0, 0.2); background: linear-gradient(135deg, rgba(255,165,0,0.04), transparent); }
+        .act-btn-wth i { color: var(--primary); }
 
-        .menu-list { display: flex; flex-direction: column; gap: 8px; list-style: none; }
-        .menu-item a {
-            display: flex; align-items: center; gap: 14px; padding: 12px 16px;
-            color: var(--text-muted); text-decoration: none; border-radius: 12px;
-            font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .menu-item.active a, .menu-item a:hover {
-            color: #fff; background: rgba(0, 255, 204, 0.04);
-            border: 1px solid rgba(0, 255, 204, 0.1); box-shadow: 0 4px 15px rgba(0,255,204,0.05);
-        }
-        .menu-item.active a i { color: var(--primary); filter: drop-shadow(0 0 5px var(--primary-glow)); }
+        /* 📉 Real-Time Micro Trading Signals Engine Widget */
+        .widget-card { background: var(--panel-bg); margin: 0 14px 16px 14px; border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 14px; }
+        .widget-title { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .signal-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .signal-asset { font-weight: 600; font-size: 0.85rem; }
+        .signal-action { padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .sig-call { background: rgba(0,255,204,0.1); color: var(--success); }
+        .sig-put { background: rgba(255,74,74,0.1); color: var(--danger); }
 
-        /* Main Workspace Content Area */
-        .main-workspace {
-            margin-left: 260px; flex: 1; padding: 30px 40px;
-            display: flex; flex-direction: column; gap: 30px; min-width: 0;
-            transition: all 0.3s ease;
-        }
+        /* 💎 Investment Tier Node Matrix Grid */
+        .section-header { padding: 0 14px 10px 14px; font-size: 0.95rem; font-weight: 700; color: #fff; display: flex; justify-content: space-between; }
+        .plan-grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0 14px; }
+        .plan-card { background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(0,0,0,0.2)); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px; position: relative; }
+        .plan-badge { position: absolute; top: 14px; right: 14px; background: rgba(255,165,0,0.15); color: var(--primary); font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+        .plan-cost { font-size: 1.5rem; font-weight: 700; margin: 4px 0; }
+        .plan-stats { display: flex; gap: 20px; margin: 10px 0; font-size: 0.8rem; color: var(--text-muted); }
+        .plan-stats strong { color: #fff; }
+        .btn-buy-node { background: var(--primary); color: #000; border: none; width: 100%; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
 
-        .workspace-header { display: flex; justify-content: space-between; align-items: center; gap: 15px; }
-        .user-meta-hub { display: flex; align-items: center; gap: 10px; background: var(--card-bg); border: 1px solid var(--border); padding: 8px 16px; border-radius: 30px; }
-        .badge-verified { color: var(--verified-blue); font-size: 0.95rem; display: none; margin-left: 4px; }
-
-        /* Sleek & Compact Stats Bars */
-        .compact-stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-        .mini-card {
-            background: var(--card-bg); border: 1px solid var(--border); padding: 18px 22px;
-            border-radius: 16px; display: flex; justify-content: space-between; align-items: center;
-            transition: 0.3s ease; backdrop-filter: blur(10px);
-        }
-        .mini-card:hover { border-color: var(--primary); transform: translateY(-1px); }
-        .mini-card h3 { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-        .mini-card .val { font-size: 1.4rem; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
-        .mini-icon { width: 42px; height: 42px; background: rgba(255,255,255,0.02); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); border: 1px solid var(--border); }
-
-        /* SPA Panels */
-        .view-panel { display: none; flex-direction: column; gap: 30px; animation: panelFade 0.4s ease; }
-        .view-panel.active-panel { display: flex; }
-        @keyframes panelFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Live Trading Chart Box */
-        .trading-chart-container {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
-            padding: 24px; position: relative; overflow: hidden;
-        }
-        .chart-mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .live-pulse { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--primary); font-weight: 600; }
-        .live-pulse span { width: 7px; height: 7px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-
-        /* Investment Grid */
-        .strategy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-        .plan-tier-card {
-            background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 24px;
-            border-radius: 16px; display: flex; flex-direction: column; gap: 15px; transition: 0.3s;
-        }
-        .plan-tier-card:hover { border-color: rgba(0,255,204,0.3); background: rgba(0,255,204,0.01); }
-        .plan-tier-card h4 { font-size: 1.1rem; font-weight: 600; color: #fff; }
-        .plan-tier-card .price-tag { font-size: 1.6rem; font-weight: 700; color: var(--primary); }
-        .plan-feature-list { list-style: none; font-size: 0.82rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 8px; }
-        .plan-feature-list li i { color: var(--primary); margin-right: 6px; }
-        .btn-subscribe { background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 10px; border-radius: 10px; color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-subscribe:hover { background: var(--primary); color: #04080f; border-color: var(--primary); }
-
-        /* Profile & Forms */
-        .profile-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .panel-box { background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 20px; display: flex; flex-direction: column; gap: 16px; }
-        .panel-box h3 { font-size: 1rem; font-weight: 600; margin-bottom: 5px; }
+        /* 📂 Bottom Sliding Page Engine Panels */
+        .app-view-panel { display: none; padding: 14px; }
+        .panel-active { display: block; }
+        .form-group { margin-bottom: 12px; }
+        label { font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 5px; }
+        .form-control, select { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 10px; color: #fff; outline: none; font-size: 0.88rem; }
+        .form-control:focus { border-color: var(--primary); }
+        .btn-submit-action { width: 100%; background: var(--primary); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; margin-top: 10px; cursor: pointer; }
         
-        .input-group-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .field-box { display: flex; flex-direction: column; gap: 6px; }
-        .field-box label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; }
-        .field-box input, .field-box select {
-            background: rgba(0,0,0,0.4); border: 1px solid var(--border); padding: 12px;
-            border-radius: 10px; color: #fff; font-size: 0.88rem; outline: none; transition: 0.3s;
-        }
-        .field-box input:focus { border-color: var(--primary); }
-        .btn-save-meta { background: var(--primary); color: #04080f; border: none; padding: 12px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.88rem; margin-top: 10px; }
+        .calc-preview-box { background: rgba(255,165,0,0.04); border: 1px dashed rgba(255,165,0,0.2); padding: 10px; border-radius: 8px; font-size: 0.8rem; margin: 10px 0; line-height: 1.4; color: #fff; }
 
-        /* KYC Layout */
-        .kyc-badge-status { padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-align: center; }
-        .status-unverified { background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1px solid var(--border); }
-        .status-pending { background: rgba(255,165,0,0.1); color: #ffa500; border: 1px solid rgba(ffa500,0.2); }
-        .status-verified { background: rgba(0,255,204,0.1); color: var(--primary); border: 1px solid rgba(0,255,204,0.2); }
-        .status-rejected { background: rgba(255,74,74,0.1); color: var(--danger); border: 1px solid rgba(255,74,74,0.2); }
-        
-        .camera-viewport { width: 100%; height: 180px; background: #000; border-radius: 10px; border: 1px dashed var(--border); overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; }
-        #webcamStream { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        #capturedCanvas { display: none; width: 100%; height: 100%; object-fit: cover; }
+        /* 📋 Live History Stream Timeline */
+        .history-item { background: var(--panel-bg); border-left: 3px solid var(--primary); padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem; }
+        .history-meta { display: flex; justify-content: space-between; margin-bottom: 4px; color: var(--text-muted); }
 
-        /* Tables & Lists */
-        .history-table-wrapper { width: 100%; overflow-x: auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; }
-        .history-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; min-width: 500px; }
-        .history-table th { background: rgba(255,255,255,0.01); padding: 14px 18px; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-        .history-table td { padding: 14px 18px; border-bottom: 1px solid var(--border); color: #fff; }
-        
-        .affiliate-link-card { background: rgba(0,255,204,0.01); border: 1px dashed rgba(0,255,204,0.2); padding: 20px; border-radius: 12px; display: flex; gap: 10px; align-items: center; }
+        /* 🧭 Luxury Side Navigation System Drawer */
+        .side-drawer { position: fixed; inset: 0; background: rgba(4,6,12,0.96); z-index: 1000; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1); padding: 24px; }
+        .side-drawer.drawer-open { transform: translateX(0); }
+        .drawer-close-btn { align-self: flex-end; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; background:none; border:none;}
+        .drawer-welcome { margin: 20px 0; }
+        .drawer-welcome h3 { font-size: 1.3rem; font-weight: 700; color: #fff; }
+        .drawer-welcome p { color: var(--primary); font-size: 0.8rem; font-weight: 500; }
+        .drawer-menu { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; overflow-y: auto;}
+        .drawer-item { display: flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; font-size: 0.95rem; font-weight: 500; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); cursor: pointer; }
+        .drawer-item i { font-size: 1.1rem; color: var(--primary); width: 24px; }
+        .drawer-item-logout { border-color: rgba(255,74,74,0.1); color: var(--danger); }
+        .drawer-item-logout i { color: var(--danger); }
 
-        #customToast { position: fixed; top: 25px; right: 25px; padding: 14px 22px; border-radius: 12px; color: #fff; font-weight: 600; font-size: 0.85rem; z-index: 10000; box-shadow: 0 10px 40px rgba(0,0,0,0.6); transform: translateY(-20px); opacity: 0; transition: 0.4s ease; }
-        .global-loader { position: fixed; inset: 0; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; z-index: 99999; }
-        .spinner { width: 35px; height: 35px; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: rot 1s linear infinite; }
-        @keyframes rot { to { transform: rotate(360deg); } }
+        /* Global Status Badges */
+        .badge-verify-tick { background: var(--success); color: #000; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 5px; }
 
-        /* 📱 RESPONSIVE MEDIA QUERIES (মোবাইল কমপ্লায়েন্স সিএসএস) */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .mobile-nav-bar { display: flex; }
-            .sidebar {
-                transform: translateX(-100%);
-                width: 260px;
-                top: 60px;
-                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
-            }
-            .sidebar.open { transform: translateX(0); }
-            .main-workspace { margin-left: 0; padding: 90px 20px 30px 20px; }
-            .profile-container { grid-template-columns: 1fr; }
-            .workspace-header { flex-direction: column; align-items: flex-start; }
-            .user-meta-hub { width: 100%; justify-content: space-between; }
-        }
+        #toastNotify { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(10px); background: #ffa500; color: #000; font-weight: 700; font-size: 0.82rem; padding: 12px 24px; border-radius: 30px; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: 0.3s; }
     </style>
 </head>
 <body>
 
-<div id="customToast">Notification System</div>
+<div id="toastNotify">Notification Triggered</div>
 
-<div class="global-loader" id="globalAppLoader"><div class="spinner"></div></div>
-
-<div class="mobile-nav-bar">
-    <div class="sidebar-brand">
-        <i class="fa-solid fa-bolt-lightning" style="color: var(--primary); font-size: 1.1rem;"></i>
-        <h1 style="font-size:1rem; color:#fff;">Zenit Global</h1>
+<!-- 🧭 SIDE DRAWER NAVIGATION SYSTEM -->
+<div class="side-drawer" id="sideDrawer">
+    <button class="drawer-close-btn" onclick="toggleAppDrawer()"><i class="fa-solid fa-xmark"></i></button>
+    <div class="drawer-welcome">
+        <h3 id="drUsername">Welcome Node</h3>
+        <p id="drKycStatus">Zenit Network Ecosystem</p>
     </div>
-    <button class="mobile-menu-btn" onclick="toggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+    <div class="drawer-menu">
+        <div class="drawer-item" onclick="switchView('viewHome')"><i class="fa-solid fa-house-chimney"></i> Core Matrix Home</div>
+        <div class="drawer-item" onclick="switchView('viewDeposit')"><i class="fa-solid fa-wallet"></i> Instant Deposit Hub</div>
+        <div class="drawer-item" onclick="switchView('viewWithdraw')"><i class="fa-solid fa-money-bill-transfer"></i> Safe Asset Withdrawal</div>
+        <div class="drawer-item" onclick="switchView('viewKyc')"><i class="fa-solid fa-id-card"></i> Profile Document KYC</div>
+        <div class="drawer-item" onclick="switchView('viewHistory')"><i class="fa-solid fa-clock-rotate-left"></i> Live Ledger History</div>
+        <div class="drawer-item" onclick="switchView('viewAffiliate')"><i class="fa-solid fa-users-viewfinder"></i> Affiliate Engine</div>
+        <div class="drawer-item" onclick="switchView('viewSupport')"><i class="fa-solid fa-headset"></i> Support Terminal</div>
+        <div class="drawer-item drawer-item-logout" onclick="executeAppSignOut()"><i class="fa-solid fa-power-off"></i> Terminate Session</div>
+    </div>
 </div>
 
-<aside class="sidebar" id="appSidebar">
-    <div class="sidebar-brand">
-        <i class="fa-solid fa-bolt-lightning" style="color: var(--primary); font-size: 1.3rem;"></i>
-        <h1>Zenit Global</h1>
+<!-- TOP MASTER BAR NAVIGATION -->
+<nav class="top-nav">
+    <div class="brand-title">ZENIT<span>GLOBAL</span></div>
+    <button class="menu-trigger" onclick="toggleAppDrawer()"><i class="fa-solid fa-bars-staggered"></i></button>
+</nav>
+
+<!-- LIVE SCROLLING MARQUEE NOTICE BOX -->
+<div class="notice-container">
+    <span class="notice-label"><i class="fa-solid fa-bullhorn"></i> INFO</span>
+    <span class="notice-marquee" id="dynamicNoticeNode">Establishing contact with the backend core pipeline system feeds...</span>
+</div>
+
+
+<!-- 🏠 SCREEN VIEW: CORE MATRIX HOME -->
+<div id="viewHome" class="app-view-panel panel-active">
+    
+    <!-- EYE TOGGLE SYSTEM -->
+    <div class="eye-toggle-master" onclick="toggleBalanceVisibility()">
+        <i class="fa-solid fa-eye-slash" id="eyeIcon"></i> Hide Dashboard Balances
     </div>
-    <ul class="menu-list">
-        <li class="menu-item active" id="tab-trade" onclick="switchRoute('trade')"><a><i class="fa-solid fa-chart-line"></i> Live Trade & Plans</a></li>
-        <li class="menu-item" id="tab-profile" onclick="switchRoute('profile')"><a><i class="fa-solid fa-circle-user"></i> Profile Settings</a></li>
-        <li class="menu-item" id="tab-kyc" onclick="switchRoute('kyc')"><a><i class="fa-solid fa-shield-halved"></i> Identity Verify</a></li>
-        <li class="menu-item" id="tab-history" onclick="switchRoute('history')"><a><i class="fa-solid fa-clock-rotate-left"></i> Core Live History</a></li>
-        <li class="menu-item" id="tab-affiliate" onclick="switchRoute('affiliate')"><a><i class="fa-solid fa-network-wired"></i> Affiliate Network</a></li>
-        <li class="menu-item" style="margin-top: 40px;"><a onclick="triggerSessionTermination()" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Disconnect Session</a></li>
-    </ul>
-</aside>
 
-<main class="main-workspace">
-    <header class="workspace-header">
-        <div>
-            <h2 style="font-size: 1.4rem; font-weight: 700;">Secure Client Workspace</h2>
-            <p style="font-size: 0.8rem; color: var(--text-muted);">Real-time synchronized terminal.</p>
+    <!-- 💰 3-TIER BALANCE BOX GRID -->
+    <div class="balance-grid">
+        <div class="balance-box">
+            <i class="fa-solid fa-vault"></i>
+            <div class="balance-title">Deposit Bal</div>
+            <div class="balance-value" id="valDep">Loading...</div>
         </div>
-        <div class="user-meta-hub">
-            <span id="globalHeaderUsername" style="font-size: 0.85rem; font-weight: 600;">Loading...</span>
-            <i class="fa-solid fa-circle-check badge-verified" id="globalVerifiedTick"></i>
+        <div class="balance-box" style="border-color: var(--success);">
+            <i class="fa-solid fa-microchip" style="color:var(--success)"></i>
+            <div class="balance-title">Mining Profit</div>
+            <div class="balance-value" id="valMin" style="color:var(--success)">Loading...</div>
         </div>
-    </header>
-
-    <section class="compact-stats-row">
-        <div class="mini-card">
-            <div><h3>Available Core Wallet</h3><div class="val">$<span id="metricBalance">0.00</span></div></div>
-            <div class="mini-icon"><i class="fa-solid fa-wallet"></i></div>
-        </div>
-        <div class="mini-card">
-            <div><h3>Affiliate Matrix Capital</h3><div class="val">$<span id="metricBonus">0.00</span></div></div>
-            <div class="mini-icon"><i class="fa-solid fa-gift"></i></div>
-        </div>
-        <div class="mini-card">
-            <div><h3>Network Count</h3><div class="val"><span id="metricRefCount">0</span> Users</div></div>
-            <div class="mini-icon"><i class="fa-solid fa-users"></i></div>
-        </div>
-    </section>
-
-    <div class="view-panel active-panel" id="panel-trade">
-        <div class="trading-chart-container">
-            <div class="chart-mock-header">
-                <div style="font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px;">
-                    <i class="fa-solid fa-chart-area" style="color: var(--primary); margin-right: 6px;"></i> 
-                    BTC/USD Real-Time High-Frequency Graph
-                </div>
-                <div class="live-pulse"><span></span> Live Network Feed</div>
-            </div>
-            <div style="position: relative; width: 100%; height: 220px; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; overflow: hidden;">
-                <canvas id="liveTradingCanvas" style="width: 100%; height: 100%; display: block;"></canvas>
-            </div>
-        </div>
-
-        <div class="welcome-box"><h3 style="font-size: 1.1rem; font-weight: 600;">Premium Investment Nodes</h3></div>
-        
-        <div class="strategy-grid">
-            <div class="plan-tier-card">
-                <h4>Starter Micro Nodes</h4>
-                <div class="price-tag">$6.00</div>
-                <ul class="plan-feature-list">
-                    <li><i class="fa-solid fa-check"></i> 1.2% Daily Yield Generation</li>
-                    <li><i class="fa-solid fa-check"></i> Min Deposit Setup Entry</li>
-                </ul>
-                <button class="btn-subscribe" onclick="purchaseNode('Starter', 6)">Activate Node</button>
-            </div>
-            <div class="plan-tier-card">
-                <h4>Alpha Advanced Strategy</h4>
-                <div class="price-tag">$50.00</div>
-                <ul class="plan-feature-list">
-                    <li><i class="fa-solid fa-check"></i> 2.5% Daily Compound Feed</li>
-                    <li><i class="fa-solid fa-check"></i> Live Priority Yield Routing</li>
-                </ul>
-                <button class="btn-subscribe" onclick="purchaseNode('Alpha', 50)">Activate Node</button>
-            </div>
-            <div class="plan-tier-card">
-                <h4>Quantum VIP Enterprise</h4>
-                <div class="price-tag">$250.00</div>
-                <ul class="plan-feature-list">
-                    <li><i class="fa-solid fa-check"></i> 4.0% Infinite Network Feed</li>
-                    <li><i class="fa-solid fa-check"></i> Instant Core Account Audit</li>
-                </ul>
-                <button class="btn-subscribe" onclick="purchaseNode('Quantum', 250)">Activate Node</button>
-            </div>
+        <div class="balance-box">
+            <i class="fa-solid fa-gift"></i>
+            <div class="balance-title">Bonus/Ref</div>
+            <div class="balance-value" id="valRef">Loading...</div>
         </div>
     </div>
 
-    <div class="view-panel" id="panel-profile">
-        <div class="profile-container">
-            <div class="panel-box">
-                <h3>Identity Core Matrix</h3>
-                <form id="profileCoreForm">
-                    <div class="input-group-row">
-                        <div class="field-box"><label>First Name</label><input type="text" id="profFirst" required></div>
-                        <div class="field-box"><label>Last Name</label><input type="text" id="profLast" required></div>
-                    </div>
-                    <div class="field-box"><label>Phone Network Number</label><input type="text" id="profPhone" readonly style="opacity:0.6;"></div>
-                    <div class="field-box"><label>System Registered Email</label><input type="email" id="profEmail" readonly style="opacity:0.6;"></div>
-                    <button type="submit" class="btn-save-meta">Commit Parameters</button>
-                </form>
-            </div>
-            
-            <div class="panel-box">
-                <h3>Financial Operations Terminal</h3>
-                <div style="display:flex; flex-direction:column; gap:12px;">
-                    <button class="btn-save-meta" style="background:rgba(0,255,204,0.05); color:var(--primary); border:1px solid rgba(0,255,204,0.2);" onclick="openFinOps('Deposit')">Initiate Capital Deposit (Min $6)</button>
-                    <button class="btn-save-meta" style="background:rgba(255,255,255,0.02); color:#fff; border:1px solid var(--border);" onclick="openFinOps('Withdraw')">Execute Assets Outflow (Min $20)</button>
-                </div>
-            </div>
+    <!-- QUICK OPERATIONS CONTROLS -->
+    <div class="action-container">
+        <div class="act-btn act-btn-dep" onclick="switchView('viewDeposit')"><i class="fa-solid fa-circle-plus"></i> Deposit</div>
+        <div class="act-btn act-btn-wth" onclick="switchView('viewWithdraw')"><i class="fa-solid fa-circle-minus"></i> Withdraw</div>
+    </div>
+
+    <!-- REAL-TIME MICRO TRADING SIGNALS OPTION LAYOUT -->
+    <div class="widget-card">
+        <div class="widget-title"><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> Live Expert System Trading Indicators</div>
+        <div id="signalDashboardStream">
+            <div class="signal-row"><span>BTC/USDT</span><span class="signal-action sig-call">STRONG BUY</span></div>
+            <div class="signal-row"><span>ETH/USDT</span><span class="signal-action sig-put">STRONG SELL</span></div>
+            <div class="signal-row"><span>SOL/USDT</span><span class="signal-action sig-call">STRONG BUY</span></div>
         </div>
     </div>
 
-    <div class="view-panel" id="panel-kyc">
-        <div class="panel-box" style="max-width: 600px;">
-            <h3>Regulatory Verification Portal</h3>
-            <div id="kycStatusHeader" class="kyc-badge-status status-unverified">Status: Unverified Client</div>
-            <div id="kycRejectionReason" style="color:var(--danger); font-size:0.85rem; display:none; background:rgba(255,74,74,0.05); padding:10px; border-radius:8px; margin-top:10px;"></div>
+    <!-- 💎 PLATFORM INVESTMENT PLANS CHANNELS -->
+    <div class="section-header"><div><i class="fa-solid fa-cubes"></i> Active Node Packages</div><div style="color:var(--primary); font-size:0.8rem;">Min Dep: $6.00</div></div>
+    <div class="plan-grid" id="planRenderMatrix"></div>
+</div>
 
-            <form id="kycSubmissionForm" style="display: flex; flex-direction: column; gap: 16px; margin-top:15px;">
-                <div class="field-box">
-                    <label>Document Archetype</label>
-                    <select id="kycDocType" required>
-                        <option value="National ID Card">National ID Card / Smart Card</option>
-                        <option value="International Passport">International Passport</option>
-                        <option value="Driving License">Driving License Card</option>
-                    </select>
-                </div>
-                <div class="field-box"><label>Document Identification Serial</label><input type="text" id="kycSerial" placeholder="Enter identification number" required></div>
-                
-                <div class="field-box">
-                    <label>Biometric Camera Snapshot Capture</label>
-                    <div class="camera-viewport">
-                        <video id="webcamStream" autoplay playsinline></video>
-                        <canvas id="capturedCanvas"></canvas>
-                    </div>
-                    <div style="display:flex; gap:10px; margin-top:8px;">
-                        <button type="button" class="btn-subscribe" style="flex:1;" onclick="initializeCamera()">Boot Camera</button>
-                        <button type="button" class="btn-subscribe" style="flex:1; background:var(--primary); color:#04080f;" onclick="captureBiometricSnapshot()">Freeze Snap</button>
-                    </div>
-                </div>
-                <button type="submit" class="btn-save-meta" id="kycSubmitBtn">Transmit KYC Ledger</button>
-            </form>
+
+<!-- 📥 SCREEN VIEW: DEPOSIT FLOW INTERFACE -->
+<div id="viewDeposit" class="app-view-panel">
+    <h3 style="margin-bottom:15px;"><i class="fa-solid fa-wallet" style="color:var(--success)"></i> Asset Deposit System Portal</h3>
+    
+    <div class="form-group">
+        <label>Select Financial Asset Transfer Pipeline</label>
+        <select id="depMethod" onchange="handleDepositGatewayToggle()">
+            <option value="bKash">bKash (Personal Fast-track Node)</option>
+            <option value="Nagad">Nagad (Personal Fast-track Node)</option>
+            <option value="Binance">Binance Smart Chain (USDT Pay-ID)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Amount to Route ($ USD)</label>
+        <input type="number" id="depAmount" class="form-control" placeholder="Minimum $6.00" oninput="runDepositCalculationEngine()">
+    </div>
+
+    <!-- REAL-TIME AUTO CALCULATOR & SYSTEM INSTRUCTIONS FEED -->
+    <div class="calc-preview-box" id="calcGatewayPreview">
+        Please complete the processing input form parameters correctly.
+    </div>
+
+    <!-- FIAT GATEWAY BLOCK CONTROLS -->
+    <div id="fiatInputBlocks">
+        <div class="form-group">
+            <label>Sender Mobile Network Account Number</label>
+            <input type="tel" id="depSenderPhone" class="form-control" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="form-group">
+            <label>Blockchain / Mobile Transaction Hash Reference ID</label>
+            <input type="text" id="depTxnId" class="form-control" placeholder="Enter Transaction ID">
         </div>
     </div>
 
-    <div class="view-panel" id="panel-history">
-        <div class="history-table-wrapper">
-            <table class="history-table">
-                <thead><tr><th>Payload Timestamp</th><th>Operation Type</th><th>Volume Amount</th><th>Network Flow Status</th></tr></thead>
-                <tbody id="historyTableBody"></tbody>
-            </table>
+    <!-- CRYPTO BINANCE SYSTEM BLOCK -->
+    <div id="cryptoInputBlock" style="display:none;">
+        <div class="form-group">
+            <label>Your Origin Binance Account User-ID (Pay-ID/App-ID)</label>
+            <input type="text" id="depBinanceId" class="form-control" placeholder="Your Binance ID">
         </div>
     </div>
 
-    <div class="view-panel" id="panel-affiliate">
-        <div class="panel-box">
-            <h3>Affiliate Referral Engine</h3>
-            <div class="affiliate-link-card">
-                <input type="text" id="affiliateInputShare" readonly style="flex:1; background:transparent; border:none; color:#fff; outline:none; font-size:0.85rem;" value="Configuring connection...">
-                <button class="btn-subscribe" onclick="copyAffiliateURL()" style="padding:8px 15px;">Copy URL</button>
-            </div>
-        </div>
-        <div class="history-table-wrapper" style="margin-top:20px;">
-            <table class="history-table">
-                <thead><tr><th>Member Node</th><th>Verification Status</th><th>Bonus Credited</th></tr></thead>
-                <tbody id="affiliateTableBody"></tbody>
-            </table>
+    <div class="form-group">
+        <label>Upload Network Proof Voucher Receipt Screenshot (Mandatory)</label>
+        <input type="file" id="depScreenshot" class="form-control" accept="image/*" style="padding:8px;">
+    </div>
+
+    <button class="btn-submit-action" onclick="commitDepositTransactionPipeline()"><i class="fa-solid fa-shield-halved"></i> Authorize Deposit Transmission</button>
+</div>
+
+
+<!-- 📤 SCREEN VIEW: WITHDRAW RESOURCE TRANSFERS -->
+<div id="viewWithdraw" class="app-view-panel">
+    <h3 style="margin-bottom:15px;"><i class="fa-solid fa-money-bill-transfer" style="color:var(--primary)"></i> Asset Withdrawal Settlement</h3>
+    <div style="background:rgba(255,165,0,0.06); padding:10px; border-radius:8px; font-size:0.78rem; margin-bottom:15px; color:var(--primary)">
+        Notice: Initial wallet audit withdrawal limit is fixed at $12.00. Standard dynamic free liquidity tiers activate instantly upon completion of the initial settlement clearance.
+    </div>
+
+    <div class="form-group">
+        <label>Choose Clearance Outward Network</label>
+        <select id="wthMethod" onchange="handleWithdrawGatewayToggle()">
+            <option value="bKash">bKash Network Wallet</option>
+            <option value="Nagad">Nagad Network Wallet</option>
+            <option value="Binance">Binance Ecosystem (USDT-ID)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Withdrawal Capital Volume ($ USD)</label>
+        <input type="number" id="wthAmount" class="form-control" placeholder="Enter Amount">
+    </div>
+
+    <div id="wthMobileTargetBlock">
+        <div class="form-group">
+            <label>Target Mobile Money Receiver Number</label>
+            <input type="tel" id="wthTargetPhone" class="form-control" placeholder="01XXXXXXXXX">
         </div>
     </div>
-</main>
+
+    <div id="wthBinanceTargetBlock" style="display:none;">
+        <div class="form-group">
+            <label>Target Destination Binance Core Pay-ID</label>
+            <input type="text" id="wthTargetBinanceId" class="form-control" placeholder="Enter Binance Pay ID">
+        </div>
+    </div>
+
+    <button class="btn-submit-action" onclick="commitWithdrawalRequestPipeline()"><i class="fa-solid fa-bolt"></i> Initiate Settlement Transfer</button>
+</div>
+
+
+<!-- 🪪 SCREEN VIEW: SECURE KYC PROFILE SYSTEM -->
+<div id="viewKyc" class="app-view-panel">
+    <h3 style="margin-bottom:15px;"><i class="fa-solid fa-fingerprint"></i> Dynamic KYC Authentication System</h3>
+    <div class="form-group">
+        <label>Official Document Form Matrix</label>
+        <select id="kycDocType">
+            <option value="National ID Card">National ID Card (NID)</option>
+            <option value="Driver License">Official Driver License</option>
+            <option value="Birth Certificate">State Birth Registry Certificate</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Document Registry Serial Number</label>
+        <input type="text" id="kycSerial" class="form-control" placeholder="Enter Serial reference text">
+    </div>
+    <div class="form-group">
+        <label>Upload Document Snapshot Evidence</label>
+        <input type="file" id="kycDocFile" class="form-control" accept="image/*">
+    </div>
+    <div class="form-group">
+        <label>Live Facial Biometric Verification Snapshot</label>
+        <input type="file" id="kycFaceFile" class="form-control" accept="image/*">
+    </div>
+    <button class="btn-submit-action" onclick="commitKycIdentityStructure()"><i class="fa-solid fa-cloud-arrow-up"></i> Dispatch Verification Ledger</button>
+</div>
+
+
+<!-- 📋 SCREEN VIEW: USER LIVE HISTORY PIPELINES -->
+<div id="viewHistory" class="app-view-panel">
+    <h3 style="margin-bottom:15px;"><i class="fa-solid fa-list-check"></i> Real-time Network Ledger Audits</h3>
+    <div id="userLedgerHistoryStream">Synchronizing current pipeline transaction entries...</div>
+</div>
+
+
+<!-- 🔗 SCREEN VIEW: AFFILIATE NETWORK ENGINE -->
+<div id="viewAffiliate" class="app-view-panel">
+    <h3 style="margin-bottom:15px;"><i class="fa-solid fa-network-wired"></i> Affiliate Program Hub</h3>
+    <div class="form-group">
+        <label>Your Personal Network Inviter Refer-Link Token</label>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="refCopyLinkInput" class="form-control" readonly style="background:rgba(255,255,255,0.05)">
+            <button class="btn-update-bal" style="background:var(--primary); padding:0 15px; border-radius:10px; font-weight:700; color:#000;" onclick="copyAffiliateLinkToken()">COPY</button>
+        </div>
+    </div>
+    <div style="background:var(--panel-bg); padding:15px; border-radius:14px; border:1px solid rgba(255,255,255,0.04);">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:8px;">Affiliate Matrix Statistics:</p>
+        <h4 style="font-size:1.1rem; color:#fff;" id="refCountMeta">Total Affiliates Recruited: 0 Users</h4>
+        <h4 style="font-size:1.1rem; color:var(--success); margin-top:4px;" id="refEarningsMeta">Total Affiliate Revenue Generated: $0.00</h4>
+    </div>
+</div>
+
+
+<!-- 📞 SCREEN VIEW: HELPCENTER TERMINAL SUPPORT -->
+<div id="viewSupport" class="app-view-panel">
+    <h3 style="margin-bottom:15px;"><i class="fa-solid fa-headset"></i> Global Core Support Desk</h3>
+    <div style="background:var(--panel-bg); border:1px solid rgba(255,255,255,0.05); border-radius:16px; padding:20px; line-height:1.7; font-size:0.9rem;">
+        <p><strong style="color:var(--primary)"><i class="fa-solid fa-envelope"></i> Core System Email Support:</strong><br> operations@zenit.global.support.com</p><br>
+        <p><strong style="color:var(--primary)"><i class="fa-solid fa-building-shield"></i> United States Office Registry Address:</strong><br> 750 Lexington Avenue, 14th Floor, Manhattan, New York, NY 10022, United States</p><br>
+        <p><strong style="color:var(--primary)"><i class="fa-solid fa-phone-volume"></i> Hotlines Carrier Number:</strong><br> +1 (212) 555-0198 (Global Desk Toll-Free)</p>
+    </div>
+</div>
+
 
 <script>
+    // 🔏 Anti-Malicious Key Injection Setup
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', e => {
+        if(e.ctrlKey && (e.key==='u' || e.key==='s' || e.key==='i' || e.key==='c')) e.preventDefault();
+    });
+
+    // App Firebase Master Web Configurations
     const firebaseConfig = {
       apiKey: "AIzaSyDvyHqU-dR3mAPs7NfIi94_4vUl3lBxsCo",
       authDomain: "zenith-global-5e2a4.firebaseapp.com",
@@ -389,227 +371,423 @@
     };
 
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
     const db = firebase.firestore();
+    const auth = firebase.auth();
 
-    let localSessionUser = null;
-    let cameraMediaStream = null;
-    let base64CapturedImagePayload = "";
+    // Investment Matrix Packages Data Collection Nodes
+    const systemNodesMatrix = [
+        { cost: 6, days: 28, returnVal: 11.00, profit: 5.00 },
+        { cost: 10, days: 30, returnVal: 22.00, profit: 12.00 },
+        { cost: 17, days: 31, returnVal: 35.70, profit: 18.70 },
+        { cost: 25, days: 32, returnVal: 52.50, profit: 27.50 },
+        { cost: 40, days: 34, returnVal: 84.00, profit: 44.00 },
+        { cost: 50, days: 35, returnVal: 105.00, profit: 55.00 },
+        { cost: 70, days: 36, returnVal: 147.00, profit: 77.00 },
+        { cost: 90, days: 38, returnVal: 189.00, profit: 99.00 },
+        { cost: 120, days: 40, returnVal: 252.00, profit: 132.00 }
+    ];
 
-    function toggleMobileMenu() {
-        document.getElementById('appSidebar').classList.toggle('open');
-    }
+    let currentLoggedInUserNode = null;
+    let balancesHiddenStatusState = false;
+    
+    // Dynamic Cloud Configurations Variables
+    let gateBkashNum = "01700000000";
+    let gateNagadNum = "01800000000";
+    let gateBinanceId = "8899776655";
 
-    function switchRoute(targetPanelId) {
-        document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-panel'));
-        document.querySelectorAll('.menu-list .menu-item').forEach(m => m.classList.remove('active'));
-        
-        const selectedPanel = document.getElementById(`panel-${targetPanelId}`);
-        const selectedTab = document.getElementById(`tab-${targetPanelId}`);
-        
-        if(selectedPanel && selectedTab) {
-            selectedPanel.classList.add('active-panel');
-            selectedTab.classList.add('active');
-        }
-        document.getElementById('appSidebar').classList.remove('open');
-        killCameraStream();
-    }
-
-    // --- 📊 High Frequency Fast Pre-rendering Chart Engine ---
-    const canvas = document.getElementById('liveTradingCanvas');
-    const ctx = canvas.getContext('2d');
-    let dataPoints = [];
-    const maxPoints = 40;
-
-    function resizeCanvas() {
-        canvas.width = canvas.parentElement.clientWidth * window.devicePixelRatio;
-        canvas.height = canvas.parentElement.clientHeight * window.devicePixelRatio;
-        ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    function initChartMockData() {
-        let base = 64200 + Math.random()*400;
-        for(let i=0; i<maxPoints; i++) { base += (Math.random()-0.5)*50; dataPoints.push(base); }
-    }
-    initChartMockData();
-
-    function drawChart() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        const w = canvas.parentElement.clientWidth;
-        const h = 200;
-        const min = Math.min(...dataPoints) - 10;
-        const max = Math.max(...dataPoints) + 10;
-        const range = max - min;
-        const step = w / (maxPoints - 1);
-
-        let grad = ctx.createLinearGradient(0,0,0,h);
-        grad.addColorStop(0, 'rgba(0, 255, 204, 0.2)');
-        grad.addColorStop(1, 'rgba(0, 255, 204, 0.0)');
-
-        ctx.beginPath(); ctx.moveTo(0, h);
-        for(let i=0; i<dataPoints.length; i++) {
-            ctx.lineTo(i*step, h - ((dataPoints[i]-min)/range)*h);
-        }
-        ctx.lineTo((dataPoints.length-1)*step, h); ctx.closePath();
-        ctx.fillStyle = grad; ctx.fill();
-
-        ctx.beginPath();
-        for(let i=0; i<dataPoints.length; i++) {
-            let x = i*step, y = h - ((dataPoints[i]-min)/range)*h;
-            if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-        }
-        ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 2.5; ctx.stroke();
-        requestAnimationFrame(drawChart);
-    }
-    setInterval(() => {
-        dataPoints.push(dataPoints[dataPoints.length-1] + (Math.random()-0.49)*40);
-        if(dataPoints.length > maxPoints) dataPoints.shift();
-    }, 400);
-    requestAnimationFrame(drawChart);
-
-    // --- 📡 Realtime Connection Pipelines ---
+    // 1. Initial Identity Authentication Validation Check Loop
     auth.onAuthStateChanged(user => {
-        if (!user) window.location.href = "index.html";
-        else { localSessionUser = user; syncAccountData(); }
-    });
-
-    function syncAccountData() {
-        db.collection("users").doc(localSessionUser.uid).onSnapshot(doc => {
-            if(doc.exists) {
-                const data = doc.data();
-                document.getElementById('globalHeaderUsername').innerText = data.username || "Client Node";
-                document.getElementById('metricBalance').innerText = Number(data.balance || 0).toFixed(2);
-                document.getElementById('metricBonus').innerText = Number(data.bonusBalance || 0).toFixed(2);
-                
-                document.getElementById('profFirst').value = data.firstName || "";
-                document.getElementById('profLast').value = data.lastName || "";
-                document.getElementById('profPhone').value = data.phone || "Verified";
-                document.getElementById('profEmail').value = data.email || "";
-
-                document.getElementById('globalVerifiedTick').style.display = data.isVerified ? 'inline-block' : 'none';
-
-                const path = window.location.origin + window.location.pathname.replace('dashboard.html', 'index.html');
-                document.getElementById('affiliateInputShare').value = `${path}?ref=${data.username || localSessionUser.uid}`;
-
-                streamLogs();
-                streamAffiliates(data.username || localSessionUser.uid);
-                renderKycStatus(data.kycStatus, data.kycReason);
-            }
-            document.getElementById('globalAppLoader').style.display = 'none';
-        });
-    }
-
-    function renderKycStatus(status, reason) {
-        const h = document.getElementById('kycStatusHeader');
-        const r = document.getElementById('kycRejectionReason');
-        const f = document.getElementById('kycSubmissionForm');
-        r.style.display = 'none'; f.style.display = 'flex';
-
-        if(status === 'pending') { h.className="kyc-badge-status status-pending"; h.innerText="Status: Pending Review"; f.style.display='none'; }
-        else if(status === 'verified') { h.className="kyc-badge-status status-verified"; h.innerText="Status: Verified Asset"; f.style.display='none'; }
-        else if(status === 'rejected') { h.className="kyc-badge-status status-rejected"; h.innerText="Status: Submission Rejected"; if(reason){r.style.display='block'; r.innerText=reason;} }
-        else { h.className="kyc-badge-status status-unverified"; h.innerText="Status: Unverified Client"; }
-    }
-
-    async function initializeCamera() {
-        try {
-            cameraMediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-            document.getElementById('webcamStream').srcObject = cameraMediaStream;
-        } catch(e) { popNotify("Camera access denied.", "danger"); }
-    }
-
-    function captureBiometricSnapshot() {
-        const v = document.getElementById('webcamStream');
-        const c = document.getElementById('capturedCanvas');
-        if(!cameraMediaStream) return;
-        const cx = c.getContext('2d');
-        c.width = v.videoWidth; c.height = v.videoHeight;
-        cx.drawImage(v, 0, 0, c.width, c.height);
-        base64CapturedImagePayload = c.toDataURL('image/jpeg', 0.8);
-        v.style.display = 'none'; c.style.display = 'block';
-        killCameraStream();
-    }
-
-    function killCameraStream() { if(cameraMediaStream) { cameraMediaStream.getTracks().forEach(t=>t.stop()); cameraMediaStream=null; } }
-
-    document.getElementById('kycSubmissionForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if(!base64CapturedImagePayload) { popNotify("Capture snapshot first.", "danger"); return; }
-        document.getElementById('kycSubmitBtn').innerText = "Uploading Payload...";
-        await db.collection("users").doc(localSessionUser.uid).update({
-            kycStatus: "pending", kycDocumentType: document.getElementById('kycDocType').value,
-            kycSerialNo: document.getElementById('kycSerial').value, kycBiometricBase64: base64CapturedImagePayload
-        });
-        popNotify("KYC Payload Transmitted Successfully.", "success");
-    });
-
-    document.getElementById('profileCoreForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await db.collection("users").doc(localSessionUser.uid).update({
-            firstName: document.getElementById('profFirst').value, lastName: document.getElementById('profLast').value
-        });
-        popNotify("Profile configuration updated.", "success");
-    });
-
-    async function purchaseNode(name, fee) {
-        const ref = db.collection("users").doc(localSessionUser.uid);
-        const snap = await ref.get();
-        if((snap.data().balance || 0) < fee) { popNotify("Insufficient system balance.", "danger"); return; }
-        await ref.update({ balance: firebase.firestore.FieldValue.increment(-fee) });
-        await db.collection("history").add({ uid: localSessionUser.uid, type: `Activated Node (${name})`, amount: -fee, status: "Synchronized", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-        popNotify(`${name} Node Online.`, "success");
-    }
-
-    async function openFinOps(mode) {
-        const val = parseFloat(prompt(`Enter amount to ${mode}:`));
-        if(isNaN(val) || val <= 0) return;
-        const ref = db.collection("users").doc(localSessionUser.uid);
-        if(mode==='Withdraw') {
-            const s = await ref.get(); if((s.data().balance||0)<val) { popNotify("Insufficient assets.", "danger"); return; }
-            await ref.update({ balance: firebase.firestore.FieldValue.increment(-val) });
+        if (user) {
+            setupRealtimeSynchronizedStreams(user.uid);
         } else {
-            await ref.update({ balance: firebase.firestore.FieldValue.increment(val) });
+            window.location.href = "login.html"; 
         }
-        await db.collection("history").add({ uid: localSessionUser.uid, type: mode, amount: mode==='Deposit'? val : -val, status: "Completed Gateway", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-        popNotify("Operation executed successfully.", "success");
+    });
+
+    // 2. Realtime Synchronized Pipeline Streams Dashboard Hub
+    function setupRealtimeSynchronizedStreams(uid) {
+        // User Profile Node Dynamic Pipeline
+        db.collection("users").doc(uid).onSnapshot(doc => {
+            if(!doc.exists) return;
+            currentLoggedInUserNode = doc.data();
+            currentLoggedInUserNode.uid = uid;
+            
+            updateDashboardInterfaceMetricsDisplay();
+            generateAffiliateEcosystemDetails(uid);
+        });
+
+        // Global System Dynamic Variable Parameter Feed Stream
+        db.collection("settings").doc("gateways").onSnapshot(doc => {
+            if(doc.exists){
+                const d = doc.data();
+                gateBkashNum = d.bkash || gateBkashNum;
+                gateNagadNum = d.nagad || gateNagadNum;
+                gateBinanceId = d.binance || gateBinanceId;
+                if(document.getElementById('viewDeposit').classList.contains('panel-active')) {
+                    runDepositCalculationEngine();
+                }
+            }
+        });
+
+        // Global System Notification Feed Marquee Ticker Stream
+        db.collection("settings").doc("noticeBoard").onSnapshot(doc => {
+            if(doc.exists) {
+                document.getElementById('dynamicNoticeNode').innerText = doc.data().text || '';
+            }
+        });
+
+        // Transaction History Streams Real-Time Sync Pipeline
+        db.collection("history").where("uid", "==", uid).orderBy("timestamp", "desc").onSnapshot(snap => {
+            const container = document.getElementById('userLedgerHistoryStream');
+            container.innerHTML = "";
+            if(snap.empty) { container.innerHTML = "<p style='color:var(--text-muted)'>No events logged inside database system pipeline ledger.</p>"; return; }
+
+            snap.forEach(doc => {
+                const log = doc.data();
+                let statusIconStyle = `color:var(--primary);`;
+                if(log.status === "Completed Gateway" || log.status === "Synchronized") statusIconStyle = `color:var(--success);`;
+                if(log.status === "Rejected Asset Flow") statusIconStyle = `color:var(--danger);`;
+
+                container.innerHTML += `
+                    <div class="history-item">
+                        <div class="history-meta">
+                            <span><i class="fa-solid fa-receipt"></i> <strong>${log.type}</strong></span>
+                            <span>${log.timestamp ? new Date(log.timestamp.seconds*1000).toLocaleDateString() : 'Sync...'}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:0.95rem; font-weight:700; color:#fff;">$${Math.abs(log.amount).toFixed(2)}</span>
+                            <span style="font-size:0.72rem; ${statusIconStyle} font-weight:700;"><i class="fa-solid fa-circle-nodes"></i> ${log.status}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        });
+
+        // Trading Signals Mock Dynamic Pulse Logic Engine Setup
+        setInterval(() => {
+            const actions = ["STRONG BUY", "STRONG SELL", "BUY", "SELL"];
+            const assets = ["BTC/USDT", "ETH/USDT", "SOL/USDT"];
+            const stream = document.getElementById('signalDashboardStream');
+            stream.innerHTML = "";
+            assets.forEach(asset => {
+                const randomAct = actions[Math.floor(Math.random() * actions.length)];
+                const badgeClass = randomAct.includes("BUY") ? "sig-call" : "sig-put";
+                stream.innerHTML += `<div class="signal-row"><span>${asset}</span><span class="signal-action ${badgeClass}">${randomAct}</span></div>`;
+            });
+        }, 4500);
     }
 
-    function streamLogs() {
-        db.collection("history").where("uid", "==", localSessionUser.uid).orderBy("timestamp","desc").onSnapshot(s => {
-            const b = document.getElementById('historyTableBody'); b.innerHTML = "";
-            s.forEach(d => {
-                const i = d.data();
-                b.innerHTML += `<tr><td>${i.timestamp ? new Date(i.timestamp.seconds*1000).toLocaleString():'Pending'}</td><td>${i.type}</td><td style="color:${i.amount>=0?'#00ffcc':'#ff4a4a'}">${i.amount>=0?'+':''}$${i.amount.toFixed(2)}</td><td>${i.status}</td></tr>`;
-            });
+    // 3. Main Dashboard UI Compilation Update Rendering Engine
+    function updateDashboardInterfaceMetricsDisplay() {
+        const u = currentLoggedInUserNode;
+        
+        // Welcome and Badges Verification Controls UI Setup
+        let kycVerifiedBadge = "";
+        if(u.kycStatus === "verified") {
+            kycVerifiedBadge = `<span class="badge-verify-tick"><i class="fa-solid fa-shield-check"></i> VERIFIED</span>`;
+            document.getElementById('drKycStatus').innerHTML = `<span style="color:var(--success)"><i class="fa-solid fa-circle-check"></i> Account Verified</span>`;
+        } else if(u.kycStatus === "pending") {
+            document.getElementById('drKycStatus').innerHTML = `<span style="color:var(--primary)"><i class="fa-solid fa-circle-notch fa-spin"></i> KYC Under Audit</span>`;
+        } else {
+            document.getElementById('drKycStatus').innerHTML = `<span style="color:var(--text-muted)"><i class="fa-solid fa-triangle-exclamation"></i> Unverified Node</span>`;
+        }
+
+        document.getElementById('drUsername').innerHTML = (u.username || "Client") + kycVerifiedBadge;
+        document.getElementById('refCopyLinkInput').value = window.location.origin + "/register.html?ref=" + (u.username || "");
+
+        // Floating Point Balances Parsing Core Setup
+        const dBal = Number(u.balance || 0).toFixed(2);
+        const mBal = Number(u.miningBalance || 0).toFixed(2);
+        const rBal = Number(u.referBalance || 0).toFixed(2);
+
+        if(balancesHiddenStatusState) {
+            document.getElementById('valDep').innerText = "••••••";
+            document.getElementById('valMin').innerText = "••••••";
+            document.getElementById('valRef').innerText = "••••••";
+        } else {
+            document.getElementById('valDep').innerText = "$" + dBal;
+            document.getElementById('valMin').innerText = "$" + mBal;
+            document.getElementById('valRef').innerText = "$" + rBal;
+        }
+
+        // Active Investment Matrix Cards Grid Render Framework Engine
+        const grid = document.getElementById('planRenderMatrix');
+        grid.innerHTML = "";
+        systemNodesMatrix.forEach((p, idx) => {
+            grid.innerHTML += `
+                <div class="plan-card">
+                    <span class="plan-badge">${p.days} Days Node Tier</span>
+                    <div style="color:var(--text-muted); font-size:0.75rem;">Capital Investment Allocation</div>
+                    <div class="plan-cost">$${p.cost.toFixed(2)}</div>
+                    <div class="plan-stats">
+                        <div>Return: <strong>$${p.returnVal.toFixed(2)}</strong></div>
+                        <div>Profit Yield: <strong style="color:var(--success)">+$${p.profit.toFixed(2)}</strong></div>
+                    </div>
+                    <button class="btn-buy-node" onclick="executeBuyInvestmentNode(${p.cost}, ${p.days}, ${p.profit}, ${idx})"><i class="fa-solid fa-bolt-lightning"></i> Deploy Micro Mining Node</button>
+                </div>
+            `;
         });
     }
 
-    function streamAffiliates(user) {
-        db.collection("users").where("referrer", "==", user).onSnapshot(s => {
-            const b = document.getElementById('affiliateTableBody'); b.innerHTML = "";
-            document.getElementById('metricRefCount').innerText = s.size;
-            s.forEach(d => {
-                const data = d.data();
-                b.innerHTML += `<tr><td>${data.username}</td><td>${data.kycStatus||'unverified'}</td><td>+$1.00</td></tr>`;
-            });
+    // 4. Investment Core Purchase Processing Pipeline
+    async function executeBuyInvestmentNode(cost, days, profit, index) {
+        const u = currentLoggedInUserNode;
+        // Purchase check engine validator rules logic
+        if(Number(u.referBalance || 0) < cost) {
+            popToastNotification("Insufficient funds inside your Affiliate/Bonus Wallet container to allocate this plan.", "danger");
+            return;
+        }
+
+        // Deduct reference balance and append processing transaction item to node database record logs
+        const updatedRefBal = Number(u.referBalance || 0) - cost;
+        
+        await db.collection("users").doc(u.uid).update({
+            referBalance: updatedRefBal
+        });
+
+        await db.collection("history").add({
+            uid: u.uid,
+            type: `Purchased Tier ${index+1} Mining Node`,
+            amount: -cost,
+            status: "Synchronized",
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        popToastNotification(`Node Package Tier ${index+1} initialization successful. Yield generation activated!`, "success");
+    }
+
+    // 5. Deposits Module Calculation & Processing Interface Engine
+    function handleDepositGatewayToggle() {
+        const method = document.getElementById('depMethod').value;
+        if(method === 'Binance') {
+            document.getElementById('fiatInputBlocks').style.display = 'none';
+            document.getElementById('cryptoInputBlock').style.display = 'block';
+        } else {
+            document.getElementById('fiatInputBlocks').style.display = 'block';
+            document.getElementById('cryptoInputBlock').style.display = 'none';
+        }
+        runDepositCalculationEngine();
+    }
+
+    function runDepositCalculationEngine() {
+        const amount = parseFloat(document.getElementById('depAmount').value) || 0;
+        const method = document.getElementById('depMethod').value;
+        const outBox = document.getElementById('calcGatewayPreview');
+
+        if(amount < 6) {
+            outBox.innerHTML = `<span style="color:var(--danger)"><i class="fa-solid fa-circle-exclamation"></i> Core limit validation error: Minimum deposit parameter threshold is set to $6.00 USD.</span>`;
+            return;
+        }
+
+        const exactBdtConversion = Math.round(amount * 120); // Static 120 BDT System Conversion Matrix Index Ratio
+
+        if(method === 'bKash' || method === 'Nagad') {
+            const currentGateNum = (method === 'bKash') ? gateBkashNum : gateNagadNum;
+            outBox.innerHTML = `
+                <strong><i class="fa-solid fa-calculator"></i> System Outflow Rates:</strong> $${amount.toFixed(2)} USD = ${exactBdtConversion} BDT.<br>
+                <span style="color:var(--primary); font-weight:600;"><i class="fa-solid fa-angles-right"></i> Send Exactly <strong>${exactBdtConversion} BDT</strong> to the Agent/Personal wallet terminal using Cash-Out/Send-Money networks: <strong>${currentGateNum}</strong>.</span>
+            `;
+        } else {
+            outBox.innerHTML = `
+                <strong><i class="fa-solid fa-network-wired"></i> Blockchain Router Coordinates:</strong><br>
+                <span style="color:var(--primary); font-weight:600;"><i class="fa-solid fa-microchip"></i> Transfer $${amount.toFixed(2)} USDT securely to system Binance Pay-ID endpoint address identifier: <strong>${gateBinanceId}</strong>.</span>
+            `;
+        }
+    }
+
+    async function commitDepositTransactionPipeline() {
+        const amount = parseFloat(document.getElementById('depAmount').value);
+        const method = document.getElementById('depMethod').value;
+        const screenshotFile = document.getElementById('depScreenshot').files[0];
+        
+        if(!amount || amount < 6) { popToastNotification("Minimum capital threshold submission error: $6.00 required.", "danger"); return; }
+        if(!screenshotFile) { popToastNotification("Mandatory Requirement: System deposit receipt screenshot image missing.", "danger"); return; }
+
+        let customPayloadTrackingId = "";
+        let senderSystemAccountRef = "";
+
+        if(method === 'Binance') {
+            customPayloadTrackingId = document.getElementById('depBinanceId').value;
+            if(!customPayloadTrackingId) { popToastNotification("Please supply your origin verification Binance Account Pay-ID parameter.", "danger"); return; }
+        } else {
+            senderSystemAccountRef = document.getElementById('depSenderPhone').value;
+            customPayloadTrackingId = document.getElementById('depTxnId').value;
+            if(!senderSystemAccountRef || !customPayloadTrackingId) { popToastNotification("Please input both the sender account terminal number and the network reference Transaction ID.", "danger"); return; }
+        }
+
+        // Convert screenshot imagery assets data stream to continuous Base64 storage payloads strings
+        const base64ScreenshotStringImg = await convertImageFileToBase64PayloadStream(screenshotFile);
+
+        await db.collection("history").add({
+            uid: currentLoggedInUserNode.uid,
+            type: `Deposit (${method})`,
+            amount: amount,
+            gatewayMethod: method,
+            senderReferenceAccount: senderSystemAccountRef,
+            transactionPayloadId: customPayloadTrackingId,
+            proofVoucherBase64Payload: base64ScreenshotStringImg,
+            status: "Pending Gateway Settlement Verification",
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        popToastNotification("Asset transfer tracking dispatch initialized successfully. Awaiting compliance validation.", "success");
+        switchView('viewHome');
+    }
+
+    // 6. Withdraw System Processing Modules
+    function handleWithdrawGatewayToggle() {
+        const method = document.getElementById('wthMethod').value;
+        if(method === 'Binance') {
+            document.getElementById('wthMobileTargetBlock').style.display = 'none';
+            document.getElementById('wthBinanceTargetBlock').style.display = 'block';
+        } else {
+            document.getElementById('wthMobileTargetBlock').style.display = 'block';
+            document.getElementById('wthBinanceTargetBlock').style.display = 'none';
+        }
+    }
+
+    async function commitWithdrawalRequestPipeline() {
+        const amount = parseFloat(document.getElementById('wthAmount').value);
+        const method = document.getElementById('wthMethod').value;
+        const u = currentLoggedInUserNode;
+
+        // Dynamic multi tier enforcement rules check logic block
+        const isFirstWithdrawalOperationDone = u.firstWithdrawDone || false;
+        const absoluteMinimumLimitFloor = isFirstWithdrawalOperationDone ? 1 : 12;
+
+        if(!amount || amount < absoluteMinimumLimitFloor) {
+            popToastNotification(`Withdrawal boundary parameter mismatch logic error: Current allowed minimum boundary target is $${absoluteMinimumLimitFloor}.00.`, "danger");
+            return;
+        }
+
+        if(Number(u.miningBalance || 0) < amount) {
+            popToastNotification("Insufficient liquid capital inside your Auto Mining Profits account container link.", "danger");
+            return;
+        }
+
+        let clearDestinationAddressId = "";
+        if(method === 'Binance') {
+            clearDestinationAddressId = document.getElementById('wthTargetBinanceId').value;
+        } else {
+            clearDestinationAddressId = document.getElementById('wthTargetPhone').value;
+        }
+
+        if(!clearDestinationAddressId) { popToastNotification("Target resolution clearing interface data payload empty.", "danger"); return; }
+
+        // Securely lock the capital inside database logs pending compliance officer oversight clearance reviews
+        const updatedMiningBalNode = Number(u.miningBalance || 0) - amount;
+        
+        await db.collection("users").doc(u.uid).update({
+            miningBalance: updatedMiningBalNode,
+            firstWithdrawDone: true // Flips validation context tracking states across all subsequent transaction invocations
+        });
+
+        await db.collection("history").add({
+            uid: u.uid,
+            type: `Withdrawal (${method})`,
+            amount: -amount,
+            targetDestinationAddress: clearDestinationAddressId,
+            status: "Pending Gateway Settlement Verification",
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        popToastNotification("Withdrawal out-route ledger processing dispatched. Awaiting confirmation.", "success");
+        switchView('viewHome');
+    }
+
+    // 7. KYC Identity File Base64 Pipelines Processing Stream Engine
+    async function commitKycIdentityStructure() {
+        const docType = document.getElementById('kycDocType').value;
+        const serialNo = document.getElementById('kycSerial').value;
+        const docFile = document.getElementById('kycDocFile').files[0];
+        const faceFile = document.getElementById('kycFaceFile').files[0];
+
+        if(!serialNo || !docFile || !faceFile) {
+            popToastNotification("All identity authentication parameters and photo capture entries are strictly mandatory.", "danger");
+            return;
+        }
+
+        const docBase64 = await convertImageFileToBase64PayloadStream(docFile);
+        const faceBase64 = await convertImageFileToBase64PayloadStream(faceFile);
+
+        await db.collection("users").doc(currentLoggedInUserNode.uid).update({
+            kycStatus: "pending",
+            kycDocumentType: docType,
+            kycSerialNo: serialNo,
+            kycDocImageBase64: docBase64,
+            kycBiometricBase64: faceBase64
+        });
+
+        popToastNotification("Identity security framework dossier successfully routed to internal compliance matrix.", "success");
+        switchView('viewHome');
+    }
+
+    // 8. Helper Functions Infrastructure Setup Utilities
+    function generateAffiliateEcosystemDetails(uid) {
+        db.collection("users").where("referrer", "==", currentLoggedInUserNode.username || "").get().then(snap => {
+            document.getElementById('refCountMeta').innerText = `Total Affiliates Recruited: ${snap.size} Users`;
+            let generatedAggregateRefBonusAccumulator = snap.size * 1.50; // Dynamic system referral reward factor parameter
+            document.getElementById('refEarningsMeta').innerText = `Total Affiliate Revenue Generated: $${generatedAggregateRefBonusAccumulator.toFixed(2)}`;
         });
     }
 
-    function copyAffiliateURL() {
-        const input = document.getElementById('affiliateInputShare'); input.select();
-        navigator.clipboard.writeText(input.value); popNotify("Referral link copied.", "success");
+    function toggleBalanceVisibility() {
+        balancesHiddenStatusState = !balancesHiddenStatusState;
+        const icon = document.getElementById('eyeIcon');
+        if(balancesHiddenStatusState) {
+            icon.className = "fa-solid fa-eye";
+            popToastNotification("Financial data displays masked.", "success");
+        } else {
+            icon.className = "fa-solid fa-eye-slash";
+            popToastNotification("Financial data displays visible.", "success");
+        }
+        updateDashboardInterfaceMetricsDisplay();
     }
 
-    function popNotify(msg, type) {
-        const t = document.getElementById('customToast'); t.innerText = msg;
-        t.style.background = type === 'success' ? '#00cb9c' : '#ff4a4a';
-        t.style.opacity = '1'; t.style.transform = 'translateY(0)';
-        setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(-20px)'; }, 3000);
+    function convertImageFileToBase64PayloadStream(fileObj) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = err => reject(err);
+            reader.readAsDataURL(fileObj);
+        });
     }
 
-    function triggerSessionTermination() { auth.signOut().then(() => window.location.href="index.html"); }
+    function toggleAppDrawer() {
+        document.getElementById('sideDrawer').classList.toggle('drawer-open');
+    }
+
+    function switchView(targetPanelSelectorId) {
+        document.querySelectorAll('.app-view-panel').forEach(p => p.classList.remove('panel-active'));
+        document.getElementById(targetPanelSelectorId).classList.add('panel-active');
+        toggleAppDrawer();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function popToastNotification(msg, type) {
+        const toast = document.getElementById('toastNotify');
+        toast.innerText = msg;
+        toast.style.background = type === 'danger' ? '#ff4a4a' : '#ffa500';
+        toast.style.color = type === 'danger' ? '#fff' : '#000';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => { 
+            toast.style.opacity = '0'; 
+            toast.style.transform = 'translateX(-50%) translateY(10px)'; 
+        }, 3500);
+    }
+
+    function copyAffiliateLinkToken() {
+        const copyText = document.getElementById("refCopyLinkInput");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        popToastNotification("Affiliate link token securely cached to device clipboard memory.", "success");
+    }
+
+    function executeAppSignOut() {
+        auth.signOut().then(() => { window.location.href = "login.html"; });
+    }
 </script>
 </body>
 </html>
