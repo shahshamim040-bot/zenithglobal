@@ -52,6 +52,12 @@
         .balance-value { font-size: 0.95rem; font-weight: 700; margin-top: 4px; color: #fff; transition: 0.2s; }
         .eye-toggle-master { text-align: right; padding: 4px 16px 0 0; font-size: 0.85rem; color: var(--primary); cursor: pointer; }
 
+        /* 📊 Dynamic Metric Tracker Rows */
+        .tracker-grid { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 0 14px 14px 14px; }
+        .tracker-box { background: rgba(255, 165, 0, 0.03); border: 1px dashed rgba(255, 165, 0, 0.15); padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+        .tracker-lbl { color: var(--text-muted); font-weight: 500; }
+        .tracker-val { font-weight: 700; color: var(--primary); }
+
         /* ⚡ Quick Action Quick Link Blocks */
         .action-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 14px 14px 14px; }
         .act-btn { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.06); padding: 14px; border-radius: 14px; text-align: center; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
@@ -178,13 +184,20 @@
         </div>
     </div>
 
+    <div class="tracker-grid">
+        <div class="tracker-box">
+            <div class="tracker-lbl"><i class="fa-solid fa-cubes-stacked"></i> Total Purchased Nodes Logged:</div>
+            <div class="tracker-val" id="totalPurchasedPlansCounter">0 Active</div>
+        </div>
+    </div>
+
     <div class="action-container">
         <div class="act-btn act-btn-dep" onclick="switchView('viewDeposit')"><i class="fa-solid fa-circle-plus"></i> Deposit</div>
         <div class="act-btn act-btn-wth" onclick="switchView('viewWithdraw')"><i class="fa-solid fa-circle-minus"></i> Withdraw</div>
     </div>
 
     <div class="widget-card">
-        <div class="widget-title"><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> Live Expert System Trading Indicator Graph</div>
+        <div class="widget-title"><i class="fa-solid fa-chart-line" style="color:var(--danger)"></i> Live Expert System Trading Indicator Graph</div>
         <canvas id="tradingGraph"></canvas>
     </div>
 
@@ -470,6 +483,9 @@
             currentLoggedInUserNode = doc.data();
             currentLoggedInUserNode.uid = uid;
             
+            // অফলাইন ডেইলি অটো-মাইনিং ইনকাম ক্যালকুলেশন ইঞ্জিন (লগইন না করলেও ইনকাম যোগ হবে)
+            processOfflineMiningAccruals(uid);
+            
             updateDashboardInterfaceMetricsDisplay();
             generateAffiliateEcosystemDetails(uid);
         });
@@ -528,6 +544,48 @@
         initTradingLiveCanvasGraph();
     }
 
+    // ব্যাকগ্রাউন্ড অটো মাইনিং প্রফিট জেনারেটর মেকানিজম
+    function processOfflineMiningAccruals(uid) {
+        const u = currentLoggedInUserNode;
+        if (!u.activeNodesArray || u.activeNodesArray.length === 0) return;
+
+        const currentServerTimeSec = Math.floor(Date.now() / 1000);
+        let lastLoggedTrackingTimestamp = u.lastMiningTimestamp || currentServerTimeSec;
+        let totalTimeElapsedSeconds = currentServerTimeSec - lastLoggedTrackingTimestamp;
+
+        // ১ সেকেন্ডের বেশি গ্যাপ পেলেই ব্যালেন্স হিসাব শুরু হবে
+        if (totalTimeElapsedSeconds > 0) {
+            let accruedTotalProfitAccumulator = 0;
+
+            u.activeNodesArray.forEach(node => {
+                const nodeTotalSecondsDuration = node.daysDuration * 86400;
+                const profitGeneratedPerSecondNode = node.totalProfitYield / nodeTotalSecondsDuration;
+                
+                // চেক করা হচ্ছে নোডটির মেয়াদ শেষ হয়েছে কি না
+                if (currentServerTimeSec < node.expirationTimestamp) {
+                    accruedTotalProfitAccumulator += (totalTimeElapsedSeconds * profitGeneratedPerSecondNode);
+                } else if (lastLoggedTrackingTimestamp < node.expirationTimestamp) {
+                    // আংশিক সময় মেয়াদের মধ্যে থাকলে শুধু সেইটুকু ইনকাম যোগ হবে
+                    let validActiveSeconds = node.expirationTimestamp - lastLoggedTrackingTimestamp;
+                    accruedTotalProfitAccumulator += (validActiveSeconds * profitGeneratedPerSecondNode);
+                }
+            });
+
+            if (accruedTotalProfitAccumulator > 0) {
+                const updatedMiningWalletBalance = Number(u.miningBalance || 0) + accruedTotalProfitAccumulator;
+                
+                db.collection("users").doc(uid).update({
+                    miningBalance: updatedMiningWalletBalance,
+                    lastMiningTimestamp: currentServerTimeSec
+                });
+            } else {
+                db.collection("users").doc(uid).update({
+                    lastMiningTimestamp: currentServerTimeSec
+                });
+            }
+        }
+    }
+
     // 3. Main Dashboard UI Compilation Update Rendering Engine
     function updateDashboardInterfaceMetricsDisplay() {
         const u = currentLoggedInUserNode;
@@ -548,7 +606,7 @@
 
         // Floating Point Balances Parsing Core Setup
         const dBal = Number(u.balance || 0).toFixed(2);
-        const mBal = Number(u.miningBalance || 0).toFixed(2);
+        const mBal = Number(u.miningBalance || 0).toFixed(6); // নোডের লাইভ ইনকাম নিখুঁত দেখানোর জন্য ৬ দশমিক করা হয়েছে
         const rBal = Number(u.referBalance || 0).toFixed(2);
 
         if(balancesHiddenStatusState) {
@@ -560,6 +618,10 @@
             document.getElementById('valMin').innerText = "$" + mBal;
             document.getElementById('valRef').innerText = "$" + rBal;
         }
+
+        // মোট কয়টি প্ল্যান/নোড কেনা হয়েছে তার রিয়েল কাউন্টার আপডেট
+        const totalPurchasedPlansCount = u.activeNodesArray ? u.activeNodesArray.length : 0;
+        document.getElementById('totalPurchasedPlansCounter').innerText = `${totalPurchasedPlansCount} Active Packages`;
 
         // Active Investment Matrix Cards Grid Render Framework Engine
         const grid = document.getElementById('planRenderMatrix');
@@ -580,7 +642,7 @@
         });
     }
 
-    // 4. Investment Core Purchase Processing Pipeline (যেকোনো ব্যালেন্স সাপোর্ট)
+    // 4. Investment Core Purchase Processing Pipeline (যেকোনো ব্যালেন্স সাপোর্ট + হিস্ট্রি অটো লাইভ)
     async function executeBuyInvestmentNode(cost, days, profit, index) {
         const u = currentLoggedInUserNode;
         const selectedSourceField = document.getElementById('planPurchaseSource').value;
@@ -591,10 +653,28 @@
             return;
         }
 
+        const currentServerTimestampSec = Math.floor(Date.now() / 1000);
+        const nodeExpirationTimeCalculated = currentServerTimestampSec + (days * 86400);
+
+        // নতুন নোডের প্রফেশনাল স্কিমা অবজেক্ট স্ট্রাকচার
+        const newPurchasedNodePayloadItem = {
+            nodeIndexId: index,
+            costAmount: cost,
+            daysDuration: days,
+            totalProfitYield: profit,
+            activationTimestamp: currentServerTimestampSec,
+            expirationTimestamp: nodeExpirationTimeCalculated
+        };
+
+        let existingActiveNodesArrayRef = u.activeNodesArray || [];
+        existingActiveNodesArrayRef.push(newPurchasedNodePayloadItem);
+
         // Deduct balance from targeted chosen wallet source
         const newWalletValue = currentWalletBalance - cost;
         let updatePayload = {};
         updatePayload[selectedSourceField] = newWalletValue;
+        updatePayload.activeNodesArray = existingActiveNodesArrayRef;
+        updatePayload.lastMiningTimestamp = currentServerTimestampSec; // মাইনিং নোড ক্লক সিঙ্ক রিসেট
 
         // চেক করা হবে এটাই নতুন ইউজারের প্রথম প্ল্যান কেনা কি না, যদি রেফার লিংকে এসে থাকে
         let referBonusGrantedTrigger = false;
@@ -604,6 +684,7 @@
             referBonusGrantedTrigger = true;
         }
 
+        // ডেটাবেজ আপডেট করার সাথে সাথে অন-স্ন্যাপশট লিসেনার দিয়ে লাইভ হিস্ট্রি এড হবে
         await db.collection("users").doc(u.uid).update(updatePayload);
 
         // হিস্টোরি প্যানেলে সাকসেস লগ এন্ট্রি
@@ -865,7 +946,7 @@
         updateDashboardInterfaceMetricsDisplay();
     }
 
-    // ক্যানভাস লাইভ গ্রাফ অ্যানিমেশন ইঞ্জিন (কোনো টেক্সট ছাড়া)
+    // ক্যানভাস লাইভ স্ট্রাইকিং রেড গ্রাফ অ্যানিমেশন ইঞ্জিন (কোনো টেক্সট ছাড়া)
     function initTradingLiveCanvasGraph() {
         const canvas = document.getElementById('tradingGraph');
         if(!canvas) return;
@@ -889,9 +970,9 @@
                 ctx.beginPath(); ctx.moveTo(0, h); ctx.lineTo(canvas.width, h); ctx.stroke();
             }
 
-            // Realtime Stock Trend Pulse Path
+            // Realtime Stock Trend Pulse Path (Striking Neon Red Line)
             ctx.beginPath();
-            ctx.strokeStyle = '#00ffcc';
+            ctx.strokeStyle = '#ff4a4a'; 
             ctx.lineWidth = 2.5;
             ctx.lineJoin = 'round';
             ctx.lineCap = 'round';
@@ -904,10 +985,10 @@
             }
             ctx.stroke();
 
-            // Gradient Area Under Vector Line
+            // Gradient Area Under Vector Red Line
             ctx.lineTo((trackingGraphPointsArray.length - 1) * xDeltaStepNode, canvas.height);
             ctx.lineTo(0, canvas.height);
-            ctx.fillStyle = 'rgba(0, 255, 204, 0.03)';
+            ctx.fillStyle = 'rgba(255, 74, 74, 0.04)';
             ctx.fill();
 
         }, 500);
@@ -921,6 +1002,19 @@
             reader.readAsDataURL(fileObj);
         });
     }
+
+    // ১ সেকেন্ড পর পর ড্যাশবোর্ডে মাইনিং ওয়ালেটের ব্যালেন্স ও সিঙ্ক আপডেট করা
+    setInterval(() => {
+        if(currentLoggedInUserNode && auth.currentUser) {
+            processOfflineMiningAccruals(auth.currentUser.uid);
+            
+            if(!balancesHiddenStatusState) {
+                const updatedMinBal = Number(currentLoggedInUserNode.miningBalance || 0).toFixed(6);
+                const minBalContainer = document.getElementById('valMin');
+                if(minBalContainer) minBalContainer.innerText = "$" + updatedMinBal;
+            }
+        }
+    }, 1000);
 
     function toggleAppDrawer() {
         document.getElementById('sideDrawer').classList.toggle('drawer-open');
